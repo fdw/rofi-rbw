@@ -1,0 +1,12 @@
+# Created by .ignore support plugin (hsz.mobi)
+__pycache__/
+build/
+dist/
+sdist/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+target/
+.idea/
+*.iml
+rofi_rbw.egg-info/
