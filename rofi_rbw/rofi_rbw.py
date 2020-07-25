@@ -49,17 +49,20 @@ def main() -> None:
 
 
 def get_data(name: str, folder: str) -> Data:
+    command = ['rbw', 'get', '--full', '--folder', folder, name]
+    if folder == "":
+        command = ['rbw', 'get', '--full', name]
     result = run(
-        ['rbw', 'get', '--full', '--folder', folder, name],
+        command,
         capture_output=True,
         encoding='utf-8'
     ).stdout.split('\n')
 
     password = result[0].strip()
-    if len(result[1]) == 0:
-        username = ""
-    else:
-        username = result[1].split(':')[1].strip()
+    username = ""
+    for resultline in result:
+        if resultline.startswith('Username:'):
+            username = resultline.replace('Username: ', '')
 
     return Data(username, password)
 
