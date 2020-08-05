@@ -49,8 +49,13 @@ def main() -> None:
 
 
 def get_data(name: str, folder: str) -> Data:
+
+    arguments = ['rbw', 'get', '--full', name]
+    if len(folder) > 0:
+        arguments += ['--folder', folder]
+
     result = run(
-        ['rbw', 'get', '--full', '--folder', folder, name],
+        arguments,
         capture_output=True,
         encoding='utf-8'
     ).stdout.split('\n')
