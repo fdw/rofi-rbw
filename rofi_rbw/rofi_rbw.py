@@ -49,9 +49,10 @@ def main() -> None:
 
 
 def get_data(name: str, folder: str) -> Data:
-    command = ['rbw', 'get', '--full', '--folder', folder, name]
-    if folder == "":
-        command = ['rbw', 'get', '--full', name]
+    command = ['rbw', 'get', '--full', name]
+    if folder != "":
+        command.extend(["--folder", folder])
+
     result = run(
         command,
         capture_output=True,
@@ -59,12 +60,16 @@ def get_data(name: str, folder: str) -> Data:
     ).stdout.split('\n')
 
     password = result[0].strip()
-    username = ""
-    for resultline in result:
-        if resultline.startswith('Username:'):
-            username = resultline.replace('Username: ', '')
+    username = extract_username(result)
 
     return Data(username, password)
+
+
+def extract_username(result: [str]) -> str:
+    for resultline in result:
+        if resultline.startswith('Username:'):
+            return resultline.replace('Username: ', '')
+    return ""
 
 
 def type(text: str, active_window: str) -> None:
