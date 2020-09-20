@@ -18,9 +18,15 @@ def main() -> None:
     ).stdout.strip().split('\n')
     entries = sorted(map(lambda it: it.replace('\t', '/'), entries))
 
+    help_text = "<b>Enter</b>: type pass | <b>Alt+2</b>: Type user | <b>Alt+1</b>: Type user,pass | <b>Alt+u</b> Copy user | <b>Alt+p</b> Copy pass"
+
     rofi = run(
         [
             'rofi',
+            '-p',
+            'Name',
+            '-mesg',
+            help_text,
             '-dmenu',
             '-kb-custom-11',
             'Alt+p',
