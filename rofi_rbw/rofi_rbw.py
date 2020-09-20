@@ -21,6 +21,8 @@ def main() -> None:
     rofi = run(
         [
             'rofi',
+            '-p',
+            'Select entry',
             '-dmenu',
             '-kb-custom-11',
             'Alt+p',
