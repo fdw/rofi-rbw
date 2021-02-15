@@ -34,6 +34,9 @@ def main() -> None:
         capture_output=True
     )
 
+    if not rofi.stdout:
+        return
+
     (selected_folder, selected_entry) = rofi.stdout.rsplit('/', 1)
 
     data = get_data(selected_entry.strip(), selected_folder.strip())
