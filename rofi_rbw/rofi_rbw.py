@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from collections import namedtuple
-from subprocess import run
+from subprocess import run, DEVNULL
 from time import sleep
+from sys import stderr
 
 Data = namedtuple('Data', ['username', 'password'])
 
@@ -87,7 +88,13 @@ def type(text: str, active_window: str) -> None:
 
 
 def copy_to_clipboard(text: str) -> None:
-    run(['xsel', '-i', '-b'], encoding='utf-8', input=text)
+    if not run(['which', 'xsel'], stdout=DEVNULL, stderr=DEVNULL).returncode:
+        run(['xsel', '-i', '-b'], encoding='utf-8', input=text)
+    elif not run(['which', 'xclip'], stdout=DEVNULL, stderr=DEVNULL).returncode:
+        run(['xclip', '-in', '-selection', 'clipboard'], encoding='utf-8', input=text)
+    else:
+        print('Could not find a clipboard extension', file=stderr)
+        exit(1)
 
 
 if __name__ == "__main__":
