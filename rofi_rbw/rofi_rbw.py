@@ -8,6 +8,9 @@ Data = namedtuple('Data', ['username', 'password'])
 
 
 def main() -> None:
+    if run(args=['rbw', 'unlocked']).returncode != 0: 
+        run(args=['rbw', 'unlock'])
+
     active_window = run(args=['xdotool', 'getactivewindow'],
                         capture_output=True, encoding='utf-8').stdout[:-1]
 
