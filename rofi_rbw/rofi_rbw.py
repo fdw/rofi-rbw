@@ -1,93 +1,188 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import argparse
+import enum
+import shlex
+import sys
 from collections import namedtuple
 from subprocess import run
-from time import sleep
+
+import configargparse
 
 Data = namedtuple('Data', ['username', 'password'])
 
-
-def main() -> None:
-    active_window = run(args=['xdotool', 'getactivewindow'],
-                        capture_output=True, encoding='utf-8').stdout[:-1]
-
-    entries = run(
-        ['rbw', 'ls', '--fields', 'folder,name'],
-        encoding='utf-8',
-        capture_output=True
-    ).stdout.strip().split('\n')
-    entries = sorted(map(lambda it: it.replace('\t', '/'), entries))
-
-    rofi = run(
-        [
-            'rofi',
-            '-p',
-            'Select entry',
-            '-dmenu',
-            '-kb-custom-11',
-            'Alt+p',
-            '-kb-custom-12',
-            'Alt+u'
-        ],
-        encoding='utf-8',
-        input='\n'.join(entries),
-        capture_output=True
-    )
-
-    (selected_folder, selected_entry) = rofi.stdout.rsplit('/', 1)
-
-    data = get_data(selected_entry.strip(), selected_folder.strip())
-
-    if rofi.returncode == 0 or rofi.returncode == 12:
-        type(data.password, active_window)
-    elif rofi.returncode == 11:
-        type(data.username, active_window)
-    elif rofi.returncode == 10:
-        type(f"{data.username}\t{data.password}", active_window)
-    elif rofi.returncode == 20:
-        copy_to_clipboard(data.password)
-    elif rofi.returncode == 21:
-        copy_to_clipboard(data.username)
+try:
+    from rofi_rbw.clipboarder import Clipboarder
+    from rofi_rbw.typer import Typer
+    from rofi_rbw.selector import Selector
+    from rofi_rbw.paths import *
+except ModuleNotFoundError:
+    from clipboarder import Clipboarder
+    from typer import Typer
+    from selector import Selector
+    from paths import *
 
 
-def get_data(name: str, folder: str) -> Data:
-    command = ['rbw', 'get', '--full', name]
-    if folder != "":
-        command.extend(["--folder", folder])
+class RofiRbw(object):
+    class Action(enum.Enum):
+        TYPE_PASSWORD = 'type-password'
+        TYPE_USERNAME = 'type-username'
+        TYPE_BOTH = 'autotype'
+        COPY_USERNAME = 'copy-username'
+        COPY_PASSWORD = 'copy-password'
 
-    result = run(
-        command,
-        capture_output=True,
-        encoding='utf-8'
-    ).stdout.split('\n')
+    def __init__(self) -> None:
+        self.args = self.parse_arguments()
+        self.selector = Selector.best_option(self.args.selector)
+        self.typer = Typer.best_option(self.args.typer)
+        self.clipboarder = Clipboarder.best_option(self.args.clipboarder)
+        self.active_window = self.typer.get_active_window()
 
-    password = result[0].strip()
-    username = extract_username(result)
+    def parse_arguments(self) -> argparse.Namespace:
+        parser = configargparse.ArgumentParser(
+            description='Select, insert or copy Unicode characters using rofi.',
+            default_config_files=config_file_locations
+        )
+        parser.add_argument('--version', action='version', version='rofi-rbw 2.0.0-SNAPSHOT')
+        parser.add_argument(
+            '--action',
+            '-a',
+            dest='action',
+            action='store',
+            choices=[action.value for action in self.Action],
+            default=self.Action.TYPE_PASSWORD.value,
+            help='What to do with the selected entry'
+        )
+        parser.add_argument(
+            '--prompt',
+            '-r',
+            dest='prompt',
+            action='store',
+            default='Select entry',
+            help='Set rofi-rbw\'s  prompt'
+        )
+        parser.add_argument(
+            '--rofi-args',
+            dest='rofi_args',
+            action='store',
+            default='',
+            help='A string of arguments to give to rofi'
+        )
+        parser.add_argument(
+            '--selector',
+            dest='selector',
+            action='store',
+            type=str,
+            choices=['rofi', 'wofi'],
+            default=None,
+            help='Choose the application to select the characters with'
+        )
+        parser.add_argument(
+            '--clipboarder',
+            dest='clipboarder',
+            action='store',
+            type=str,
+            choices=['xsel', 'xclip', 'wl-copy'],
+            default=None,
+            help='Choose the application to access the clipboard with'
+        )
+        parser.add_argument(
+            '--typer',
+            dest='typer',
+            action='store',
+            type=str,
+            choices=['xdotool', 'wtype'],
+            default=None,
+            help='Choose the application to type with'
+        )
+        parser.add_argument(
+            '--show-help',
+            dest='show_help',
+            action='store',
+            type=bool,
+            default=True,
+            help='Show a help message about the shortcuts'
+        )
 
-    return Data(username, password)
+        parsed_args = parser.parse_args()
+        parsed_args.rofi_args = shlex.split(parsed_args.rofi_args)
+        parsed_args.action = next(action for action in self.Action if action.value == parsed_args.action)
+
+        return parsed_args
+
+    def main(self) -> None:
+        entries = run(
+            ['rbw', 'ls', '--fields', 'folder,name'],
+            encoding='utf-8',
+            capture_output=True
+        ).stdout.strip().split('\n')
+        entries = sorted(map(lambda it: it.replace('\t', '/'), entries))
+
+        (returncode, entry) = self.selector.show_selection(
+            '\n'.join(entries),
+            self.args.prompt,
+            self.args.show_help,
+            self.args.rofi_args
+        )
+        self.choose_action_from_return_code(returncode)
+
+        (selected_folder, selected_entry) = entry.rsplit('/', 1)
+
+        data = self.get_data(selected_entry.strip(), selected_folder.strip())
+
+        self.execute_action(data)
+
+    def choose_action_from_return_code(self, return_code: int) -> None:
+        if return_code == 1:
+            sys.exit()
+        elif return_code == 12:
+            self.args.action = self.Action.TYPE_PASSWORD
+        elif return_code == 11:
+            self.args.action = self.Action.TYPE_USERNAME
+        elif return_code == 10:
+            self.args.action = self.Action.TYPE_BOTH
+        elif return_code == 20:
+            self.args.action = self.Action.COPY_PASSWORD
+        elif return_code == 21:
+            self.args.action = self.Action.COPY_USERNAME
+
+    def execute_action(self, data: Data) -> None:
+        if self.args.action == self.Action.TYPE_PASSWORD:
+            self.typer.type_characters(data.password, self.active_window)
+        elif self.args.action == self.Action.TYPE_USERNAME:
+            self.typer.type_characters(data.username, self.active_window)
+        elif self.args.action == self.Action.TYPE_BOTH:
+            self.typer.type_characters(f"{data.username}\t{data.password}", self.active_window)
+        elif self.args.action == self.Action.COPY_PASSWORD:
+            self.clipboarder.copy_to_clipboard(data.password)
+        elif self.args.action == self.Action.COPY_USERNAME:
+            self.clipboarder.copy_to_clipboard(data.username)
+
+    def get_data(self, name: str, folder: str) -> Data:
+        command = ['rbw', 'get', '--full', name]
+        if folder != "":
+            command.extend(["--folder", folder])
+
+        result = run(
+            command,
+            capture_output=True,
+            encoding='utf-8'
+        ).stdout.split('\n')
+
+        password = result[0].strip()
+        username = self.extract_username(result)
+
+        return Data(username, password)
+
+    def extract_username(self, result: [str]) -> str:
+        for resultline in result:
+            if resultline.startswith('Username:'):
+                return resultline.replace('Username: ', '')
+        return ""
 
 
-def extract_username(result: [str]) -> str:
-    for resultline in result:
-        if resultline.startswith('Username:'):
-            return resultline.replace('Username: ', '')
-    return ""
-
-
-def type(text: str, active_window: str) -> None:
-    sleep(0.05)
-    run([
-        'xdotool',
-        'type',
-        '--window',
-        active_window,
-        '--clearmodifiers',
-        text
-    ])
-
-
-def copy_to_clipboard(text: str) -> None:
-    run(['xsel', '-i', '-b'], encoding='utf-8', input=text)
+def main():
+    RofiRbw().main()
 
 
 if __name__ == "__main__":

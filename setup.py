@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='rofi-rbw',
-    version='0.1.1',
+    version='0.2.0',
     description='Rofi frontend for Bitwarden',
     author='fdw',
     author_email='5821180+fdw@users.noreply.github.com',
@@ -18,5 +18,8 @@ setup(
         'console_scripts': [
             'rofi-rbw = rofi_rbw.rofi_rbw:main'
         ]
-    }
+    },
+    install_requires=[
+        'ConfigArgParse>0.15,<2.0.0'
+    ]
 )
