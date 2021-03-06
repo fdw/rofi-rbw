@@ -43,7 +43,7 @@ class RofiRbw(object):
             description='Select, insert or copy Unicode characters using rofi.',
             default_config_files=config_file_locations
         )
-        parser.add_argument('--version', action='version', version='rofi-rbw 2.0.0-SNAPSHOT')
+        parser.add_argument('--version', action='version', version='rofi-rbw 2.0.0')
         parser.add_argument(
             '--action',
             '-a',
