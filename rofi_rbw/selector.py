@@ -42,6 +42,7 @@ class Rofi(Selector):
             'rofi',
             '-dmenu',
             '-i',
+            '-sort',
             '-p',
             prompt,
             '-kb-custom-11',
