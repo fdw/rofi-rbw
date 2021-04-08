@@ -40,10 +40,10 @@ class RofiRbw(object):
 
     def parse_arguments(self) -> argparse.Namespace:
         parser = configargparse.ArgumentParser(
-            description='Select, insert or copy Unicode characters using rofi.',
+            description='Insert or copy passwords and usernames from Bitwarden using rofi.',
             default_config_files=config_file_locations
         )
-        parser.add_argument('--version', action='version', version='rofi-rbw 2.0.0')
+        parser.add_argument('--version', action='version', version='rofi-rbw 0.3.0')
         parser.add_argument(
             '--action',
             '-a',

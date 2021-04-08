@@ -1,3 +1,8 @@
+# [0.3.0]
+## Changed
+- The search is now case insensitive. (#8)
+- Entries are sorted by relevancy.
+
 # [0.2.0]
 ## Added
 - `rofi-rbw` now supports Wayland with `wofi`, `wl-copy` and `wtyper`.

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='rofi-rbw',
-    version='0.2.0',
+    version='0.3.0',
     description='Rofi frontend for Bitwarden',
     author='fdw',
     author_email='5821180+fdw@users.noreply.github.com',
