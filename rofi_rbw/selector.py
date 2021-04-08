@@ -41,6 +41,7 @@ class Rofi(Selector):
         parameters = [
             'rofi',
             '-dmenu',
+            '-i',
             '-p',
             prompt,
             '-kb-custom-11',
