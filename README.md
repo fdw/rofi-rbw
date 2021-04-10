@@ -26,8 +26,13 @@ You can configure `rofi-rbw` either with cli arguments or with a config file cal
 | `--typer` | | `xdotool`, `wtype` | Type the characters using this application. |
 
 ## Installation
+
 ### Arch Linux
 Install the [rofi-rbw](https://aur.archlinux.org/packages/rofi-rbw/) AUR package.
+
+### From PyPI
+`rofi-rbw` is on [PyPI](https://pypi.org/project/rofi-rbw/). You can install it with `pip install --user rofi-rbw` (or `sudo pip install rofi-rbw`).
+
 ### Manual
 Download the wheel file from releases and install it with  `sudo pip install $filename` (or you can use `pip install --user $filename` to only install it for the local user).
 Note that it needs `configargparse` to work.

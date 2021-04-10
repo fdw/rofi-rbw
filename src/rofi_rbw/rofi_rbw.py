@@ -22,6 +22,8 @@ except ModuleNotFoundError:
     from selector import Selector
     from paths import *
 
+__version__ = '0.3.0'
+
 
 class RofiRbw(object):
     class Action(enum.Enum):
@@ -43,7 +45,7 @@ class RofiRbw(object):
             description='Insert or copy passwords and usernames from Bitwarden using rofi.',
             default_config_files=config_file_locations
         )
-        parser.add_argument('--version', action='version', version='rofi-rbw 0.3.0')
+        parser.add_argument('--version', action='version', version='rofi-rbw ' + __version__)
         parser.add_argument(
             '--action',
             '-a',
