@@ -75,3 +75,30 @@ class WTypeTyper(Typer):
             'wtype',
             characters
         ])
+
+class YDotoolTyper(Typer):
+    @staticmethod
+    def supported() -> bool:
+        return is_wayland() and is_installed('ydotool')
+
+    @staticmethod
+    def name() -> str:
+        return 'ydotool'
+
+    def get_active_window(self) -> str:
+        return "not possible with ydotool"
+
+    def type_characters(self, characters: str, active_window: str, use_root = True) -> None:
+        if use_root:
+            run([
+                'sudo',
+                'ydotool',
+                'type',
+                characters
+            ])
+        else:
+            run([
+                'ydotool',
+                'type',
+                characters
+            ])
