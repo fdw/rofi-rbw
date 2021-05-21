@@ -32,6 +32,7 @@ class RofiRbw(object):
         TYPE_BOTH = 'autotype'
         COPY_USERNAME = 'copy-username'
         COPY_PASSWORD = 'copy-password'
+        COPY_TOTP = 'copy-totp'
 
     def __init__(self) -> None:
         self.args = self.parse_arguments()
@@ -147,6 +148,8 @@ class RofiRbw(object):
             self.args.action = self.Action.COPY_PASSWORD
         elif return_code == 21:
             self.args.action = self.Action.COPY_USERNAME
+        elif return_code == 22:
+            self.args_action = self.Action.COPY_TOTP
 
     def execute_action(self, cred: Credentials) -> None:
         if self.args.action == self.Action.TYPE_PASSWORD:
@@ -163,6 +166,8 @@ class RofiRbw(object):
             self.clipboarder.copy_to_clipboard(cred.password)
         elif self.args.action == self.Action.COPY_USERNAME:
             self.clipboarder.copy_to_clipboard(cred.username)
+        elif self.args.action == self.Action.COPY_TOTP:
+            self.clipboarder.copy_to_clipboard(cred.totp)
 
     def get_credentials(self, name: str, folder: str) -> Credentials:
         command = ['rbw', 'get', '--full', name]
