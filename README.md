@@ -4,11 +4,12 @@
 Based on the alternative [Bitwarden](https://bitwarden.com/) CLI [rbw](https://git.tozt.net/rbw) and inspired by [rofi-pass](https://github.com/carnager/rofi-pass), `rbw-rofi` is a simplistic password typer/copier using [rofi](https://github.com/davatorium/rofi).
 
 ## Features
-- Type the selected password with `Enter` or `Alt+3`
+- Type the selected password with `Enter` or `Alt+3` (and copy TOTP to clipboard)
 - Type the selected username with `Alt+2`
-- Autotype username and password (with a `tab` character in between) with `Alt+1`
+- Autotype username and password (with a `tab` character in between) with `Alt+1` (and copy TOTP to clipboard)
 - Copy the username to your clipboard with `Alt+u`
 - Copy the password to your clipboard with `Alt+p`
+- Copy the totp to your clipboard with `Alt+t`
 
 ## Configuration
 You can configure `rofi-rbw` either with cli arguments or with a config file called `$XDG_CONFIG_HOME/rofi-rbw.rc`. In the file, use the long option names without double dashes.
