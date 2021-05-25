@@ -8,7 +8,7 @@ class Credentials:
         self.username = ""
 
     @staticmethod
-    def from_rbw(data: str) -> Credentials:
+    def from_rbw(data: str) -> 'Credentials':
         result = Credentials()
         result.password, *rest = data.split('\n')
         for line in rest:
