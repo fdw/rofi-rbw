@@ -171,7 +171,7 @@ class RofiRbw(object):
             encoding='utf-8'
         ).stdout
 
-        return Credentials.from_rbw(result)
+        return Credentials(result)
 
 
 def main():
