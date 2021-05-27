@@ -6,8 +6,8 @@ class Credentials:
         self.username = ""
 
         # Parse rbw output
-        result.password, *rest = data.split('\n')
+        self.password, *rest = data.split('\n')
         for line in rest:
             key, value = line.rsplit(": ", 1)
             if key == "Username":
-                result.username = value
+                self.username = value
