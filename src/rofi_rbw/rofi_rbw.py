@@ -9,17 +9,17 @@ from subprocess import run
 
 import configargparse
 
-Data = namedtuple('Data', ['username', 'password'])
-
 try:
     from rofi_rbw.clipboarder import Clipboarder
     from rofi_rbw.typer import Typer
     from rofi_rbw.selector import Selector
+    from rofi_rbw.credentials import Credentials
     from rofi_rbw.paths import *
 except ModuleNotFoundError:
     from clipboarder import Clipboarder
     from typer import Typer
     from selector import Selector
+    from credentials import Credentials
     from paths import *
 
 __version__ = '0.3.0'
@@ -130,7 +130,7 @@ class RofiRbw(object):
 
         (selected_folder, selected_entry) = entry.rsplit('/', 1)
 
-        data = self.get_data(selected_entry.strip(), selected_folder.strip())
+        data = self.get_credentials(selected_entry.strip(), selected_folder.strip())
 
         self.execute_action(data)
 
@@ -148,19 +148,19 @@ class RofiRbw(object):
         elif return_code == 21:
             self.args.action = self.Action.COPY_USERNAME
 
-    def execute_action(self, data: Data) -> None:
+    def execute_action(self, cred: Credentials) -> None:
         if self.args.action == self.Action.TYPE_PASSWORD:
-            self.typer.type_characters(data.password, self.active_window)
+            self.typer.type_characters(cred.password, self.active_window)
         elif self.args.action == self.Action.TYPE_USERNAME:
-            self.typer.type_characters(data.username, self.active_window)
+            self.typer.type_characters(cred.username, self.active_window)
         elif self.args.action == self.Action.TYPE_BOTH:
-            self.typer.type_characters(f"{data.username}\t{data.password}", self.active_window)
+            self.typer.type_characters(f"{cred.username}\t{cred.password}", self.active_window)
         elif self.args.action == self.Action.COPY_PASSWORD:
-            self.clipboarder.copy_to_clipboard(data.password)
+            self.clipboarder.copy_to_clipboard(cred.password)
         elif self.args.action == self.Action.COPY_USERNAME:
-            self.clipboarder.copy_to_clipboard(data.username)
+            self.clipboarder.copy_to_clipboard(cred.username)
 
-    def get_data(self, name: str, folder: str) -> Data:
+    def get_credentials(self, name: str, folder: str) -> Credentials:
         command = ['rbw', 'get', '--full', name]
         if folder != "":
             command.extend(["--folder", folder])
@@ -169,18 +169,9 @@ class RofiRbw(object):
             command,
             capture_output=True,
             encoding='utf-8'
-        ).stdout.split('\n')
+        ).stdout
 
-        password = result[0].strip()
-        username = self.extract_username(result)
-
-        return Data(username, password)
-
-    def extract_username(self, result: [str]) -> str:
-        for resultline in result:
-            if resultline.startswith('Username:'):
-                return resultline.replace('Username: ', '')
-        return ""
+        return Credentials(result)
 
 
 def main():
