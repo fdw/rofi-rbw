@@ -49,13 +49,15 @@ class Rofi(Selector):
             'Alt+p',
             '-kb-custom-12',
             'Alt+u',
+            '-kb-custom-13',
+            'Alt+t',
             *additional_args
         ]
 
         if show_help_message:
             parameters.extend([
                 '-mesg',
-                '<b>Alt+1</b>: Autotype username and password | <b>Alt+2</b> Type username | <b>Alt+u</b> Copy username | <b>Alt+p</b> Copy password'
+                '<b>Alt+1</b>: Autotype username and password | <b>Alt+2</b> Type username | <b>Alt+u</b> Copy username | <b>Alt+p</b> Copy password | <b>Alt+t</b> Copy totp'
             ])
 
         rofi = run(
