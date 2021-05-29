@@ -76,6 +76,7 @@ class WTypeTyper(Typer):
             characters
         ])
 
+
 class YDotoolTyper(Typer):
     @staticmethod
     def supported() -> bool:
@@ -88,21 +89,12 @@ class YDotoolTyper(Typer):
     def get_active_window(self) -> str:
         return "not possible with ydotool"
 
-    def type_characters(self, characters: str, active_window: str, use_root = False) -> None:
-        if use_root:
-            run([
-                'sudo',
-                'ydotool',
-                'type',
-                characters
-            ])
-        else:
-            # The delay is needed for it to work, because the compositor may need some time to register a new input device. Without delay, the first few keys have a chance to be missed.
-            run([
-                'ydotool',
-                'sleep',
-                '50',
-                ',',
-                'type',
-                characters
-            ])
+    def type_characters(self, characters: str, active_window: str) -> None:
+        run([
+            'ydotool',
+            'sleep',
+            '50',
+            ',',
+            'type',
+            characters
+        ])
