@@ -1,3 +1,8 @@
+# [0.4.0]
+## Added
+- `rofi-rbw` can now deal with TOTPs as well; they're copied to the clipboard by default. (Thanks to #10)
+- You can now use `ydotool` as a typer (but without `sudo`). (Thanks to #9)
+
 # [0.3.0]
 ## Changed
 - The search is now case insensitive. (#8)
