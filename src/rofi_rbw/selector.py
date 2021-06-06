@@ -1,7 +1,10 @@
-from rofi_rbw.abstractionhelper import is_wayland, is_installed
-
 from typing import List, Tuple
 from subprocess import run
+
+try:
+    from rofi_rbw.abstractionhelper import is_wayland, is_installed
+except:
+    from abstractionhelper import is_wayland, is_installed
 
 
 class Selector:
