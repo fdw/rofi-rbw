@@ -2,13 +2,10 @@
 class Credentials:
 
     def __init__(self, data: str) -> None:
-        # Set default values
         self.username = ""
         self.totp = ""
 
-        # Parse rbw output
-        self.password, *rest = data.strip().split('\n')
-        for line in rest:
+        for line in data.strip().split('\n'):
             try:
                 key, value = line.split(": ", 1)
                 if key == "Username":
@@ -20,4 +17,4 @@ class Credentials:
                     except ModuleNotFoundError:
                         pass
             except ValueError:
-                pass
+                self.password = line

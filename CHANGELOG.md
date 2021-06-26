@@ -1,3 +1,14 @@
+# [NEXT]
+## Fixed
+- Entries without password can be handled.
+
+# [0.4.1]
+## Fixed
+- Credentials can now be parsed again. (#14)
+
+## Changed
+- `xdotool` is now used differently, for hopefully better compatibility.
+
 # [0.4.0]
 ## Added
 - `rofi-rbw` can now deal with TOTPs as well; they're copied to the clipboard by default. (Thanks to #10)
