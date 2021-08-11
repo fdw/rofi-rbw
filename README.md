@@ -20,6 +20,7 @@ You can configure `rofi-rbw` either with cli arguments or with a config file cal
 | --- | --- | --- | --- |
 | `--action` | `-a` | `type-password` (default), `type-username`, `autotype`, `copy-username`, `copy-password` | Chose what `rofi-rbw` should do. |
 | `--prompt` | `-r` | any string | Define the prompt text for `rofimoji`. |
+| `--fields` | `-f` | any string | What to pass for `--field` when running `rbw list`. |
 | `--show-help` | | `true` (default), `false` | Show a help message with the available shortcuts. |
 | `--rofi-args` | | | Define arguments that will be passed through to `rofi`.<br/>Please note that you need to specify it as `--rofi-args="<rofi-args>"` or `--rofi-args " <rofi-args>"` because of a [bug in argparse](https://bugs.python.org/issue9334) |
 | `--selector` | | `rofi`, `wofi` | Show the selection dialog with this application. |

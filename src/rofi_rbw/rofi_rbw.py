@@ -63,7 +63,15 @@ class RofiRbw(object):
             action='store',
             default='Select entry',
             help='Set rofi-rbw\'s  prompt'
-        )
+        ),
+        parser.add_argument(
+            '--fields',
+            '-f',
+            dest='fields',
+            action='store',
+            default='folder,name',
+            help='What to pass to pass for --field when running `rbw list`'
+        ),
         parser.add_argument(
             '--rofi-args',
             dest='rofi_args',
@@ -115,7 +123,7 @@ class RofiRbw(object):
 
     def main(self) -> None:
         entries = run(
-            ['rbw', 'ls', '--fields', 'folder,name'],
+            ['rbw', 'ls', '--fields', self.args.fields],
             encoding='utf-8',
             capture_output=True
         ).stdout.strip().split('\n')
