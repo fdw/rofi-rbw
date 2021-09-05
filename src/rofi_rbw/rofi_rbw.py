@@ -33,6 +33,7 @@ class RofiRbw(object):
         COPY_USERNAME = 'copy-username'
         COPY_PASSWORD = 'copy-password'
         COPY_TOTP = 'copy-totp'
+        AUTOTYPE_MENU = 'menu'
 
     def __init__(self) -> None:
         self.args = self.parse_arguments()
@@ -144,6 +145,8 @@ class RofiRbw(object):
             self.args.action = self.Action.TYPE_USERNAME
         elif return_code == 10:
             self.args.action = self.Action.TYPE_BOTH
+        elif return_code == 13:
+            self.args_action = self.Action.AUTOTYPE_MENU
         elif return_code == 20:
             self.args.action = self.Action.COPY_PASSWORD
         elif return_code == 21:
@@ -168,6 +171,8 @@ class RofiRbw(object):
             self.clipboarder.copy_to_clipboard(cred.username)
         elif self.args.action == self.Action.COPY_TOTP:
             self.clipboarder.copy_to_clipboard(cred.totp)
+        elif self.args.action == self.Action.AUTOTYPE_MENU:
+            self.show_autotype_menu(cred)
 
     def get_credentials(self, name: str, folder: str) -> Credentials:
         command = ['rbw', 'get', '--full', name]
@@ -181,6 +186,30 @@ class RofiRbw(object):
         ).stdout
 
         return Credentials(result)
+
+    def show_autotype_menu(self, cred: Credentials):
+        entries = []
+        if cred.username:
+            entries.append(f'Username: {cred.username}')
+        if cred.password:
+            entries.append(f'Password: {cred.password}')
+        if cred.totp:
+            entries.append(f'TOTP: {cred.totp}')
+        for (key, value) in cred.further.items():
+            entries.append(f'{key}: {value}')
+
+        (returncode, entry) = self.selector.show_selection(
+            "\n".join(entries),
+            prompt='Autotype field',
+            show_help_message=False,
+            additional_args=[]
+        )
+
+        if returncode == 1:
+            self.main()
+        self.choose_action_from_return_code(returncode)
+
+        self.typer.type_characters(entry.split(': ')[1], self.active_window)
 
 
 def main():

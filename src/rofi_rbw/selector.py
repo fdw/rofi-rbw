@@ -26,7 +26,13 @@ class Selector:
     def name() -> str:
         pass
 
-    def show_selection(self, entries: str, prompt: str, show_help_message: bool, additional_args: List[str]) -> Tuple[int, str]:
+    def show_selection(
+        self,
+        entries: str,
+        prompt: str,
+        show_help_message: bool,
+        additional_args: List[str]
+    ) -> Tuple[int, str]:
         print('Could not find a valid way to show the selection. Please check the required dependencies.')
         exit(4)
 
@@ -40,7 +46,13 @@ class Rofi(Selector):
     def name() -> str:
         return 'rofi'
 
-    def show_selection(self, entries: str, prompt: str, show_help_message: bool, additional_args: List[str]) -> Tuple[int, str]:
+    def show_selection(
+        self,
+        entries: str,
+        prompt: str,
+        show_help_message: bool,
+        additional_args: List[str]
+    ) -> Tuple[int, str]:
         parameters = [
             'rofi',
             '-dmenu',
@@ -54,6 +66,8 @@ class Rofi(Selector):
             'Alt+u',
             '-kb-custom-13',
             'Alt+t',
+            '-kb-custom-15',
+            'Alt+m',
             *additional_args
         ]
 
@@ -81,7 +95,13 @@ class Wofi(Selector):
     def name() -> str:
         return 'wofi'
 
-    def show_selection(self, entries: str, prompt: str, show_help_message: bool, additional_args: List[str]) -> Tuple[int, str]:
+    def show_selection(
+        self,
+        entries: str,
+        prompt: str,
+        show_help_message: bool,
+        additional_args: List[str]
+    ) -> Tuple[int, str]:
         parameters = [
             'wofi',
             '--dmenu',

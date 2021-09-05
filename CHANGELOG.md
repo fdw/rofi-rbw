@@ -1,4 +1,7 @@
 # [NEXT]
+## Added
+- Added an autotype menu that can works with all defined fields. (#17)
+- 
 ## Fixed
 - Entries without password can be handled.
 
