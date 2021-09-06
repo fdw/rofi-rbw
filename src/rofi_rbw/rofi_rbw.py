@@ -192,11 +192,14 @@ class RofiRbw(object):
         if cred.username:
             entries.append(f'Username: {cred.username}')
         if cred.password:
-            entries.append(f'Password: {cred.password}')
+            entries.append(f'Password: {cred.password[0]}{"*" * (len(cred.password) -1)}')
         if cred.totp:
             entries.append(f'TOTP: {cred.totp}')
         for (key, value) in cred.further.items():
-            entries.append(f'{key}: {value}')
+            if key == 'URI':
+                entries.append(f'{key}: {value}')
+            else:
+                entries.append(f'{key}: {value[0]}{"*" * (len(value) -1)}')
 
         (returncode, entry) = self.selector.show_selection(
             "\n".join(entries),
@@ -209,7 +212,7 @@ class RofiRbw(object):
             self.main()
         self.choose_action_from_return_code(returncode)
 
-        self.typer.type_characters(entry.split(': ')[1], self.active_window)
+        self.typer.type_characters(cred[entry.split(': ')[0]], self.active_window)
 
 
 def main():
