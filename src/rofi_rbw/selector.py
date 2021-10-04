@@ -55,6 +55,7 @@ class Rofi(Selector):
     ) -> Tuple[int, str]:
         parameters = [
             'rofi',
+            '-markup-rows',
             '-dmenu',
             '-i',
             '-sort',

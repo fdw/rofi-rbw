@@ -14,12 +14,14 @@ try:
     from rofi_rbw.typer import Typer
     from rofi_rbw.selector import Selector
     from rofi_rbw.credentials import Credentials
+    from rofi_rbw.entry import Entry
     from rofi_rbw.paths import *
 except ModuleNotFoundError:
     from clipboarder import Clipboarder
     from typer import Typer
     from selector import Selector
     from credentials import Credentials
+    from entry import Entry
     from paths import *
 
 __version__ = '0.4.1'
@@ -116,11 +118,13 @@ class RofiRbw(object):
 
     def main(self) -> None:
         entries = run(
-            ['rbw', 'ls', '--fields', 'folder,name'],
+            ['rbw', 'ls', '--fields', 'folder,name,user'],
             encoding='utf-8',
             capture_output=True
         ).stdout.strip().split('\n')
-        entries = sorted(map(lambda it: it.replace('\t', '/'), entries))
+        parsed_entries = list(map(lambda it: Entry(it), entries))
+        maxwidth = max(list(map(lambda it: len(it), parsed_entries)))
+        entries = sorted(map(lambda it: it.formatted_string(maxwidth), parsed_entries))
 
         (returncode, entry) = self.selector.show_selection(
             '\n'.join(entries),
@@ -130,7 +134,7 @@ class RofiRbw(object):
         )
         self.choose_action_from_return_code(returncode)
 
-        (selected_folder, selected_entry) = entry.rsplit('/', 1)
+        (selected_folder, selected_entry) = entry.split('</b>')[0].replace('<b>', '').strip().rsplit('/', 1)
 
         data = self.get_credentials(selected_entry.strip(), selected_folder.strip())
 
