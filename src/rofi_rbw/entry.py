@@ -8,7 +8,7 @@ class Entry:
         self.folder = ''
         self.username = ''
 
-        fields = data.strip().split('\t')
+        fields = data.split('\t')
         self.name = fields[1]
         self.folder = fields[0]
         self.length = len(self.name) + len(self.folder) + 1
