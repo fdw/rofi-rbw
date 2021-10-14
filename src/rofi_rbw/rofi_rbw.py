@@ -200,7 +200,7 @@ class RofiRbw(object):
         if cred.totp:
             entries.append(f'TOTP: {cred.totp}')
         for (key, value) in cred.further.items():
-            if key == 'URI':
+            if key.startswith('URI'):
                 entries.append(f'{key}: {value}')
             else:
                 entries.append(f'{key}: {value[0]}{"*" * (len(value) -1)}')
