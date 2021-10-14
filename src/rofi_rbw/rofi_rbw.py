@@ -150,13 +150,13 @@ class RofiRbw(object):
         elif return_code == 10:
             self.args.action = self.Action.TYPE_BOTH
         elif return_code == 13:
-            self.args_action = self.Action.AUTOTYPE_MENU
+            self.args.action = self.Action.AUTOTYPE_MENU
         elif return_code == 20:
             self.args.action = self.Action.COPY_PASSWORD
         elif return_code == 21:
             self.args.action = self.Action.COPY_USERNAME
         elif return_code == 22:
-            self.args_action = self.Action.COPY_TOTP
+            self.args.action = self.Action.COPY_TOTP
 
     def execute_action(self, cred: Credentials) -> None:
         if self.args.action == self.Action.TYPE_PASSWORD:
