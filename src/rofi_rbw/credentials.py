@@ -10,7 +10,6 @@ class Credentials:
         self.further = {}
 
         first = True
-        uri = 1
         for line in data.strip().split('\n'):
             fields = line.split(": ", 1)
             if len(fields) == 2:
@@ -22,9 +21,6 @@ class Credentials:
                         self.totp = pyotp.parse_uri(fields[1]).now()
                     except ModuleNotFoundError:
                         pass
-                elif fields[0] == "URI":
-                    self.further[f'URI {uri}'] = fields[1]
-                    uri += 1
                 else:
                     self.further[fields[0]] = fields[1]
             elif first:
