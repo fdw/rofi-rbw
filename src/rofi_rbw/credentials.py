@@ -9,25 +9,29 @@ class Credentials:
         self.totp = ''
         self.further = {}
 
-        first = True
-        for line in data.strip().split('\n'):
-            fields = line.split(": ", 1)
-            if len(fields) == 2:
-                if fields[0] == "Username":
-                    self.username = fields[1]
-                elif fields[0] == "TOTP Secret":
+        self.password, *rest = data.strip().split('\n')
+        if len(self.password.split(": ", 1)) == 2:
+            # Password contains ': ' and thus is probably a key-value pair
+            # This means there is no password for this entry
+            rest = [self.password] + rest
+            self.password = ''
+
+        for line in rest:
+            try:
+                key, value = line.split(": ", 1)
+                if key == "Username":
+                    self.username = value
+                elif key == "TOTP Secret":
                     try:
                         import pyotp
-                        self.totp = pyotp.parse_uri(fields[1]).now()
+                        self.totp = pyotp.parse_uri(value).now()
                     except ModuleNotFoundError:
                         pass
                 else:
-                    self.further[fields[0]] = fields[1]
-            elif first:
-                self.password = line
-            else:
+                    self.further[key] = value
+            except ValueError:
+                # Non-key-value-pairs (i.e. notes) are ignored
                 pass
-            first = False
 
     def __getitem__(self, item: str) -> Union[str, None]:
         if item.lower() == 'username':
