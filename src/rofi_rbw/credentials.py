@@ -9,12 +9,13 @@ class Credentials:
         self.totp = ''
         self.further = {}
 
-        self.password, *rest = data.strip().split('\n')
-        if len(self.password.split(": ", 1)) == 2:
-            # Password contains ': ' and thus is probably a key-value pair
+        line, *rest = data.strip().split('\n')
+        if len(line.split(": ", 1)) == 2:
+            # First line contains ': ' and thus is probably a key-value pair
             # This means there is no password for this entry
-            rest = [self.password] + rest
-            self.password = ''
+            rest = [line] + rest
+        else:
+            self.password = line
 
         for line in rest:
             try:
