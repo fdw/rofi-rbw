@@ -7,6 +7,7 @@ class Credentials:
         self.username = ''
         self.password = ''
         self.totp = ''
+        self.uris = []
         self.further = {}
 
         line, *rest = data.strip().split('\n')
@@ -22,6 +23,8 @@ class Credentials:
                 key, value = line.split(": ", 1)
                 if key == "Username":
                     self.username = value
+                elif key == "URI":
+                    self.uris.append(value)
                 elif key == "TOTP Secret":
                     try:
                         import pyotp
@@ -41,6 +44,8 @@ class Credentials:
             return self.password
         elif item.lower() == 'totp':
             return self.totp
+        elif item.lower() == 'uris':
+            return self.uris
         else:
             try:
                 return self.further[item]
