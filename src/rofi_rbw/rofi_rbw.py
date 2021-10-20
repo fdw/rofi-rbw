@@ -3,7 +3,6 @@
 import argparse
 import enum
 import shlex
-import sys
 from collections import namedtuple
 from subprocess import run
 
@@ -133,7 +132,7 @@ class RofiRbw(object):
             self.args.rofi_args
         )
         if returncode == 1:
-            sys.exit()
+            return
 
         (selected_folder, selected_entry) = entry.split('</b>')[0].replace('<b>', '').strip().rsplit('/', 1)
 
@@ -215,6 +214,7 @@ class RofiRbw(object):
 
         if returncode == 1:
             self.main()
+            return
 
         key, value = entry.split(': ', 1)
 
