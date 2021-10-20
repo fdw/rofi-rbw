@@ -47,7 +47,4 @@ class Credentials:
         elif item.lower() == 'uris':
             return self.uris
         else:
-            try:
-                return self.further[item]
-            except KeyError:
-                return None
+            return self.further.get(item, None)
