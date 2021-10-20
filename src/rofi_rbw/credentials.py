@@ -40,14 +40,10 @@ class Credentials:
     def __getitem__(self, item: str) -> Union[str, None]:
         if item.lower() == 'username':
             return self.username
-        elif item.lower() == 'password':
+        if item.lower() == 'password':
             return self.password
-        elif item.lower() == 'totp':
+        if item.lower() == 'totp':
             return self.totp
-        elif item.lower() == 'uris':
+        if item.lower() == 'uris':
             return self.uris
-        else:
-            try:
-                return self.further[item]
-            except KeyError:
-                return None
+        return self.further.get(item, None)
