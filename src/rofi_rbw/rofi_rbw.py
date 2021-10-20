@@ -132,50 +132,51 @@ class RofiRbw(object):
             self.args.show_help,
             self.args.rofi_args
         )
-        self.choose_action_from_return_code(returncode)
+        action = self.choose_action_from_return_code(returncode)
 
         (selected_folder, selected_entry) = entry.split('</b>')[0].replace('<b>', '').strip().rsplit('/', 1)
 
         data = self.get_credentials(selected_entry.strip(), selected_folder.strip())
 
-        self.execute_action(data)
+        self.execute_action(action, data)
 
-    def choose_action_from_return_code(self, return_code: int) -> None:
+    def choose_action_from_return_code(self, return_code: int) -> Action:
         if return_code == 1:
             sys.exit()
-        elif return_code == 12:
-            self.args.action = self.Action.TYPE_PASSWORD
-        elif return_code == 11:
-            self.args.action = self.Action.TYPE_USERNAME
-        elif return_code == 10:
-            self.args.action = self.Action.TYPE_BOTH
-        elif return_code == 13:
-            self.args.action = self.Action.AUTOTYPE_MENU
-        elif return_code == 20:
-            self.args.action = self.Action.COPY_PASSWORD
-        elif return_code == 21:
-            self.args.action = self.Action.COPY_USERNAME
-        elif return_code == 22:
-            self.args.action = self.Action.COPY_TOTP
+        if return_code == 12:
+            return self.Action.TYPE_PASSWORD
+        if return_code == 11:
+            return self.Action.TYPE_USERNAME
+        if return_code == 10:
+            return self.Action.TYPE_BOTH
+        if return_code == 13:
+            return self.Action.AUTOTYPE_MENU
+        if return_code == 20:
+            return self.Action.COPY_PASSWORD
+        if return_code == 21:
+            return self.Action.COPY_USERNAME
+        if return_code == 22:
+            return self.Action.COPY_TOTP
+        return self.args.action
 
-    def execute_action(self, cred: Credentials) -> None:
-        if self.args.action == self.Action.TYPE_PASSWORD:
+    def execute_action(self, action: Action, cred: Credentials) -> None:
+        if action == self.Action.TYPE_PASSWORD:
             self.typer.type_characters(cred.password, self.active_window)
             if cred.totp != "":
                 self.clipboarder.copy_to_clipboard(cred.totp)
-        elif self.args.action == self.Action.TYPE_USERNAME:
+        elif action == self.Action.TYPE_USERNAME:
             self.typer.type_characters(cred.username, self.active_window)
-        elif self.args.action == self.Action.TYPE_BOTH:
+        elif action == self.Action.TYPE_BOTH:
             self.typer.type_characters(f"{cred.username}\t{cred.password}", self.active_window)
             if cred.totp != "":
                 self.clipboarder.copy_to_clipboard(cred.totp)
-        elif self.args.action == self.Action.COPY_PASSWORD:
+        elif action == self.Action.COPY_PASSWORD:
             self.clipboarder.copy_to_clipboard(cred.password)
         elif self.args.action == self.Action.COPY_USERNAME:
             self.clipboarder.copy_to_clipboard(cred.username)
-        elif self.args.action == self.Action.COPY_TOTP:
+        elif action == self.Action.COPY_TOTP:
             self.clipboarder.copy_to_clipboard(cred.totp)
-        elif self.args.action == self.Action.AUTOTYPE_MENU:
+        elif action == self.Action.AUTOTYPE_MENU:
             self.show_autotype_menu(cred)
 
     def get_credentials(self, name: str, folder: str) -> Credentials:
