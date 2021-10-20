@@ -122,9 +122,9 @@ class RofiRbw(object):
             encoding='utf-8',
             capture_output=True
         ).stdout.strip().split('\n')
-        parsed_entries = list(map(lambda it: Entry(it), entries))
-        maxwidth = max(list(map(lambda it: len(it), parsed_entries)))
-        entries = sorted(map(lambda it: it.formatted_string(maxwidth), parsed_entries))
+        parsed_entries = [Entry(it) for it in entries]
+        maxwidth = max(len(it) for it in parsed_entries)
+        entries = sorted(it.formatted_string(maxwidth) for it in parsed_entries)
 
         (returncode, entry) = self.selector.show_selection(
             '\n'.join(entries),
