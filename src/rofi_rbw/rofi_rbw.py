@@ -132,6 +132,9 @@ class RofiRbw(object):
             self.args.show_help,
             self.args.rofi_args
         )
+        if returncode == 1:
+            sys.exit()
+
         action = self.choose_action_from_return_code(returncode)
 
         (selected_folder, selected_entry) = entry.split('</b>')[0].replace('<b>', '').strip().rsplit('/', 1)
@@ -141,8 +144,6 @@ class RofiRbw(object):
         self.execute_action(action, data)
 
     def choose_action_from_return_code(self, return_code: int) -> Action:
-        if return_code == 1:
-            sys.exit()
         if return_code == 12:
             return self.Action.TYPE_PASSWORD
         if return_code == 11:
