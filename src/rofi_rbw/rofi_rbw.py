@@ -136,7 +136,7 @@ class RofiRbw(object):
 
         selected_entry = Entry.parse_formatted_string(selected_string)
 
-        data = self.get_credentials(selected_entry.name, selected_entry.folder)
+        data = self.get_credentials(selected_entry.name, selected_entry.folder, selected_entry.username)
 
         self.execute_action(data)
 
@@ -176,8 +176,8 @@ class RofiRbw(object):
         elif self.args.action == self.Action.AUTOTYPE_MENU:
             self.show_autotype_menu(cred)
 
-    def get_credentials(self, name: str, folder: str) -> Credentials:
-        command = ['rbw', 'get', '--full', name]
+    def get_credentials(self, name: str, folder: str, username: str) -> Credentials:
+        command = ['rbw', 'get', '--full', name, username]
         if folder != "":
             command.extend(["--folder", folder])
 
