@@ -28,7 +28,7 @@ class Selector:
 
     def show_selection(
         self,
-        entries: str,
+        entries: List[str],
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
@@ -48,7 +48,7 @@ class Rofi(Selector):
 
     def show_selection(
         self,
-        entries: str,
+        entries: List[str],
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
@@ -80,7 +80,7 @@ class Rofi(Selector):
 
         rofi = run(
             parameters,
-            input=entries,
+            input='\n'.join(entries),
             capture_output=True,
             encoding='utf-8'
         )
@@ -98,7 +98,7 @@ class Wofi(Selector):
 
     def show_selection(
         self,
-        entries: str,
+        entries: List[str],
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
@@ -113,7 +113,7 @@ class Wofi(Selector):
 
         wofi = run(
             parameters,
-            input=entries,
+            input='\n'.join(entries),
             capture_output=True,
             encoding='utf-8'
         )
