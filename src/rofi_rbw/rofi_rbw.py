@@ -216,7 +216,6 @@ class RofiRbw(object):
 
         if returncode == 1:
             self.main()
-        self.choose_action_from_return_code(returncode)
 
         key, value = entry.split(': ', 1)
 
