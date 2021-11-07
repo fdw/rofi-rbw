@@ -127,7 +127,7 @@ class RofiRbw(object):
         entries = sorted(it.formatted_string(maxwidth) for it in parsed_entries)
 
         (returncode, entry) = self.selector.show_selection(
-            '\n'.join(entries),
+            entries,
             self.args.prompt,
             self.args.show_help,
             self.args.rofi_args
@@ -208,7 +208,7 @@ class RofiRbw(object):
             entries.append(f'{key}: {value[0]}{"*" * (len(value) -1)}')
 
         (returncode, entry) = self.selector.show_selection(
-            "\n".join(entries),
+            entries,
             prompt='Autotype field',
             show_help_message=False,
             additional_args=[]
