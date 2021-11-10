@@ -1,9 +1,10 @@
 from typing import Union
+from subprocess import run
 
 
 class Credentials:
 
-    def __init__(self, data: str) -> None:
+    def __init__(self, name: str, folder: str, data: str) -> None:
         self.username = ''
         self.password = ''
         self.totp = ''
@@ -26,11 +27,15 @@ class Credentials:
                 elif key == "URI":
                     self.uris.append(value)
                 elif key == "TOTP Secret":
-                    try:
-                        import pyotp
-                        self.totp = pyotp.parse_uri(value).now()
-                    except ModuleNotFoundError:
-                        pass
+                    command = ['rbw', 'code', name]
+                    if folder != "":
+                        command.extend(["--folder", folder])
+
+                    self.totp = run(
+                        command,
+                        capture_output=True,
+                        encoding='utf-8'
+                    ).stdout.strip()
                 else:
                     self.further[key] = value
             except ValueError:

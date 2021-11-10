@@ -187,7 +187,7 @@ class RofiRbw(object):
             encoding='utf-8'
         ).stdout
 
-        return Credentials(result)
+        return Credentials(name, folder, result)
 
     def show_autotype_menu(self, cred: Credentials):
         entries = []
