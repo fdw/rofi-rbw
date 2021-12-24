@@ -3,7 +3,6 @@
 import argparse
 import enum
 import shlex
-from collections import namedtuple
 from subprocess import run
 
 import configargparse
@@ -178,17 +177,7 @@ class RofiRbw(object):
             self.show_autotype_menu(cred)
 
     def get_credentials(self, name: str, folder: str, username: str) -> Credentials:
-        command = ['rbw', 'get', '--full', name, username]
-        if folder != "":
-            command.extend(["--folder", folder])
-
-        result = run(
-            command,
-            capture_output=True,
-            encoding='utf-8'
-        ).stdout
-
-        return Credentials(result)
+        return Credentials(name, username, folder)
 
     def show_autotype_menu(self, cred: Credentials):
         entries = []
@@ -196,7 +185,7 @@ class RofiRbw(object):
             entries.append(f'Username: {cred.username}')
         if cred.password:
             entries.append(f'Password: {cred.password[0]}{"*" * (len(cred.password) -1)}')
-        if cred.totp:
+        if cred.has_totp:
             entries.append(f'TOTP: {cred.totp}')
         if len(cred.uris) == 1:
             entries.append(f'URI: {cred.uris[0]}')

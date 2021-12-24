@@ -5,6 +5,9 @@
 ## Fixed
 - Entries without password can be handled.
 
+## Changed
+- TOTP is now handled by `rbw`. (#33)
+
 # [0.4.1]
 ## Fixed
 - Credentials can now be parsed again. (#14)
