@@ -133,6 +133,7 @@ class RofiRbw(object):
         )
         if returncode == 1:
             return
+        self.choose_action_from_return_code(returncode)
 
         selected_entry = Entry.parse_formatted_string(selected_string)
 
