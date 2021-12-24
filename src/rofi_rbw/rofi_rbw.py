@@ -121,11 +121,11 @@ class RofiRbw(object):
             encoding='utf-8',
             capture_output=True
         ).stdout.strip().split('\n')
-        parsed_entries = [Entry(it) for it in entries]
+        parsed_entries = [Entry.parse_rbw_output(it) for it in entries]
         maxwidth = max(len(it) for it in parsed_entries)
         entries = sorted(it.formatted_string(maxwidth) for it in parsed_entries)
 
-        (returncode, entry) = self.selector.show_selection(
+        (returncode, selected_string) = self.selector.show_selection(
             entries,
             self.args.prompt,
             self.args.show_help,
@@ -134,9 +134,9 @@ class RofiRbw(object):
         if returncode == 1:
             return
 
-        (selected_folder, selected_entry) = entry.split('</b>')[0].replace('<b>', '').strip().rsplit('/', 1)
+        selected_entry = Entry.parse_formatted_string(selected_string)
 
-        data = self.get_credentials(selected_entry.strip(), selected_folder.strip())
+        data = self.get_credentials(selected_entry.name, selected_entry.folder)
 
         self.execute_action(data)
 
