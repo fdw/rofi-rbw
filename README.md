@@ -1,7 +1,7 @@
 # rbw-rofi
 ## A rofi frontend for Bitwarden
 
-Based on the alternative [Bitwarden](https://bitwarden.com/) CLI [rbw](https://git.tozt.net/rbw) and inspired by [rofi-pass](https://github.com/carnager/rofi-pass), `rbw-rofi` is a simplistic password typer/copier using [rofi](https://github.com/davatorium/rofi).
+Based on the alternative [Bitwarden](https://bitwarden.com/) CLI [rbw](https://git.tozt.net/rbw) and inspired by [rofi-pass](https://github.com/carnager/rofi-pass), `rbw-rofi` is a simplistic password typer/copier using [rofi](https://github.com/davatorium/rofi) and [wofi](https://hg.sr.ht/~scoopta/wofi).
 
 ## Features
 - Type the selected password with `Enter` or `Alt+3` (and copy TOTP to clipboard)
@@ -21,10 +21,10 @@ You can configure `rofi-rbw` either with cli arguments or with a config file cal
 | `--action` | `-a` | `type-password` (default), `type-username`, `autotype`, `copy-username`, `copy-password` | Chose what `rofi-rbw` should do. |
 | `--prompt` | `-r` | any string | Define the prompt text for `rofimoji`. |
 | `--show-help` | | `true` (default), `false` | Show a help message with the available shortcuts. |
-| `--rofi-args` | | | Define arguments that will be passed through to `rofi`.<br/>Please note that you need to specify it as `--rofi-args="<rofi-args>"` or `--rofi-args " <rofi-args>"` because of a [bug in argparse](https://bugs.python.org/issue9334) |
 | `--selector` | | `rofi`, `wofi` | Show the selection dialog with this application. |
 | `--clipboarder` | | `xsel`, `xclip`, `wl-copy` | Access the clipboard with this application. |
 | `--typer` | | `xdotool`, `wtype` | Type the characters using this application. |
+| `--selector-args` |              |                                                                                                               | Define arguments that will be passed through to `rofi` or `wofi`.<br/>Please note that you need to specify it as `--selector-args="<args>"` or `--selector-args " <args>"` because of a [bug in argparse](https://bugs.python.org/issue9334) |
 
 ## Installation
 

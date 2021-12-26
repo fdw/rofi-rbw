@@ -66,6 +66,13 @@ class RofiRbw(object):
             help='Set rofi-rbw\'s  prompt'
         )
         parser.add_argument(
+            '--selector-args',
+            dest='selector_args',
+            action='store',
+            default='',
+            help='A string of arguments to give to the selector'
+        )
+        parser.add_argument(
             '--rofi-args',
             dest='rofi_args',
             action='store',
@@ -100,16 +107,18 @@ class RofiRbw(object):
             help='Choose the application to type with'
         )
         parser.add_argument(
-            '--show-help',
+            '--no-help',
             dest='show_help',
-            action='store',
-            type=bool,
-            default=True,
-            help='Show a help message about the shortcuts'
+            action='store_false',
+            help='Don\'t show a help message about the shortcuts'
         )
 
         parsed_args = parser.parse_args()
-        parsed_args.rofi_args = shlex.split(parsed_args.rofi_args)
+        parsed_args.selector_args = shlex.split(parsed_args.selector_args)
+        if parsed_args.rofi_args and not parsed_args.selector_args:
+            print("The --rofi-args option is deprecated. Please migrate to using --selector-args exclusively.")
+            parsed_args.selector_args = shlex.split(parsed_args.rofi_args)
+
         parsed_args.action = next(action for action in self.Action if action.value == parsed_args.action)
 
         return parsed_args
@@ -128,7 +137,7 @@ class RofiRbw(object):
             entries,
             self.args.prompt,
             self.args.show_help,
-            self.args.rofi_args
+            self.args.selector_args
         )
         if returncode == 1:
             return
@@ -184,7 +193,7 @@ class RofiRbw(object):
         if cred.username:
             entries.append(f'Username: {cred.username}')
         if cred.password:
-            entries.append(f'Password: {cred.password[0]}{"*" * (len(cred.password) -1)}')
+            entries.append(f'Password: {cred.password[0]}{"*" * (len(cred.password) - 1)}')
         if cred.has_totp:
             entries.append(f'TOTP: {cred.totp}')
         if len(cred.uris) == 1:
@@ -193,7 +202,7 @@ class RofiRbw(object):
             for (key, value) in enumerate(cred.uris):
                 entries.append(f'URI {key + 1}: {value}')
         for (key, value) in cred.further.items():
-            entries.append(f'{key}: {value[0]}{"*" * (len(value) -1)}')
+            entries.append(f'{key}: {value[0]}{"*" * (len(value) - 1)}')
 
         (returncode, entry) = self.selector.show_selection(
             entries,
