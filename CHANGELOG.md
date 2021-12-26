@@ -7,6 +7,8 @@
 
 ## Changed
 - TOTP is now handled by `rbw`. (#33)
+- Username is shown in the menu.
+- One entry can have multiple URIs. (#25)
 
 # [0.4.1]
 ## Fixed
