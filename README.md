@@ -9,10 +9,10 @@ Based on the alternative [Bitwarden](https://bitwarden.com/) CLI [rbw](https://g
 - Copy username, password or TOTP to the clipboard (`Alt+u`, `Alt+p` and `Alt+t`, respectively)
 - Show an autotype menu with all fields
 
-## Configuration
+# Configuration
 You can configure `rofi-rbw` either with cli arguments or with a config file called `$XDG_CONFIG_HOME/rofi-rbw.rc`. In the file, use the long option names without double dashes.
 
-### Options
+## Options
 
 | long option       | short option | possible values                                                                                               | description                                                                                                                                                                                                                                  |
 |-------------------|--------------|---------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -25,14 +25,21 @@ You can configure `rofi-rbw` either with cli arguments or with a config file cal
 | `--typer`         |              | `xdotool`, `wtype`                                                                                            | Type the characters using this application.                                                                                                                                                                                                  |
 | `--no-help`       |              |                                                                                                               | By default, `rofi-rbw` shows a list of possible keybindings. If it annoys you, you can deactivate it with this parameter.                                                                                                                    |
 
-## Installation
+# Installation
 
-### Arch Linux
-Install the [rofi-rbw](https://aur.archlinux.org/packages/rofi-rbw/) AUR package.
+## From distribution repositories
+[![Packaging status](https://repology.org/badge/vertical-allrepos/rofi-rbw.svg)](https://repology.org/project/rofi-rbw/versions)
 
-### From PyPI
+## From PyPI
 `rofi-rbw` is on [PyPI](https://pypi.org/project/rofi-rbw/). You can install it with `pip install --user rofi-rbw` (or `sudo pip install rofi-rbw`).
 
-### Manually
+## Manually
 Download the wheel file from releases and install it with  `sudo pip install $filename` (or you can use `pip install --user $filename` to only install it for the local user).
 Note that it needs `configargparse` to work.
+
+## Dependencies
+You also need:
+- Python 3.7 or higher
+- `rofi` or `wofi`
+- Something to programmatically type characters into other applications. Depending on your display server, it's `xdotool` or `wtype`.
+- Something to copy text to the clipboard. Again, depending on the display server, you want `xclip`, `xsel` or `wl-copy`.
