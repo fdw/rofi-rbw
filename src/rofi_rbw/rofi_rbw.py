@@ -124,12 +124,7 @@ class RofiRbw(object):
         return parsed_args
 
     def main(self) -> None:
-        entries = run(
-            ['rbw', 'ls', '--fields', 'folder,name,user'],
-            encoding='utf-8',
-            capture_output=True
-        ).stdout.strip().split('\n')
-        parsed_entries = [Entry.parse_rbw_output(it) for it in entries]
+        parsed_entries = self.get_entries()
         maxwidth = max(len(it) for it in parsed_entries)
         entries = sorted(it.formatted_string(maxwidth) for it in parsed_entries)
 
@@ -148,6 +143,20 @@ class RofiRbw(object):
         data = self.get_credentials(selected_entry.name, selected_entry.folder, selected_entry.username)
 
         self.execute_action(data)
+
+    def get_entries(self):
+        rofi = run(
+            ['rbw', 'ls', '--fields', 'folder,name,user'],
+            encoding='utf-8',
+            capture_output=True
+        )
+
+        if rofi.returncode != 0:
+            print('There was a problem calling rbw. Is it correctly configured?')
+            print(rofi.stderr)
+            exit(2)
+
+        return [Entry.parse_rbw_output(it) for it in (rofi.stdout.strip().split('\n'))]
 
     def choose_action_from_return_code(self, return_code: int) -> None:
         if return_code == 12:
