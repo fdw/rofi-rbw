@@ -29,8 +29,11 @@ class Entry:
     def parse_rbw_output(cls, rbw_string: str) -> 'Entry':
         fields = rbw_string.split('\t')
 
-        return cls(
-            fields[1],
-            fields[0],
-            fields[2] if len(fields) > 2 else ''
-        )
+        try:
+            return cls(
+                fields[1],
+                fields[0],
+                fields[2] if len(fields) > 2 else ''
+            )
+        except IndexError:
+            raise Exception('Entry is incorrectly formatted and cannot be parsed')
