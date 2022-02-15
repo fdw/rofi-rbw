@@ -1,3 +1,4 @@
+import time
 from subprocess import run
 
 try:
@@ -41,7 +42,7 @@ class XSelClipboarder(Clipboarder):
     def name() -> str:
         return 'xsel'
 
-    def copy_to_clipboard(self, characters: str) -> None:
+    def copy_to_clipboard(self, characters: str, clear: int = 0) -> None:
         run([
             'xsel',
             '-i',
@@ -50,6 +51,9 @@ class XSelClipboarder(Clipboarder):
             input=characters,
             encoding='utf-8'
         )
+        if clear > 0:
+            time.sleep(clear)
+            run(['xsel', '-delete'])
 
 
 class XClipClipboarder(Clipboarder):
@@ -61,7 +65,7 @@ class XClipClipboarder(Clipboarder):
     def name() -> str:
         return 'xclip'
 
-    def copy_to_clipboard(self, characters: str) -> None:
+    def copy_to_clipboard(self, characters: str, clear: int = 0) -> None:
         run([
             'xclip',
             '-i',
@@ -71,6 +75,9 @@ class XClipClipboarder(Clipboarder):
             input=characters,
             encoding='utf-8'
         )
+        if clear > 0:
+            time.sleep(clear)
+            self.copy_to_clipboard("")
 
 
 class WlClipboarder(Clipboarder):
@@ -82,9 +89,12 @@ class WlClipboarder(Clipboarder):
     def name() -> str:
         return 'wl-copy'
 
-    def copy_to_clipboard(self, characters: str) -> None:
+    def copy_to_clipboard(self, characters: str, clear: int = 0) -> None:
         run(
             ['wl-copy'],
             input=characters,
             encoding='utf-8'
         )
+        if clear > 0:
+            time.sleep(clear)
+            run(['wl-copy', '--clear'])
