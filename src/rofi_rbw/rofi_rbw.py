@@ -107,6 +107,14 @@ class RofiRbw(object):
             help='Choose the application to type with'
         )
         parser.add_argument(
+            '--clear-period',
+            dest='clear_period',
+            action='store',
+            type=int,
+            default=0,
+            help='Choose the time in seconds passwords stay in your clipboard. When not set or <= 0, will keep indefinitely.'
+        )
+        parser.add_argument(
             '--no-help',
             dest='show_help',
             action='store_false',
@@ -186,7 +194,7 @@ class RofiRbw(object):
             if cred.totp != "":
                 self.clipboarder.copy_to_clipboard(cred.totp)
         elif self.args.action == self.Action.COPY_PASSWORD:
-            self.clipboarder.copy_to_clipboard(cred.password)
+            self.clipboarder.copy_to_clipboard(cred.password, self.args.clear_period)
         elif self.args.action == self.Action.COPY_USERNAME:
             self.clipboarder.copy_to_clipboard(cred.username)
         elif self.args.action == self.Action.COPY_TOTP:
