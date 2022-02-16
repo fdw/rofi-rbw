@@ -28,10 +28,12 @@ class Clipboarder:
     def name() -> str:
         pass
 
-    def copy_to_clipboard(self, characters: str, clear: int = 0) -> None:
+    def copy_to_clipboard(self, characters: str) -> None:
         print('Could not find a valid way to copy to clipboard. Please check the required dependencies.')
         exit(6)
 
+    def clear_clipboard_after(self, clear: int) -> None:
+        pass
 
 class XSelClipboarder(Clipboarder):
     @staticmethod
@@ -51,10 +53,11 @@ class XSelClipboarder(Clipboarder):
             input=characters,
             encoding='utf-8'
         )
+
+    def clear_clipboard_after(self, clear: int) -> None:
         if clear > 0:
             time.sleep(clear)
             run(['xsel', '-delete'])
-
 
 class XClipClipboarder(Clipboarder):
     @staticmethod
@@ -75,10 +78,11 @@ class XClipClipboarder(Clipboarder):
             input=characters,
             encoding='utf-8'
         )
+
+    def clear_clipboard_after(self, clear: int) -> None:
         if clear > 0:
             time.sleep(clear)
             self.copy_to_clipboard("")
-
 
 class WlClipboarder(Clipboarder):
     @staticmethod
@@ -95,6 +99,8 @@ class WlClipboarder(Clipboarder):
             input=characters,
             encoding='utf-8'
         )
+
+    def clear_clipboard_after(self, clear: int) -> None:
         if clear > 0:
             time.sleep(clear)
             run(['wl-copy', '--clear'])
