@@ -194,7 +194,8 @@ class RofiRbw(object):
             if cred.totp != "":
                 self.clipboarder.copy_to_clipboard(cred.totp)
         elif self.args.action == self.Action.COPY_PASSWORD:
-            self.clipboarder.copy_to_clipboard(cred.password, self.args.clear)
+            self.clipboarder.copy_to_clipboard(cred.password)
+            self.clipboarder.clear_clipboard_after(self.args.clear)
         elif self.args.action == self.Action.COPY_USERNAME:
             self.clipboarder.copy_to_clipboard(cred.username)
         elif self.args.action == self.Action.COPY_TOTP:
