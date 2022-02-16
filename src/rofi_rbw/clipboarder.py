@@ -28,7 +28,7 @@ class Clipboarder:
     def name() -> str:
         pass
 
-    def copy_to_clipboard(self, characters: str) -> None:
+    def copy_to_clipboard(self, characters: str, clear: int = 0) -> None:
         print('Could not find a valid way to copy to clipboard. Please check the required dependencies.')
         exit(6)
 
