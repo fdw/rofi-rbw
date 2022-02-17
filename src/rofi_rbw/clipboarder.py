@@ -44,7 +44,7 @@ class XSelClipboarder(Clipboarder):
     def name() -> str:
         return 'xsel'
 
-    def copy_to_clipboard(self, characters: str, clear: int = 0) -> None:
+    def copy_to_clipboard(self, characters: str) -> None:
         run([
             'xsel',
             '-i',
@@ -68,7 +68,7 @@ class XClipClipboarder(Clipboarder):
     def name() -> str:
         return 'xclip'
 
-    def copy_to_clipboard(self, characters: str, clear: int = 0) -> None:
+    def copy_to_clipboard(self, characters: str) -> None:
         run([
             'xclip',
             '-i',
@@ -93,7 +93,7 @@ class WlClipboarder(Clipboarder):
     def name() -> str:
         return 'wl-copy'
 
-    def copy_to_clipboard(self, characters: str, clear: int = 0) -> None:
+    def copy_to_clipboard(self, characters: str) -> None:
         run(
             ['wl-copy'],
             input=characters,
