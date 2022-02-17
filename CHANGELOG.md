@@ -1,3 +1,7 @@
+# [UPCOMING]
+## Added
+- Added an option to limit the time a passwords stay in the clipboard.
+
 # [0.5.0]
 ## Added
 - Added an autotype menu that can works with all defined fields. (#17)
