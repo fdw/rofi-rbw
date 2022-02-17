@@ -33,7 +33,8 @@ class Clipboarder:
         exit(6)
 
     def clear_clipboard_after(self, clear: int) -> None:
-        pass
+        print('Could not find a valid way to copy to clipboard. Please check the required dependencies.')
+        exit(6)
 
 class XSelClipboarder(Clipboarder):
     @staticmethod
