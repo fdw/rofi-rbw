@@ -16,7 +16,10 @@ class Credentials:
         self.__load_from_rbw(name, username, folder)
 
     def __load_from_rbw(self, name: str, username: str, folder: Optional[str]):
-        command = ['rbw', 'get', '--full', name, username]
+        command = ['rbw', 'get', '--full', name]
+        if username:
+            command.append(username)
+
         if folder != "":
             command.extend(["--folder", folder])
 
