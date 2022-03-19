@@ -226,7 +226,7 @@ class RofiRbw(object):
             entries,
             prompt='Autotype field',
             show_help_message=False,
-            additional_args=[]
+            additional_args=self.args.selector_args
         )
 
         if returncode == 1:
