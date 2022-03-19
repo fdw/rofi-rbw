@@ -2,6 +2,10 @@
 ## Added
 - Added an option to limit the time a passwords stay in the clipboard.
 
+## Fixed
+- Entries without username also work. (#42)
+- Custom selector args are passed to the autotype menu. (#43)
+
 # [0.5.0]
 ## Added
 - Added an autotype menu that can works with all defined fields. (#17)
