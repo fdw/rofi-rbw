@@ -1,4 +1,5 @@
 from subprocess import run
+import time
 
 try:
     from rofi_rbw.abstractionhelper import is_wayland, is_installed
@@ -91,11 +92,9 @@ class YDotoolTyper(Typer):
         return "not possible with ydotool"
 
     def type_characters(self, characters: str, active_window: str) -> None:
+        time.sleep(0.05)
         run([
             'ydotool',
-            'sleep',
-            '50',
-            ',',
             'type',
             characters
         ])
