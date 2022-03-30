@@ -34,6 +34,7 @@ class RofiRbw(object):
         COPY_PASSWORD = 'copy-password'
         COPY_TOTP = 'copy-totp'
         AUTOTYPE_MENU = 'menu'
+        PRINT = 'print'
 
     def __init__(self) -> None:
         self.args = self.parse_arguments()
@@ -107,7 +108,7 @@ class RofiRbw(object):
             help='Choose the application to type with'
         )
         parser.add_argument(
-            '--clear',
+            '--clear-after',
             dest='clear',
             action='store',
             type=int,
@@ -202,6 +203,8 @@ class RofiRbw(object):
             self.clipboarder.copy_to_clipboard(cred.totp)
         elif self.args.action == self.Action.AUTOTYPE_MENU:
             self.show_autotype_menu(cred)
+        elif self.args.action == self.Action.PRINT:
+            print(f'{cred.password}\n{cred.username}')
 
     def get_credentials(self, name: str, folder: str, username: str) -> Credentials:
         return Credentials(name, username, folder)
