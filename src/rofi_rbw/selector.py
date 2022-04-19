@@ -3,8 +3,10 @@ from subprocess import run
 
 try:
     from rofi_rbw.abstractionhelper import is_wayland, is_installed
+    from rofi_rbw.action import Action
 except:
     from abstractionhelper import is_wayland, is_installed
+    from action import Action
 
 
 class Selector:
@@ -29,10 +31,11 @@ class Selector:
     def show_selection(
         self,
         entries: List[str],
+        default_action: Action,
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[int, str]:
+    ) -> Tuple[Action, str]:
         print('Could not find a valid way to show the selection. Please check the required dependencies.')
         exit(4)
 
@@ -49,10 +52,11 @@ class Rofi(Selector):
     def show_selection(
         self,
         entries: List[str],
+        default_action: Action,
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[int, str]:
+    ) -> Tuple[Action, str]:
         parameters = [
             'rofi',
             '-markup-rows',
@@ -84,7 +88,25 @@ class Rofi(Selector):
             capture_output=True,
             encoding='utf-8'
         )
-        return rofi.returncode, rofi.stdout
+        returnaction = None
+        if rofi.returncode == 0:
+            returnaction = default_action
+        elif rofi.returncode == 12:
+            returnaction = Action.TYPE_PASSWORD
+        elif rofi.returncode == 11:
+            returnaction = Action.TYPE_USERNAME
+        elif rofi.returncode == 10:
+            returnaction = Action.TYPE_BOTH
+        elif rofi.returncode == 13:
+            returnaction = Action.AUTOTYPE_MENU
+        elif rofi.returncode == 20:
+            returnaction = Action.COPY_PASSWORD
+        elif rofi.returncode == 21:
+            returnaction = Action.COPY_USERNAME
+        elif rofi.returncode == 22:
+            returnaction = Action.COPY_TOTP
+
+        return returnaction, rofi.stdout
 
 
 class Wofi(Selector):
@@ -99,10 +121,11 @@ class Wofi(Selector):
     def show_selection(
         self,
         entries: List[str],
+        default_action: Action,
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[int, str]:
+    ) -> Tuple[Action, str]:
         parameters = [
             'wofi',
             '--dmenu',
@@ -117,5 +140,8 @@ class Wofi(Selector):
             capture_output=True,
             encoding='utf-8'
         )
-        return wofi.returncode, wofi.stdout
+        returnaction = None
+        if wofi.returncode == 0:
+            returnaction = default_action
+        return returnaction, wofi.stdout
 

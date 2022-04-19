@@ -129,16 +129,17 @@ class RofiRbw(object):
         maxwidth = max(len(it) for it in parsed_entries)
         entries = sorted(it.formatted_string(maxwidth) for it in parsed_entries)
 
-        (returncode, selected_string) = self.selector.show_selection(
+        (returnaction, selected_string) = self.selector.show_selection(
             entries,
+            self.args.action,
             self.args.prompt,
             self.args.show_help,
             self.args.selector_args
         )
-        if returncode == 1:
+        if returnaction == None:
             return
-        self.choose_action_from_return_code(returncode)
-
+        self.args.action = returnaction
+        
         selected_entry = Entry.parse_formatted_string(selected_string)
 
         data = self.get_credentials(selected_entry.name, selected_entry.folder, selected_entry.username)
@@ -158,22 +159,6 @@ class RofiRbw(object):
             exit(2)
 
         return [Entry.parse_rbw_output(it) for it in (rofi.stdout.strip().split('\n'))]
-
-    def choose_action_from_return_code(self, return_code: int) -> None:
-        if return_code == 12:
-            self.args.action = Action.TYPE_PASSWORD
-        elif return_code == 11:
-            self.args.action = Action.TYPE_USERNAME
-        elif return_code == 10:
-            self.args.action = Action.TYPE_BOTH
-        elif return_code == 13:
-            self.args.action = Action.AUTOTYPE_MENU
-        elif return_code == 20:
-            self.args.action = Action.COPY_PASSWORD
-        elif return_code == 21:
-            self.args.action = Action.COPY_USERNAME
-        elif return_code == 22:
-            self.args.action = Action.COPY_TOTP
 
     def execute_action(self, cred: Credentials) -> None:
         if self.args.action == Action.TYPE_PASSWORD:
@@ -219,6 +204,7 @@ class RofiRbw(object):
 
         (returncode, entry) = self.selector.show_selection(
             entries,
+            self.args.action,
             prompt='Autotype field',
             show_help_message=False,
             additional_args=self.args.selector_args
