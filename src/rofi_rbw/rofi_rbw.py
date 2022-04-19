@@ -8,6 +8,7 @@ from subprocess import run
 import configargparse
 
 try:
+    from rofi_rbw.action import Action
     from rofi_rbw.clipboarder import Clipboarder
     from rofi_rbw.typer import Typer
     from rofi_rbw.selector import Selector
@@ -15,6 +16,7 @@ try:
     from rofi_rbw.entry import Entry
     from rofi_rbw.paths import *
 except ModuleNotFoundError:
+    from action import Action
     from clipboarder import Clipboarder
     from typer import Typer
     from selector import Selector
@@ -26,16 +28,6 @@ __version__ = '0.5.0'
 
 
 class RofiRbw(object):
-    class Action(enum.Enum):
-        TYPE_PASSWORD = 'type-password'
-        TYPE_USERNAME = 'type-username'
-        TYPE_BOTH = 'autotype'
-        COPY_USERNAME = 'copy-username'
-        COPY_PASSWORD = 'copy-password'
-        COPY_TOTP = 'copy-totp'
-        AUTOTYPE_MENU = 'menu'
-        PRINT = 'print'
-
     def __init__(self) -> None:
         self.args = self.parse_arguments()
         self.selector = Selector.best_option(self.args.selector)
@@ -54,8 +46,8 @@ class RofiRbw(object):
             '-a',
             dest='action',
             action='store',
-            choices=[action.value for action in self.Action],
-            default=self.Action.TYPE_PASSWORD.value,
+            choices=[action.value for action in Action],
+            default=Action.TYPE_PASSWORD.value,
             help='What to do with the selected entry'
         )
         parser.add_argument(
@@ -128,7 +120,7 @@ class RofiRbw(object):
             print("The --rofi-args option is deprecated. Please migrate to using --selector-args exclusively.")
             parsed_args.selector_args = shlex.split(parsed_args.rofi_args)
 
-        parsed_args.action = self.Action(parsed_args.action)
+        parsed_args.action = Action(parsed_args.action)
 
         return parsed_args
 
@@ -169,41 +161,41 @@ class RofiRbw(object):
 
     def choose_action_from_return_code(self, return_code: int) -> None:
         if return_code == 12:
-            self.args.action = self.Action.TYPE_PASSWORD
+            self.args.action = Action.TYPE_PASSWORD
         elif return_code == 11:
-            self.args.action = self.Action.TYPE_USERNAME
+            self.args.action = Action.TYPE_USERNAME
         elif return_code == 10:
-            self.args.action = self.Action.TYPE_BOTH
+            self.args.action = Action.TYPE_BOTH
         elif return_code == 13:
-            self.args.action = self.Action.AUTOTYPE_MENU
+            self.args.action = Action.AUTOTYPE_MENU
         elif return_code == 20:
-            self.args.action = self.Action.COPY_PASSWORD
+            self.args.action = Action.COPY_PASSWORD
         elif return_code == 21:
-            self.args.action = self.Action.COPY_USERNAME
+            self.args.action = Action.COPY_USERNAME
         elif return_code == 22:
-            self.args.action = self.Action.COPY_TOTP
+            self.args.action = Action.COPY_TOTP
 
     def execute_action(self, cred: Credentials) -> None:
-        if self.args.action == self.Action.TYPE_PASSWORD:
+        if self.args.action == Action.TYPE_PASSWORD:
             self.typer.type_characters(cred.password, self.active_window)
             if cred.totp != "":
                 self.clipboarder.copy_to_clipboard(cred.totp)
-        elif self.args.action == self.Action.TYPE_USERNAME:
+        elif self.args.action == Action.TYPE_USERNAME:
             self.typer.type_characters(cred.username, self.active_window)
-        elif self.args.action == self.Action.TYPE_BOTH:
+        elif self.args.action == Action.TYPE_BOTH:
             self.typer.type_characters(f"{cred.username}\t{cred.password}", self.active_window)
             if cred.totp != "":
                 self.clipboarder.copy_to_clipboard(cred.totp)
-        elif self.args.action == self.Action.COPY_PASSWORD:
+        elif self.args.action == Action.COPY_PASSWORD:
             self.clipboarder.copy_to_clipboard(cred.password)
             self.clipboarder.clear_clipboard_after(self.args.clear)
-        elif self.args.action == self.Action.COPY_USERNAME:
+        elif self.args.action == Action.COPY_USERNAME:
             self.clipboarder.copy_to_clipboard(cred.username)
-        elif self.args.action == self.Action.COPY_TOTP:
+        elif self.args.action == Action.COPY_TOTP:
             self.clipboarder.copy_to_clipboard(cred.totp)
-        elif self.args.action == self.Action.AUTOTYPE_MENU:
+        elif self.args.action == Action.AUTOTYPE_MENU:
             self.show_autotype_menu(cred)
-        elif self.args.action == self.Action.PRINT:
+        elif self.args.action == Action.PRINT:
             print(f'{cred.password}\n{cred.username}')
 
     def get_credentials(self, name: str, folder: str, username: str) -> Credentials:
