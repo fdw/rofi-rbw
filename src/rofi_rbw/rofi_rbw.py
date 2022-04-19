@@ -128,7 +128,7 @@ class RofiRbw(object):
             print("The --rofi-args option is deprecated. Please migrate to using --selector-args exclusively.")
             parsed_args.selector_args = shlex.split(parsed_args.rofi_args)
 
-        parsed_args.action = next(action for action in self.Action if action.value == parsed_args.action)
+        parsed_args.action = self.Action(parsed_args.action)
 
         return parsed_args
 
