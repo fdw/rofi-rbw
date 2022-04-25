@@ -140,8 +140,8 @@ class Wofi(Selector):
             capture_output=True,
             encoding='utf-8'
         )
-        returnaction = None
         if wofi.returncode == 0:
-            returnaction = default_action
-        return returnaction, wofi.stdout
+            return default_action, wofi.stdout
+        else
+            return None, wofi.stdout
 
