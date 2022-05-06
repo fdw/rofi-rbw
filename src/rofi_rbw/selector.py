@@ -143,6 +143,6 @@ class Wofi(Selector):
         )
         if wofi.returncode == 0:
             return SelectorResponse.DEFAULT, wofi.stdout
-        else
+        else:
             return SelectorResponse.CANCEL, wofi.stdout
 
