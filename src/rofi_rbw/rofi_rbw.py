@@ -129,16 +129,16 @@ class RofiRbw(object):
         maxwidth = max(len(it) for it in parsed_entries)
         entries = sorted(it.formatted_string(maxwidth) for it in parsed_entries)
 
-        (returnaction, selected_string) = self.selector.show_selection(
+        (selected_action, selected_string) = self.selector.show_selection(
             entries,
             self.args.prompt,
             self.args.show_help,
             self.args.selector_args
         )
-        if returnaction == SelectorResponse.CANCEL:
+        if selected_action == SelectorResponse.CANCEL:
             return
-        if returnaction != SelectorResponse.DEFAULT:
-            self.args.action = returnaction
+        if selected_action != SelectorResponse.DEFAULT:
+            self.args.action = selected_action
         
         selected_entry = Entry.parse_formatted_string(selected_string)
 
