@@ -1,4 +1,5 @@
-from typing import List, Tuple
+from enum import Enum
+from typing import List, Tuple, Union
 from subprocess import run
 
 try:
@@ -8,6 +9,9 @@ except:
     from abstractionhelper import is_wayland, is_installed
     from action import Action
 
+class SelectorResponse(Enum):
+    CANCEL = 'cancel'
+    DEFAULT = 'default'
 
 class Selector:
     @staticmethod
@@ -31,11 +35,10 @@ class Selector:
     def show_selection(
         self,
         entries: List[str],
-        default_action: Action,
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Action, str]:
+    ) -> Tuple[Union[SelectorResponse, Action], str]:
         print('Could not find a valid way to show the selection. Please check the required dependencies.')
         exit(4)
 
@@ -52,11 +55,10 @@ class Rofi(Selector):
     def show_selection(
         self,
         entries: List[str],
-        default_action: Action,
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Action, str]:
+    ) -> Tuple[Union[SelectorResponse, Action], str]:
         parameters = [
             'rofi',
             '-markup-rows',
@@ -88,9 +90,9 @@ class Rofi(Selector):
             capture_output=True,
             encoding='utf-8'
         )
-        returnaction = None
+        returnaction = SelectorResponse.CANCEL
         if rofi.returncode == 0:
-            returnaction = default_action
+            returnaction = SelectorResponse.DEFAULT
         elif rofi.returncode == 12:
             returnaction = Action.TYPE_PASSWORD
         elif rofi.returncode == 11:
@@ -121,11 +123,10 @@ class Wofi(Selector):
     def show_selection(
         self,
         entries: List[str],
-        default_action: Action,
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Action, str]:
+    ) -> Tuple[Union[SelectorResponse, Action], str]:
         parameters = [
             'wofi',
             '--dmenu',
@@ -141,7 +142,7 @@ class Wofi(Selector):
             encoding='utf-8'
         )
         if wofi.returncode == 0:
-            return default_action, wofi.stdout
+            return SelectorResponse.DEFAULT, wofi.stdout
         else
-            return None, wofi.stdout
+            return SelectorResponse.CANCEL, wofi.stdout
 

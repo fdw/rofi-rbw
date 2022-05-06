@@ -19,7 +19,7 @@ except ModuleNotFoundError:
     from action import Action
     from clipboarder import Clipboarder
     from typer import Typer
-    from selector import Selector
+    from selector import Selector, SelectorResponse
     from credentials import Credentials
     from entry import Entry
     from paths import *
@@ -131,14 +131,14 @@ class RofiRbw(object):
 
         (returnaction, selected_string) = self.selector.show_selection(
             entries,
-            self.args.action,
             self.args.prompt,
             self.args.show_help,
             self.args.selector_args
         )
-        if returnaction == None:
+        if returnaction == SelectorResponse.CANCEL:
             return
-        self.args.action = returnaction
+        if returnaction != SelectorResponse.DEFAULT:
+            self.args.action = returnaction
         
         selected_entry = Entry.parse_formatted_string(selected_string)
 
