@@ -11,7 +11,7 @@ try:
     from rofi_rbw.action import Action
     from rofi_rbw.clipboarder import Clipboarder
     from rofi_rbw.typer import Typer
-    from rofi_rbw.selector import Selector
+    from rofi_rbw.selector import Selector, SelectorResponse
     from rofi_rbw.credentials import Credentials
     from rofi_rbw.entry import Entry
     from rofi_rbw.paths import *
