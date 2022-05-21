@@ -36,6 +36,7 @@ class Clipboarder:
         print('Could not find a valid way to copy to clipboard. Please check the required dependencies.')
         exit(6)
 
+
 class XSelClipboarder(Clipboarder):
     @staticmethod
     def supported() -> bool:
@@ -59,6 +60,7 @@ class XSelClipboarder(Clipboarder):
         if clear > 0:
             time.sleep(clear)
             run(['xsel', '-delete'])
+
 
 class XClipClipboarder(Clipboarder):
     @staticmethod
@@ -84,6 +86,7 @@ class XClipClipboarder(Clipboarder):
         if clear > 0:
             time.sleep(clear)
             self.copy_to_clipboard("")
+
 
 class WlClipboarder(Clipboarder):
     @staticmethod

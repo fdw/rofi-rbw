@@ -1,6 +1,11 @@
 from subprocess import run
 from typing import Union, Optional, List
 
+try:
+    from rofi_rbw.models import Target, Targets
+except ModuleNotFoundError:
+    from models import Target, Targets
+
 
 class Credentials:
     def __init__(self, name: str, username: str, folder: Optional[str]) -> None:
@@ -55,17 +60,17 @@ class Credentials:
             except ValueError:
                 pass
 
-    def __getitem__(self, item: str) -> Optional[Union[str, List[str]]]:
-        if item.lower() == 'username':
+    def __getitem__(self, target: Target) -> Optional[Union[str, List[str]]]:
+        if target == Targets.USERNAME:
             return self.username
-        elif item.lower() == 'password':
+        elif target == Targets.PASSWORD:
             return self.password
-        elif item.lower() == 'totp':
+        elif target == Targets.TOTP:
             return self.totp
-        elif item.lower() == 'uris':
-            return self.uris
+        elif target.is_uri():
+            return self.uris[target.uri_index()]
         else:
-            return self.further.get(item, None)
+            return self.further.get(target.raw, None)
 
     @property
     def totp(self):

@@ -1,30 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
-import enum
 import shlex
 from subprocess import run
+from typing import List, Tuple, Union
 
 import configargparse
 
 try:
-    from rofi_rbw.action import Action
+    from rofi_rbw.models import Action, Target, Targets, CANCEL, DEFAULT
     from rofi_rbw.clipboarder import Clipboarder
     from rofi_rbw.typer import Typer
-    from rofi_rbw.selector import Selector, SelectorResponse
+    from rofi_rbw.selector import Selector
     from rofi_rbw.credentials import Credentials
     from rofi_rbw.entry import Entry
     from rofi_rbw.paths import *
 except ModuleNotFoundError:
-    from action import Action
+    from models import Action, Target, Targets, CANCEL, DEFAULT
     from clipboarder import Clipboarder
     from typer import Typer
-    from selector import Selector, SelectorResponse
+    from selector import Selector
     from credentials import Credentials
     from entry import Entry
     from paths import *
 
-__version__ = '0.5.0'
+__version__ = '1.0.0'
 
 
 class RofiRbw(object):
@@ -47,8 +47,15 @@ class RofiRbw(object):
             dest='action',
             action='store',
             choices=[action.value for action in Action],
-            default=Action.TYPE_PASSWORD.value,
+            default=Action.TYPE.value,
             help='What to do with the selected entry'
+        )
+        parser.add_argument(
+            '--target',
+            '-t',
+            dest='targets',
+            action='append',
+            help='Which part of the entry do you want?'
         )
         parser.add_argument(
             '--prompt',
@@ -121,6 +128,10 @@ class RofiRbw(object):
             parsed_args.selector_args = shlex.split(parsed_args.rofi_args)
 
         parsed_args.action = Action(parsed_args.action)
+        if parsed_args.targets:
+            parsed_args.targets = [Target(target) for target in parsed_args.targets]
+        else:
+            parsed_args.targets = [Targets.USERNAME, Targets.PASSWORD]
 
         return parsed_args
 
@@ -129,22 +140,32 @@ class RofiRbw(object):
         maxwidth = max(len(it) for it in parsed_entries)
         entries = sorted(it.formatted_string(maxwidth) for it in parsed_entries)
 
-        (selected_action, selected_string) = self.selector.show_selection(
+        (selected_targets, selected_action, selected_string) = self.selector.show_selection(
             entries,
             self.args.prompt,
             self.args.show_help,
             self.args.selector_args
         )
-        if selected_action == SelectorResponse.CANCEL:
+        if selected_action == CANCEL():
             return
-        if selected_action != SelectorResponse.DEFAULT:
-            self.args.action = selected_action
-        
+
         selected_entry = Entry.parse_formatted_string(selected_string)
 
-        data = self.get_credentials(selected_entry.name, selected_entry.folder, selected_entry.username)
+        credential = self.get_credentials(selected_entry.name, selected_entry.folder, selected_entry.username)
 
-        self.execute_action(data)
+        if selected_targets != DEFAULT():
+            self.args.targets = selected_targets
+
+        if selected_action != DEFAULT():
+            self.args.action = selected_action
+
+        if Targets.MENU in self.args.targets:
+            targets, action = self.show_target_menu(credential, self.args.show_help,)
+            self.args.targets = targets
+            if action != DEFAULT():
+                self.args.action = action
+
+        self.execute_action(credential)
 
     def get_entries(self):
         rofi = run(
@@ -160,33 +181,14 @@ class RofiRbw(object):
 
         return [Entry.parse_rbw_output(it) for it in (rofi.stdout.strip().split('\n'))]
 
-    def execute_action(self, cred: Credentials) -> None:
-        if self.args.action == Action.TYPE_PASSWORD:
-            self.typer.type_characters(cred.password, self.active_window)
-            if cred.totp != "":
-                self.clipboarder.copy_to_clipboard(cred.totp)
-        elif self.args.action == Action.TYPE_USERNAME:
-            self.typer.type_characters(cred.username, self.active_window)
-        elif self.args.action == Action.TYPE_BOTH:
-            self.typer.type_characters(f"{cred.username}\t{cred.password}", self.active_window)
-            if cred.totp != "":
-                self.clipboarder.copy_to_clipboard(cred.totp)
-        elif self.args.action == Action.COPY_PASSWORD:
-            self.clipboarder.copy_to_clipboard(cred.password)
-            self.clipboarder.clear_clipboard_after(self.args.clear)
-        elif self.args.action == Action.COPY_USERNAME:
-            self.clipboarder.copy_to_clipboard(cred.username)
-        elif self.args.action == Action.COPY_TOTP:
-            self.clipboarder.copy_to_clipboard(cred.totp)
-        elif self.args.action == Action.AUTOTYPE_MENU:
-            self.show_autotype_menu(cred)
-        elif self.args.action == Action.PRINT:
-            print(f'{cred.password}\n{cred.username}')
-
     def get_credentials(self, name: str, folder: str, username: str) -> Credentials:
         return Credentials(name, username, folder)
 
-    def show_autotype_menu(self, cred: Credentials):
+    def show_target_menu(
+        self,
+        cred: Credentials,
+        show_help_message: bool
+    ) -> Tuple[List[Target], Union[Action, DEFAULT]]:
         entries = []
         if cred.username:
             entries.append(f'Username: {cred.username}')
@@ -202,28 +204,27 @@ class RofiRbw(object):
         for (key, value) in cred.further.items():
             entries.append(f'{key}: {value[0]}{"*" * (len(value) - 1)}')
 
-        (returncode, entry) = self.selector.show_selection(
-            entries,
-            self.args.action,
-            prompt='Autotype field',
-            show_help_message=False,
-            additional_args=self.args.selector_args
-        )
+        targets, action = self.selector.select_target(entries, show_help_message, additional_args=self.args.selector_args)
 
-        if returncode == 1:
+        if targets == CANCEL():
             self.main()
             return
 
-        key, value = entry.split(': ', 1)
+        return targets, action
 
-        if key == 'URI':
-            value = cred.uris[0]
-        elif key.startswith('URI'):
-            value = cred.uris[int(key[4:]) - 1]
-        else:
-            value = cred[key]
-
-        self.typer.type_characters(value, self.active_window)
+    def execute_action(self, cred: Credentials) -> None:
+        if self.args.action == Action.TYPE:
+            characters = '\t'.join([cred[target] for target in self.args.targets])
+            self.typer.type_characters(characters, self.active_window)
+            if Targets.PASSWORD in self.args.targets and cred.totp != "":
+                self.clipboarder.copy_to_clipboard(cred.totp)
+        elif self.args.action == Action.COPY:
+            for target in self.args.targets:
+                self.clipboarder.copy_to_clipboard(cred[target])
+            if len(self.args.targets) == 1 and self.args.targets[0] == Targets.PASSWORD:
+                self.clipboarder.clear_clipboard_after(self.args.clear)
+        elif self.args.action == Action.PRINT:
+            print('\n'.join([cred[target] for target in self.args.targets]))
 
 
 def main():

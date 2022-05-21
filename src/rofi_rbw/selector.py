@@ -1,17 +1,13 @@
-from enum import Enum
-from typing import List, Tuple, Union
 from subprocess import run
+from typing import List, Tuple, Union
 
 try:
     from rofi_rbw.abstractionhelper import is_wayland, is_installed
-    from rofi_rbw.action import Action
+    from rofi_rbw.models import Action, Target, Targets, CANCEL, DEFAULT
 except:
     from abstractionhelper import is_wayland, is_installed
-    from action import Action
+    from models import Action, Target, Targets, CANCEL, DEFAULT
 
-class SelectorResponse(Enum):
-    CANCEL = 'cancel'
-    DEFAULT = 'default'
 
 class Selector:
     @staticmethod
@@ -38,7 +34,16 @@ class Selector:
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[SelectorResponse, Action], str]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], str]:
+        print('Could not find a valid way to show the selection. Please check the required dependencies.')
+        exit(4)
+
+    def select_target(
+        self,
+        targets: List[str],
+        show_help_message: bool,
+        additional_args: List[str]
+    ) -> Tuple[Union[List[Target], CANCEL], Union[Action, DEFAULT, CANCEL]]:
         print('Could not find a valid way to show the selection. Please check the required dependencies.')
         exit(4)
 
@@ -58,7 +63,7 @@ class Rofi(Selector):
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[SelectorResponse, Action], str]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], str]:
         parameters = [
             'rofi',
             '-markup-rows',
@@ -72,8 +77,8 @@ class Rofi(Selector):
             '-kb-custom-12',
             'Alt+u',
             '-kb-custom-13',
-            'Alt+t',
-            '-kb-custom-15',
+            'Alt+o',
+            '-kb-custom-14',
             'Alt+m',
             *additional_args
         ]
@@ -81,7 +86,7 @@ class Rofi(Selector):
         if show_help_message:
             parameters.extend([
                 '-mesg',
-                '<b>Alt+1</b>: Autotype username and password | <b>Alt+2</b> Type username | <b>Alt+u</b> Copy username | <b>Alt+p</b> Copy password | <b>Alt+t</b> Copy totp'
+                '<b>Alt+1</b>: Autotype username and password | <b>Alt+2</b> Type username | <b>Alt+3</b> Type password | <b>Alt+u</b> Copy username | <b>Alt+p</b> Copy password | <b>Alt+t</b> Copy totp'
             ])
 
         rofi = run(
@@ -90,25 +95,80 @@ class Rofi(Selector):
             capture_output=True,
             encoding='utf-8'
         )
-        returnaction = SelectorResponse.CANCEL
-        if rofi.returncode == 0:
-            returnaction = SelectorResponse.DEFAULT
-        elif rofi.returncode == 12:
-            returnaction = Action.TYPE_PASSWORD
-        elif rofi.returncode == 11:
-            returnaction = Action.TYPE_USERNAME
-        elif rofi.returncode == 10:
-            returnaction = Action.TYPE_BOTH
-        elif rofi.returncode == 13:
-            returnaction = Action.AUTOTYPE_MENU
-        elif rofi.returncode == 20:
-            returnaction = Action.COPY_PASSWORD
-        elif rofi.returncode == 21:
-            returnaction = Action.COPY_USERNAME
-        elif rofi.returncode == 22:
-            returnaction = Action.COPY_TOTP
 
-        return returnaction, rofi.stdout
+        if rofi.returncode == 1:
+            return_action = CANCEL()
+            return_targets = CANCEL()
+        elif rofi.returncode == 10:
+            return_action = Action.TYPE
+            return_targets = [Targets.USERNAME, Targets.PASSWORD]
+        elif rofi.returncode == 11:
+            return_action = Action.TYPE
+            return_targets = [Targets.USERNAME]
+        elif rofi.returncode == 12:
+            return_action = Action.TYPE
+            return_targets = [Targets.PASSWORD]
+        elif rofi.returncode == 20:
+            return_action = Action.COPY
+            return_targets = [Targets.PASSWORD]
+        elif rofi.returncode == 21:
+            return_action = Action.COPY
+            return_targets = [Targets.USERNAME]
+        elif rofi.returncode == 22:
+            return_action = Action.COPY
+            return_targets = [Targets.TOTP]
+        elif rofi.returncode == 23:
+            return_action = DEFAULT
+            return_targets = [Targets.MENU]
+        else:
+            return_action = DEFAULT()
+            return_targets = DEFAULT()
+
+        return return_targets, return_action, rofi.stdout
+
+    def select_target(
+        self,
+        targets: List[str],
+        show_help_message: bool,
+        additional_args: List[str]
+    ) -> Tuple[Union[List[Target], CANCEL], Union[Action, DEFAULT, CANCEL]]:
+        parameters = [
+            'rofi',
+            '-markup-rows',
+            '-dmenu',
+            '-i',
+            '-kb-custom-11',
+            'Alt+t',
+            '-kb-custom-12',
+            'Alt+c',
+            *additional_args
+        ]
+
+        if show_help_message:
+            parameters.extend([
+                '-mesg',
+                '<b>Alt+t</b>: Type | <b>Alt+c</b> Copy'
+            ])
+
+        rofi = run(
+            parameters,
+            input='\n'.join(targets),
+            capture_output=True,
+            encoding='utf-8'
+        )
+
+        if rofi.returncode == 1:
+            return CANCEL(), CANCEL()
+        elif rofi.returncode == 20:
+            action = Action.TYPE
+        elif rofi.returncode == 21:
+            action = Action.COPY
+        else:
+            action = DEFAULT()
+
+        targets = [Target(entry.split(':')[0]) for entry in rofi.stdout.strip().split('\n')]
+
+        return targets, action
 
 
 class Wofi(Selector):
@@ -126,7 +186,7 @@ class Wofi(Selector):
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[SelectorResponse, Action], str]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL],  str]:
         parameters = [
             'wofi',
             '--dmenu',
@@ -142,7 +202,31 @@ class Wofi(Selector):
             encoding='utf-8'
         )
         if wofi.returncode == 0:
-            return SelectorResponse.DEFAULT, wofi.stdout
+            return [], DEFAULT(), wofi.stdout
         else:
-            return SelectorResponse.CANCEL, wofi.stdout
+            return [], CANCEL(), wofi.stdout
+
+    def select_target(
+        self,
+        targets: List[str],
+        show_help_message: bool,
+        additional_args: List[str]
+    ) -> Tuple[Union[List[Target], CANCEL], Union[Action, DEFAULT, CANCEL]]:
+        parameters = [
+            'wofi',
+            '--dmenu',
+            *additional_args
+        ]
+
+        wofi = run(
+            parameters,
+            input='\n'.join(targets),
+            capture_output=True,
+            encoding='utf-8'
+        )
+
+        if wofi.returncode == 1:
+            return CANCEL(), CANCEL()
+
+        return [Target(entry.split(':')[0]) for entry in wofi.stdout.strip().split('\n')], DEFAULT()
 
