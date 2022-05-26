@@ -24,7 +24,7 @@ except ModuleNotFoundError:
     from entry import Entry
     from paths import *
 
-__version__ = '1.0.0'
+__version__ = '1.0.0-RC1'
 
 
 class RofiRbw(object):
