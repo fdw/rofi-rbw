@@ -1,12 +1,8 @@
 from subprocess import run
 from typing import List, Tuple, Union
 
-try:
-    from rofi_rbw.abstractionhelper import is_wayland, is_installed
-    from rofi_rbw.models import Action, Target, Targets, CANCEL, DEFAULT
-except:
-    from abstractionhelper import is_wayland, is_installed
-    from models import Action, Target, Targets, CANCEL, DEFAULT
+from .abstractionhelper import is_wayland, is_installed
+from .models import Action, Target, Targets, CANCEL, DEFAULT
 
 
 class Selector:

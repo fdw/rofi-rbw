@@ -1,12 +1,7 @@
 import time
 from subprocess import run
 
-try:
-    from rofi_rbw.abstractionhelper import is_wayland, is_installed
-    from rofi_rbw.typer import Typer
-except ModuleNotFoundError:
-    from abstractionhelper import is_wayland, is_installed
-    from typer import Typer
+from .abstractionhelper import is_wayland, is_installed
 
 
 class Clipboarder:

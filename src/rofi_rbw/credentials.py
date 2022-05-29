@@ -1,10 +1,7 @@
 from subprocess import run
 from typing import Union, Optional, List
 
-try:
-    from rofi_rbw.models import Target, Targets
-except ModuleNotFoundError:
-    from models import Target, Targets
+from .models import Target, Targets
 
 
 class Credentials:

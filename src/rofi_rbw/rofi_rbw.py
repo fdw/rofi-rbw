@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import argparse
 import shlex
 from subprocess import run
@@ -7,22 +5,13 @@ from typing import List, Tuple, Union
 
 import configargparse
 
-try:
-    from rofi_rbw.models import Action, Target, Targets, CANCEL, DEFAULT
-    from rofi_rbw.clipboarder import Clipboarder
-    from rofi_rbw.typer import Typer
-    from rofi_rbw.selector import Selector
-    from rofi_rbw.credentials import Credentials
-    from rofi_rbw.entry import Entry
-    from rofi_rbw.paths import *
-except ModuleNotFoundError:
-    from models import Action, Target, Targets, CANCEL, DEFAULT
-    from clipboarder import Clipboarder
-    from typer import Typer
-    from selector import Selector
-    from credentials import Credentials
-    from entry import Entry
-    from paths import *
+from .models import Action, Target, Targets, CANCEL, DEFAULT
+from .clipboarder import Clipboarder
+from .typer import Typer
+from .selector import Selector
+from .credentials import Credentials
+from .entry import Entry
+from .paths import *
 
 __version__ = '1.0.0-RC1'
 
@@ -225,11 +214,3 @@ class RofiRbw(object):
                 self.clipboarder.clear_clipboard_after(self.args.clear)
         elif self.args.action == Action.PRINT:
             print('\n'.join([cred[target] for target in self.args.targets]))
-
-
-def main():
-    RofiRbw().main()
-
-
-if __name__ == "__main__":
-    main()

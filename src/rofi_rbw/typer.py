@@ -1,10 +1,7 @@
 from subprocess import run
 import time
 
-try:
-    from rofi_rbw.abstractionhelper import is_wayland, is_installed
-except ModuleNotFoundError:
-    from abstractionhelper import is_wayland, is_installed
+from .abstractionhelper import is_wayland, is_installed
 
 
 class Typer:
