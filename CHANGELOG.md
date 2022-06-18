@@ -1,4 +1,4 @@
-# [UPCOMING]
+# [1.0.0]
 ## Changed
 - Split up `--action` into `--action` and `--target` for better handling.
 - `--rofi-args` is now removed. Use `--selector-args` instead.
