@@ -1,6 +1,7 @@
 # [UPCOMING]
 ## Changed
 - Split up `--action` into `--action` and `--target` for better handling.
+- `--rofi-args` is now removed. Use `--selector-args` instead.
 
 ## Added
 - Added an option to limit the time a passwords stay in the clipboard.

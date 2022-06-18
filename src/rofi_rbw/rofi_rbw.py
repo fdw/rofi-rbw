@@ -62,13 +62,6 @@ class RofiRbw(object):
             help='A string of arguments to give to the selector'
         )
         parser.add_argument(
-            '--rofi-args',
-            dest='rofi_args',
-            action='store',
-            default='',
-            help='A string of arguments to give to rofi'
-        )
-        parser.add_argument(
             '--selector',
             dest='selector',
             action='store',
@@ -111,12 +104,11 @@ class RofiRbw(object):
         )
 
         parsed_args = parser.parse_args()
+
         parsed_args.selector_args = shlex.split(parsed_args.selector_args)
-        if parsed_args.rofi_args and not parsed_args.selector_args:
-            print("The --rofi-args option is deprecated. Please migrate to using --selector-args exclusively.")
-            parsed_args.selector_args = shlex.split(parsed_args.rofi_args)
 
         parsed_args.action = Action(parsed_args.action)
+
         if parsed_args.targets:
             parsed_args.targets = [Target(target) for target in parsed_args.targets]
         else:
