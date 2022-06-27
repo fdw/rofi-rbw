@@ -198,9 +198,9 @@ class Wofi(Selector):
             encoding='utf-8'
         )
         if wofi.returncode == 0:
-            return [], DEFAULT(), wofi.stdout
+            return DEFAULT(), DEFAULT(), wofi.stdout
         else:
-            return [], CANCEL(), wofi.stdout
+            return CANCEL(), CANCEL(), wofi.stdout
 
     def select_target(
         self,
