@@ -13,7 +13,7 @@ from .credentials import Credentials
 from .entry import Entry
 from .paths import *
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 
 class RofiRbw(object):
