@@ -5,11 +5,11 @@
 # NAME
 
 
-**rofi-moji** \- A rofi frontend for the alternative Bitwarden client rbw
+**rofi-rbw** \- A rofi frontend for the alternative Bitwarden client rbw
 
 # SYNOPSIS
 
-| **rofimoji** \[**-h**] \[**\--version**] \[**\--action** {*type*,*copy*,*print*}]
+| **rofi-rbw** \[**-h**] \[**\--version**] \[**\--action** {*type*,*copy*,*print*}]
          \[**\--target** {*username*,*password*,*totp*,*OTHER*}]
          \[**\--prompt** *PROMPT*] \[**\--selector-args** *SELECTOR_ARGS*]
          \[**\--clipboarder** *CLIPBOARDER*] \[**\--typer** *TYPER*] \[**\--selector** *SELECTOR*]
