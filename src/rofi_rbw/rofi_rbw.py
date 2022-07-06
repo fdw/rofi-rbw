@@ -89,6 +89,13 @@ class RofiRbw(object):
             help='Choose the application to type with'
         )
         parser.add_argument(
+            '--typer-args',
+            dest='typer_args',
+            action='store',
+            default='',
+            help='A string of arguments to give to the typer'
+        )
+        parser.add_argument(
             '--clear-after',
             dest='clear',
             action='store',
@@ -106,6 +113,7 @@ class RofiRbw(object):
         parsed_args = parser.parse_args()
 
         parsed_args.selector_args = shlex.split(parsed_args.selector_args)
+        parsed_args.typer_args = shlex.split(parsed_args.typer_args)
 
         parsed_args.action = Action(parsed_args.action)
 
@@ -196,7 +204,7 @@ class RofiRbw(object):
     def execute_action(self, cred: Credentials) -> None:
         if self.args.action == Action.TYPE:
             characters = '\t'.join([cred[target] for target in self.args.targets])
-            self.typer.type_characters(characters, self.active_window)
+            self.typer.type_characters(characters, self.active_window, self.args.typer_args)
             if Targets.PASSWORD in self.args.targets and cred.totp != "":
                 self.clipboarder.copy_to_clipboard(cred.totp)
         elif self.args.action == Action.COPY:
