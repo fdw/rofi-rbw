@@ -54,7 +54,11 @@ class XSelClipboarder(Clipboarder):
     def clear_clipboard_after(self, clear: int) -> None:
         if clear > 0:
             time.sleep(clear)
-            run(['xsel', '-delete'])
+            run([
+                'xsel',
+                '-d',
+                '-b'
+            ])
 
 
 class XClipClipboarder(Clipboarder):
