@@ -202,7 +202,7 @@ class RofiRbw(object):
         elif self.args.action == Action.COPY:
             for target in self.args.targets:
                 self.clipboarder.copy_to_clipboard(cred[target])
-            if len(self.args.targets) == 1 and self.args.targets[0] == Targets.PASSWORD:
+            if Targets.PASSWORD in self.args.targets:
                 self.clipboarder.clear_clipboard_after(self.args.clear)
         elif self.args.action == Action.PRINT:
             print('\n'.join([cred[target] for target in self.args.targets]))
