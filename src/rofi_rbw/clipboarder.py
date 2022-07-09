@@ -77,10 +77,27 @@ class XClipClipboarder(Clipboarder):
             encoding='utf-8'
         )
 
+        self.previously_copied = characters
+
+    def get_clipboard(self) -> str:
+        return run([
+            'xclip',
+            '-o',
+            '-selection',
+            'clipboard'
+        ],
+            capture_output=True,
+            text=True
+        ).stdout
+
     def clear_clipboard_after(self, clear: int) -> None:
         if clear > 0:
             time.sleep(clear)
-            self.copy_to_clipboard("")
+
+            # Only clear clipboard if nothing has been copied since the password
+            if self.get_clipboard() == self.previously_copied:
+                self.copy_to_clipboard("")
+                self.previously_copied = None
 
 
 class WlClipboarder(Clipboarder):
