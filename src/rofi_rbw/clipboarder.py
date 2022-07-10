@@ -44,8 +44,8 @@ class XSelClipboarder(Clipboarder):
     def copy_to_clipboard(self, characters: str) -> None:
         run([
             'xsel',
-            '-i',
-            '-b'
+            '--input',
+            '--clipboard'
         ],
             input=characters,
             encoding='utf-8'
@@ -56,8 +56,8 @@ class XSelClipboarder(Clipboarder):
             time.sleep(clear)
             run([
                 'xsel',
-                '-d',
-                '-b'
+                '--clear',
+                '--clipboard'
             ])
 
 
@@ -73,7 +73,7 @@ class XClipClipboarder(Clipboarder):
     def copy_to_clipboard(self, characters: str) -> None:
         run([
             'xclip',
-            '-i',
+            '-in',
             '-selection',
             'clipboard'
         ],
