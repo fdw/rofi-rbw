@@ -27,7 +27,7 @@ class Typer:
         print('Could not find a valid way to type characters. Please check the required dependencies.')
         exit(5)
 
-    def type_characters(self, characters: str, active_window: str, key_delay: int) -> None:
+    def type_characters(self, characters: str, active_window: str) -> None:
         print('Could not find a valid way to type characters. Please check the required dependencies.')
         exit(5)
 
@@ -45,7 +45,7 @@ class XDoToolTyper(Typer):
         return run(args=['xdotool', 'getactivewindow'], capture_output=True,
                    encoding='utf-8').stdout[:-1]
 
-    def type_characters(self, characters: str, active_window: str, key_delay: int) -> None:
+    def type_characters(self, characters: str, active_window: str) -> None:
         run([
             'xdotool',
             'windowactivate',
@@ -54,7 +54,7 @@ class XDoToolTyper(Typer):
             'type',
             '--clearmodifiers',
             '--delay',
-            str(key_delay),
+            '0',
             characters
         ])
 
@@ -71,11 +71,11 @@ class WTypeTyper(Typer):
     def get_active_window(self) -> str:
         return "not possible with wtype"
 
-    def type_characters(self, characters: str, active_window: str, key_delay: int) -> None:
+    def type_characters(self, characters: str, active_window: str) -> None:
         run([
             'wtype',
             '-d',
-            str(key_delay),
+            '0',
             characters
         ])
 
@@ -92,12 +92,12 @@ class YDotoolTyper(Typer):
     def get_active_window(self) -> str:
         return "not possible with ydotool"
 
-    def type_characters(self, characters: str, active_window: str, key_delay: int) -> None:
+    def type_characters(self, characters: str, active_window: str) -> None:
         time.sleep(0.05)
         run([
             'ydotool',
             'type',
             '--key-delay',
-            str(key_delay),
+            '0',
             characters
         ])
