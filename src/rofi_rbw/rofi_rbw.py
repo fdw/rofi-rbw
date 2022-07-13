@@ -89,14 +89,6 @@ class RofiRbw(object):
             help='Choose the application to type with'
         )
         parser.add_argument(
-            '--key-delay',
-            dest='key_delay',
-            action='store',
-            type=int,
-            default=0,
-            help='The delay in milliseconds between each key press'
-        )
-        parser.add_argument(
             '--clear-after',
             dest='clear',
             action='store',
@@ -204,7 +196,7 @@ class RofiRbw(object):
     def execute_action(self, cred: Credentials) -> None:
         if self.args.action == Action.TYPE:
             characters = '\t'.join([cred[target] for target in self.args.targets])
-            self.typer.type_characters(characters, self.active_window, self.args.key_delay)
+            self.typer.type_characters(characters, self.active_window)
             if Targets.PASSWORD in self.args.targets and cred.totp != "":
                 self.clipboarder.copy_to_clipboard(cred.totp)
         elif self.args.action == Action.COPY:
