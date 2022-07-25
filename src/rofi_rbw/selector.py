@@ -73,7 +73,7 @@ class Rofi(Selector):
             '-kb-custom-12',
             'Alt+u',
             '-kb-custom-13',
-            'Alt+o',
+            'Alt+t',
             '-kb-custom-14',
             'Alt+m',
             *additional_args
