@@ -39,9 +39,10 @@ class Selector:
     def select_target(
         self,
         targets: List[str],
+        default_action: Action,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[List[Target], Union[Action, DEFAULT, CANCEL]]:
+    ) -> Tuple[List[Target], Union[Action, CANCEL]]:
         print('Could not find a valid way to show the selection. Please check the required dependencies.')
         exit(4)
 
@@ -129,9 +130,10 @@ class Rofi(Selector):
     def select_target(
         self,
         targets: List[str],
+        default_action: Action,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], CANCEL], Union[Action, DEFAULT, CANCEL]]:
+    ) -> Tuple[List[Target], Union[Action, CANCEL]]:
         parameters = [
             'rofi',
             '-markup-rows',
@@ -158,13 +160,13 @@ class Rofi(Selector):
         )
 
         if rofi.returncode == 1:
-            return CANCEL(), CANCEL()
+            return [], CANCEL()
         elif rofi.returncode == 20:
             action = Action.TYPE
         elif rofi.returncode == 21:
             action = Action.COPY
         else:
-            action = DEFAULT()
+            action = default_action
 
         targets = [Target(entry.split(':')[0]) for entry in rofi.stdout.strip().split('\n')]
 
@@ -211,9 +213,10 @@ class Wofi(Selector):
     def select_target(
         self,
         targets: List[str],
+        default_action: Action,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], CANCEL], Union[Action, DEFAULT, CANCEL]]:
+    ) -> Tuple[List[Target], Union[Action, CANCEL]]:
         parameters = [
             'wofi',
             '--dmenu',
@@ -228,7 +231,7 @@ class Wofi(Selector):
         )
 
         if wofi.returncode == 1:
-            return CANCEL(), CANCEL()
+            return [], CANCEL()
 
-        return [Target(entry.split(':')[0]) for entry in wofi.stdout.strip().split('\n')], DEFAULT()
+        return [Target(entry.split(':')[0]) for entry in wofi.stdout.strip().split('\n')], default_action
 

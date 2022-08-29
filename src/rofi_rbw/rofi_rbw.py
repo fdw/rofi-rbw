@@ -139,10 +139,12 @@ class RofiRbw(object):
         credential = self.get_credentials(selected_entry.name, selected_entry.folder, selected_entry.username)
 
         if Targets.MENU in self.args.targets:
-            targets, action = self.show_target_menu(credential, self.args.show_help,)
-            self.args.targets = targets
-            if action != DEFAULT():
-                self.args.action = action
+            selected_targets, selected_action = self.show_target_menu(credential)
+            if selected_action == CANCEL():
+                self.main()
+                return
+            self.args.targets = selected_targets
+            self.args.action = selected_action
 
         self.execute_action(credential)
 
@@ -165,9 +167,8 @@ class RofiRbw(object):
 
     def show_target_menu(
         self,
-        cred: Credentials,
-        show_help_message: bool
-    ) -> Tuple[List[Target], Union[Action, DEFAULT]]:
+        cred: Credentials
+    ) -> Tuple[List[Target], Action]:
         entries = []
         if cred.username:
             entries.append(f'Username: {cred.username}')
@@ -183,13 +184,7 @@ class RofiRbw(object):
         for (key, value) in cred.further.items():
             entries.append(f'{key}: {value[0]}{"*" * (len(value) - 1)}')
 
-        targets, action = self.selector.select_target(entries, show_help_message, additional_args=self.args.selector_args)
-
-        if targets == CANCEL():
-            self.main()
-            return
-
-        return targets, action
+        return self.selector.select_target(entries, self.args.action, self.args.show_help, additional_args=self.args.selector_args)
 
     def execute_action(self, cred: Credentials) -> None:
         if self.args.action == Action.TYPE:
