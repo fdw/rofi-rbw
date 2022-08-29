@@ -74,6 +74,23 @@ class Credentials:
         else:
             return self.further.get(target.raw, None)
 
+    def to_menu_entries(self) -> List[str]:
+        entries = []
+        if self.username:
+            entries.append(f'Username: {self.username}')
+        if self.password:
+            entries.append(f'Password: {self.password[0]}{"*" * (len(self.password) - 1)}')
+        if self.has_totp:
+            entries.append(f'TOTP: {self.totp}')
+        if len(self.uris) == 1:
+            entries.append(f'URI: {self.uris[0]}')
+        else:
+            for (key, value) in enumerate(self.uris):
+                entries.append(f'URI {key + 1}: {value}')
+        for (key, value) in self.further.items():
+            entries.append(f'{key}: {value[0]}{"*" * (len(value) - 1)}')
+        return entries
+
     @property
     def totp(self):
         if not self.has_totp:

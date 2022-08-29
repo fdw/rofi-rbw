@@ -141,7 +141,7 @@ class RofiRbw(object):
             self.args.action = selected_action
 
         if Targets.MENU in self.args.targets:
-            targets, action = self.show_target_menu(credential, self.args.show_help,)
+            targets, action = self.show_target_menu(credential)
             self.args.targets = targets
             if action != DEFAULT():
                 self.args.action = action
@@ -165,24 +165,11 @@ class RofiRbw(object):
     def show_target_menu(
         self,
         cred: Credentials,
-        show_help_message: bool
     ) -> Tuple[List[Target], Union[Action, DEFAULT]]:
-        entries = []
-        if cred.username:
-            entries.append(f'Username: {cred.username}')
-        if cred.password:
-            entries.append(f'Password: {cred.password[0]}{"*" * (len(cred.password) - 1)}')
-        if cred.has_totp:
-            entries.append(f'TOTP: {cred.totp}')
-        if len(cred.uris) == 1:
-            entries.append(f'URI: {cred.uris[0]}')
-        else:
-            for (key, value) in enumerate(cred.uris):
-                entries.append(f'URI {key + 1}: {value}')
-        for (key, value) in cred.further.items():
-            entries.append(f'{key}: {value[0]}{"*" * (len(value) - 1)}')
-
-        targets, action = self.selector.select_target(entries, show_help_message, additional_args=self.args.selector_args)
+        targets, action = self.selector.select_target(
+            cred.to_menu_entriest(),
+            self.args.show_help,
+            additional_args=self.args.selector_args)
 
         if targets == CANCEL():
             self.main()
