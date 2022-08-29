@@ -15,15 +15,15 @@ class Credentials:
         self.uris = []
         self.further = {}
 
-        self.__load_from_rbw(name, username, folder)
+        self.__load_from_rbw()
 
-    def __load_from_rbw(self, name: str, username: str, folder: Optional[str]):
-        command = ['rbw', 'get', '--full', name]
-        if username:
-            command.append(username)
+    def __load_from_rbw(self):
+        command = ['rbw', 'get', '--full', self.name]
+        if self.username:
+            command.append(self.username)
 
-        if folder != "":
-            command.extend(["--folder", folder])
+        if self.folder != "":
+            command.extend(["--folder", self.folder])
 
         result = run(
             command,
