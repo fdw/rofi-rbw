@@ -27,10 +27,12 @@ class Selector:
     def show_selection(
         self,
         entries: List[str],
+        default_targets: List[Target],
+        default_action: Action,
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], str]:
+    ) -> Tuple[List[Target], Union[Action, CANCEL], str]:
         print('Could not find a valid way to show the selection. Please check the required dependencies.')
         exit(4)
 
@@ -39,7 +41,7 @@ class Selector:
         targets: List[str],
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], CANCEL], Union[Action, DEFAULT, CANCEL]]:
+    ) -> Tuple[List[Target], Union[Action, DEFAULT, CANCEL]]:
         print('Could not find a valid way to show the selection. Please check the required dependencies.')
         exit(4)
 
@@ -56,10 +58,12 @@ class Rofi(Selector):
     def show_selection(
         self,
         entries: List[str],
+        default_targets: List[Target],
+        default_action: Action,
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], str]:
+    ) -> Tuple[List[Target], Union[Action, CANCEL], str]:
         parameters = [
             'rofi',
             '-markup-rows',
@@ -94,7 +98,7 @@ class Rofi(Selector):
 
         if rofi.returncode == 1:
             return_action = CANCEL()
-            return_targets = CANCEL()
+            return_targets = []
         elif rofi.returncode == 10:
             return_action = Action.TYPE
             return_targets = [Targets.USERNAME, Targets.PASSWORD]
@@ -114,11 +118,11 @@ class Rofi(Selector):
             return_action = Action.COPY
             return_targets = [Targets.TOTP]
         elif rofi.returncode == 23:
-            return_action = DEFAULT
+            return_action = default_action
             return_targets = [Targets.MENU]
         else:
-            return_action = DEFAULT()
-            return_targets = DEFAULT()
+            return_action = default_action
+            return_targets = default_targets
 
         return return_targets, return_action, rofi.stdout
 
@@ -179,10 +183,12 @@ class Wofi(Selector):
     def show_selection(
         self,
         entries: List[str],
+        default_targets: List[Target],
+        default_action: Action,
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL],  str]:
+    ) -> Tuple[List[Target], Union[Action, CANCEL], str]:
         parameters = [
             'wofi',
             '--dmenu',
@@ -198,9 +204,9 @@ class Wofi(Selector):
             encoding='utf-8'
         )
         if wofi.returncode == 0:
-            return DEFAULT(), DEFAULT(), wofi.stdout
+            return default_targets, default_action, wofi.stdout
         else:
-            return CANCEL(), CANCEL(), wofi.stdout
+            return [], CANCEL(), wofi.stdout
 
     def select_target(
         self,

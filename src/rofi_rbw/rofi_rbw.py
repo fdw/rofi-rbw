@@ -123,22 +123,20 @@ class RofiRbw(object):
 
         (selected_targets, selected_action, selected_string) = self.selector.show_selection(
             entries,
+            self.args.targets,
+            self.args.action,
             self.args.prompt,
             self.args.show_help,
             self.args.selector_args
         )
         if selected_action == CANCEL():
             return
+        self.args.targets = selected_targets
+        self.args.action = selected_action
 
         selected_entry = Entry.parse_formatted_string(selected_string)
 
         credential = self.get_credentials(selected_entry.name, selected_entry.folder, selected_entry.username)
-
-        if selected_targets != DEFAULT():
-            self.args.targets = selected_targets
-
-        if selected_action != DEFAULT():
-            self.args.action = selected_action
 
         if Targets.MENU in self.args.targets:
             targets, action = self.show_target_menu(credential, self.args.show_help,)
