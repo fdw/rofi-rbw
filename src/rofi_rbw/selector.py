@@ -83,11 +83,20 @@ class Rofi(Selector):
             'Alt+m',
             *additional_args
         ]
+        keys = {
+            10: ('<b>Alt+1</b> Type username and password', [Targets.USERNAME, Targets.PASSWORD], Action.TYPE),
+            11: ('<b>Alt+2</b> Type username', [Targets.USERNAME], Action.TYPE),
+            12: ('<b>Alt+3</b> Type password', [Targets.PASSWORD], Action.TYPE),
+            21: ('<b>Alt+u</b> Copy username', [Targets.USERNAME], Action.COPY),
+            20: ('<b>Alt+p</b> Copy password', [Targets.PASSWORD], Action.COPY),
+            22: ('<b>Alt+t</b> Copy totp', [Targets.TOTP], Action.COPY),
+            23: ('<b>Alt+m</b> Show menu', [Targets.MENU], default_action)
+        }
 
         if show_help_message:
             parameters.extend([
                 '-mesg',
-                '<b>Alt+1</b>: Autotype username and password | <b>Alt+2</b> Type username | <b>Alt+3</b> Type password | <b>Alt+u</b> Copy username | <b>Alt+p</b> Copy password | <b>Alt+t</b> Copy totp'
+                ' | '.join(keys[k][0] for k in keys if not (keys[k][1] == default_targets and keys[k][2] == default_action))
             ])
 
         rofi = run(
@@ -100,27 +109,9 @@ class Rofi(Selector):
         if rofi.returncode == 1:
             return_action = CANCEL()
             return_targets = []
-        elif rofi.returncode == 10:
-            return_action = Action.TYPE
-            return_targets = [Targets.USERNAME, Targets.PASSWORD]
-        elif rofi.returncode == 11:
-            return_action = Action.TYPE
-            return_targets = [Targets.USERNAME]
-        elif rofi.returncode == 12:
-            return_action = Action.TYPE
-            return_targets = [Targets.PASSWORD]
-        elif rofi.returncode == 20:
-            return_action = Action.COPY
-            return_targets = [Targets.PASSWORD]
-        elif rofi.returncode == 21:
-            return_action = Action.COPY
-            return_targets = [Targets.USERNAME]
-        elif rofi.returncode == 22:
-            return_action = Action.COPY
-            return_targets = [Targets.TOTP]
-        elif rofi.returncode == 23:
-            return_action = default_action
-            return_targets = [Targets.MENU]
+        elif rofi.returncode in keys:
+            return_action = keys[rofi.returncode][2]
+            return_targets = keys[rofi.returncode][1]
         else:
             return_action = default_action
             return_targets = default_targets
