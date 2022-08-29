@@ -132,7 +132,7 @@ class RofiRbw(object):
 
         selected_entry = Entry.parse_formatted_string(selected_string)
 
-        credential = self.get_credentials(selected_entry.name, selected_entry.folder, selected_entry.username)
+        credential = Credentials.from_entry(selected_entry)
 
         if selected_targets != DEFAULT():
             self.args.targets = selected_targets
@@ -161,9 +161,6 @@ class RofiRbw(object):
             exit(2)
 
         return [Entry.parse_rbw_output(it) for it in (rofi.stdout.strip().split('\n'))]
-
-    def get_credentials(self, name: str, folder: str, username: str) -> Credentials:
-        return Credentials(name, username, folder)
 
     def show_target_menu(
         self,

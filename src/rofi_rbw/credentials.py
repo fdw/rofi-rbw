@@ -2,6 +2,7 @@ from subprocess import run
 from typing import Union, Optional, List
 
 from .models import Target, Targets
+from .entry import Entry
 
 
 class Credentials:
@@ -16,6 +17,10 @@ class Credentials:
         self.further = {}
 
         self.__load_from_rbw()
+
+    @classmethod
+    def from_entry(cls, entry: Entry) -> 'Credentials':
+        return Credentials(entry.name, entry.username, entry.folder)
 
     def __load_from_rbw(self):
         command = ['rbw', 'get', '--full', self.name]
