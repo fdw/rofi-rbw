@@ -48,7 +48,3 @@ class CANCEL:
     def __eq__(self, other):
         return isinstance(other, CANCEL)
 
-
-class DEFAULT:
-    def __eq__(self, other):
-        return isinstance(other, DEFAULT)

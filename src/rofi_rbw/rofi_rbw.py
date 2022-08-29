@@ -5,7 +5,7 @@ from typing import List, Tuple, Union
 
 import configargparse
 
-from .models import Action, Target, Targets, CANCEL, DEFAULT
+from .models import Action, Target, Targets, CANCEL
 from .clipboarder import Clipboarder
 from .typer import Typer
 from .selector import Selector

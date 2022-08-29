@@ -2,7 +2,7 @@ from subprocess import run
 from typing import List, Tuple, Union
 
 from .abstractionhelper import is_wayland, is_installed
-from .models import Action, Target, Targets, CANCEL, DEFAULT
+from .models import Action, Target, Targets, CANCEL
 
 
 class Selector:
