@@ -117,7 +117,7 @@ class RofiRbw(object):
         return parsed_args
 
     def main(self) -> None:
-        parsed_entries = self.get_entries()
+        parsed_entries = Entry.get_list()
         maxwidth = max(len(it) for it in parsed_entries)
         entries = sorted(it.formatted_string(maxwidth) for it in parsed_entries)
 
@@ -147,20 +147,6 @@ class RofiRbw(object):
                 self.args.action = action
 
         self.execute_action(credential)
-
-    def get_entries(self):
-        rofi = run(
-            ['rbw', 'ls', '--fields', 'folder,name,user'],
-            encoding='utf-8',
-            capture_output=True
-        )
-
-        if rofi.returncode != 0:
-            print('There was a problem calling rbw. Is it correctly configured?')
-            print(rofi.stderr)
-            exit(2)
-
-        return [Entry.parse_rbw_output(it) for it in (rofi.stdout.strip().split('\n'))]
 
     def show_target_menu(
         self,

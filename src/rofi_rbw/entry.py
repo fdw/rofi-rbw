@@ -1,5 +1,5 @@
 import re
-
+from subprocess import run
 
 class Entry:
     def __init__(self, name: str = '', folder: str = '', username: str = '') -> None:
@@ -24,6 +24,21 @@ class Entry:
             match.group('folder'),
             match.group('username').strip()
         )
+
+    @classmethod
+    def get_list(cls) -> List['Entry']:
+        rofi = run(
+            ['rbw', 'ls', '--fields', 'folder,name,user'],
+            encoding='utf-8',
+            capture_output=True
+        )
+
+        if rofi.returncode != 0:
+            print('There was a problem calling rbw. Is it correctly configured?')
+            print(rofi.stderr)
+            exit(2)
+
+        return [cls.parse_rbw_output(it) for it in (rofi.stdout.strip().split('\n'))]
 
     @classmethod
     def parse_rbw_output(cls, rbw_string: str) -> 'Entry':
