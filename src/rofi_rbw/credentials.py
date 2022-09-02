@@ -1,61 +1,17 @@
+from dataclasses import dataclass, field
 from subprocess import run
-from typing import Union, Optional, List
+from typing import Union, Optional, List, Dict
 
+from .entry import Entry
 from .models import Target, Targets
 
 
-class Credentials:
-    def __init__(self, name: str, username: str, folder: Optional[str]) -> None:
-        self.name = name
-        self.folder = folder
-        self.username = username
-
-        self.password = ''
-        self.has_totp = False
-        self.uris = []
-        self.further = {}
-
-        self.__load_from_rbw(name, username, folder)
-
-    def __load_from_rbw(self, name: str, username: str, folder: Optional[str]):
-        command = ['rbw', 'get', '--full', name]
-        if username:
-            command.append(username)
-
-        if folder != "":
-            command.extend(["--folder", folder])
-
-        result = run(
-            command,
-            capture_output=True,
-            encoding='utf-8'
-        ).stdout
-
-        self.__parse_rbw_output(result)
-
-    def __parse_rbw_output(self, output: str):
-        line, *rest = output.strip().split('\n')
-        if len(line.split(": ", 1)) == 2:
-            # First line contains ': ' and thus there is no password
-            rest = [line] + rest
-        else:
-            self.password = line
-
-        for line in rest:
-            try:
-                key, value = line.split(": ", 1)
-                if key == "Username":
-                    self.username = value
-                elif key == "URI":
-                    self.uris.append(value)
-                elif key == "TOTP Secret":
-                    self.has_totp = True
-                elif key == 'Match type':
-                    pass
-                else:
-                    self.further[key] = value
-            except ValueError:
-                pass
+@dataclass(frozen=True)
+class Credentials(Entry):
+    password: Optional[str] = ''
+    has_totp: bool = False
+    uris: List[str] = field(default_factory=list)
+    further: Dict[str, str] = field(default_factory=dict)
 
     def __getitem__(self, target: Target) -> Optional[Union[str, List[str]]]:
         if target == Targets.USERNAME:
@@ -82,3 +38,51 @@ class Credentials:
             capture_output=True,
             encoding='utf-8'
         ).stdout.strip()
+
+    @staticmethod
+    def from_entry(entry: Entry) -> 'Credentials':
+        def __load_from_rbw(name: str, username: str, folder: Optional[str]) -> str:
+            command = ['rbw', 'get', '--full', name]
+            if username:
+                command.append(username)
+
+            if folder != "":
+                command.extend(["--folder", folder])
+
+            return run(
+                command,
+                capture_output=True,
+                encoding='utf-8'
+            ).stdout
+
+        def __parse_output(line: str) -> None:
+            try:
+                key, value = line.split(": ", 1)
+                if key == "URI":
+                    uris.append(value)
+                elif key == "TOTP Secret":
+                    nonlocal has_totp
+                    has_totp = True
+                elif key == 'Match type' or key == 'username':
+                    pass
+                else:
+                    further[key] = value
+            except ValueError:
+                pass
+
+        password = ''
+        has_totp = False
+        uris = []
+        further = {}
+
+        line, *rest = __load_from_rbw(entry.name, entry.username, entry.folder).strip().split('\n')
+        if len(line.split(": ", 1)) == 2:
+            # First line contains ': ' and thus there is no password
+            rest = [line] + rest
+        else:
+            password = line
+
+        for line in rest:
+            __parse_output(line)
+
+        return Credentials(entry.name, entry.folder, entry.username, password, has_totp, uris, further)

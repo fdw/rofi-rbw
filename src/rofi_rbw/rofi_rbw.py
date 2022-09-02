@@ -117,12 +117,8 @@ class RofiRbw(object):
         return parsed_args
 
     def main(self) -> None:
-        parsed_entries = self.get_entries()
-        maxwidth = max(len(it) for it in parsed_entries)
-        entries = sorted(it.formatted_string(maxwidth) for it in parsed_entries)
-
-        (selected_targets, selected_action, selected_string) = self.selector.show_selection(
-            entries,
+        (selected_targets, selected_action, selected_entry) = self.selector.show_selection(
+            self.get_entries(),
             self.args.prompt,
             self.args.show_help,
             self.args.selector_args
@@ -130,9 +126,7 @@ class RofiRbw(object):
         if selected_action == CANCEL():
             return
 
-        selected_entry = Entry.parse_formatted_string(selected_string)
-
-        credential = self.get_credentials(selected_entry.name, selected_entry.folder, selected_entry.username)
+        credential = Credentials.from_entry(selected_entry)
 
         if selected_targets != DEFAULT():
             self.args.targets = selected_targets
@@ -161,9 +155,6 @@ class RofiRbw(object):
             exit(2)
 
         return [Entry.parse_rbw_output(it) for it in (rofi.stdout.strip().split('\n'))]
-
-    def get_credentials(self, name: str, folder: str, username: str) -> Credentials:
-        return Credentials(name, username, folder)
 
     def show_target_menu(
         self,

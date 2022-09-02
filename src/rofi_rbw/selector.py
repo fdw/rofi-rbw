@@ -2,6 +2,7 @@ from subprocess import run
 from typing import List, Tuple, Union
 
 from .abstractionhelper import is_wayland, is_installed
+from .entry import Entry
 from .models import Action, Target, Targets, CANCEL, DEFAULT
 
 
@@ -26,11 +27,11 @@ class Selector:
 
     def show_selection(
         self,
-        entries: List[str],
+        entries: List[Entry],
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], str]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], Entry]:
         print('Could not find a valid way to show the selection. Please check the required dependencies.')
         exit(4)
 
@@ -55,11 +56,11 @@ class Rofi(Selector):
 
     def show_selection(
         self,
-        entries: List[str],
+        entries: List[Entry],
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], str]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], Entry]:
         parameters = [
             'rofi',
             '-markup-rows',
@@ -85,9 +86,12 @@ class Rofi(Selector):
                 '<b>Alt+1</b>: Autotype username and password | <b>Alt+2</b> Type username | <b>Alt+3</b> Type password | <b>Alt+u</b> Copy username | <b>Alt+p</b> Copy password | <b>Alt+t</b> Copy totp'
             ])
 
+        max_length = max(len(it) for it in entries)
+        formatted_entries = sorted(it.formatted_string(max_length) for it in entries)
+
         rofi = run(
             parameters,
-            input='\n'.join(entries),
+            input='\n'.join(formatted_entries),
             capture_output=True,
             encoding='utf-8'
         )
@@ -120,7 +124,7 @@ class Rofi(Selector):
             return_action = DEFAULT()
             return_targets = DEFAULT()
 
-        return return_targets, return_action, rofi.stdout
+        return return_targets, return_action, Entry.parse_formatted_string(rofi.stdout)
 
     def select_target(
         self,
@@ -178,11 +182,11 @@ class Wofi(Selector):
 
     def show_selection(
         self,
-        entries: List[str],
+        entries: List[Entry],
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL],  str]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL],  Entry]:
         parameters = [
             'wofi',
             '--dmenu',
@@ -191,16 +195,19 @@ class Wofi(Selector):
             *additional_args
         ]
 
+        max_length = max(len(it) for it in entries)
+        formatted_entries = sorted(it.formatted_string(max_length) for it in entries)
+
         wofi = run(
             parameters,
-            input='\n'.join(entries),
+            input='\n'.join(formatted_entries),
             capture_output=True,
             encoding='utf-8'
         )
         if wofi.returncode == 0:
-            return DEFAULT(), DEFAULT(), wofi.stdout
+            return DEFAULT(), DEFAULT(), Entry.parse_formatted_string(wofi.stdout)
         else:
-            return CANCEL(), CANCEL(), wofi.stdout
+            return CANCEL(), CANCEL(), Entry.parse_formatted_string(wofi.stdout)
 
     def select_target(
         self,
