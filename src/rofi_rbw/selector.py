@@ -31,7 +31,7 @@ class Selector:
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], Entry]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], Union[Entry, None]]:
         print('Could not find a valid way to show the selection. Please check the required dependencies.')
         exit(4)
 
@@ -60,7 +60,7 @@ class Rofi(Selector):
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], Entry]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], Union[Entry, None]]:
         parameters = [
             'rofi',
             '-markup-rows',
@@ -97,8 +97,7 @@ class Rofi(Selector):
         )
 
         if rofi.returncode == 1:
-            return_action = CANCEL()
-            return_targets = CANCEL()
+            return CANCEL(), CANCEL(), None
         elif rofi.returncode == 10:
             return_action = Action.TYPE
             return_targets = [Targets.USERNAME, Targets.PASSWORD]
@@ -186,7 +185,7 @@ class Wofi(Selector):
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL],  Entry]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL],  Union[Entry, None]]:
         parameters = [
             'wofi',
             '--dmenu',
@@ -207,7 +206,7 @@ class Wofi(Selector):
         if wofi.returncode == 0:
             return DEFAULT(), DEFAULT(), Entry.parse_formatted_string(wofi.stdout)
         else:
-            return CANCEL(), CANCEL(), Entry.parse_formatted_string(wofi.stdout)
+            return CANCEL(), CANCEL(), None
 
     def select_target(
         self,

@@ -1,30 +1,30 @@
 import argparse
 import shlex
-from subprocess import run
 from typing import List, Tuple, Union
 
 import configargparse
 
-from .models import Action, Target, Targets, CANCEL, DEFAULT
 from .clipboarder import Clipboarder
-from .typer import Typer
-from .selector import Selector
 from .credentials import Credentials
-from .entry import Entry
+from .models import Action, Target, Targets, CANCEL, DEFAULT
 from .paths import *
+from .rbw import Rbw
+from .selector import Selector
+from .typer import Typer
 
 __version__ = '1.0.1'
 
 
 class RofiRbw(object):
     def __init__(self) -> None:
-        self.args = self.parse_arguments()
+        self.args = self.__parse_arguments()
+        self.rbw = Rbw()
         self.selector = Selector.best_option(self.args.selector)
         self.typer = Typer.best_option(self.args.typer)
         self.clipboarder = Clipboarder.best_option(self.args.clipboarder)
         self.active_window = self.typer.get_active_window()
 
-    def parse_arguments(self) -> argparse.Namespace:
+    def __parse_arguments(self) -> argparse.Namespace:
         parser = configargparse.ArgumentParser(
             description='Insert or copy passwords and usernames from Bitwarden using rofi.',
             default_config_files=config_file_locations
@@ -118,7 +118,7 @@ class RofiRbw(object):
 
     def main(self) -> None:
         (selected_targets, selected_action, selected_entry) = self.selector.show_selection(
-            self.get_entries(),
+            self.rbw.get_entries(),
             self.args.prompt,
             self.args.show_help,
             self.args.selector_args
@@ -126,7 +126,7 @@ class RofiRbw(object):
         if selected_action == CANCEL():
             return
 
-        credential = Credentials.from_entry(selected_entry)
+        credential = self.rbw.fetch_credentials(selected_entry)
 
         if selected_targets != DEFAULT():
             self.args.targets = selected_targets
@@ -135,28 +135,14 @@ class RofiRbw(object):
             self.args.action = selected_action
 
         if Targets.MENU in self.args.targets:
-            targets, action = self.show_target_menu(credential, self.args.show_help,)
+            targets, action = self.__show_target_menu(credential, self.args.show_help, )
             self.args.targets = targets
             if action != DEFAULT():
                 self.args.action = action
 
-        self.execute_action(credential)
+        self.__execute_action(credential)
 
-    def get_entries(self):
-        rofi = run(
-            ['rbw', 'ls', '--fields', 'folder,name,user'],
-            encoding='utf-8',
-            capture_output=True
-        )
-
-        if rofi.returncode != 0:
-            print('There was a problem calling rbw. Is it correctly configured?')
-            print(rofi.stderr)
-            exit(2)
-
-        return [Entry.parse_rbw_output(it) for it in (rofi.stdout.strip().split('\n'))]
-
-    def show_target_menu(
+    def __show_target_menu(
         self,
         cred: Credentials,
         show_help_message: bool
@@ -184,7 +170,7 @@ class RofiRbw(object):
 
         return targets, action
 
-    def execute_action(self, cred: Credentials) -> None:
+    def __execute_action(self, cred: Credentials) -> None:
         if self.args.action == Action.TYPE:
             characters = '\t'.join([cred[target] for target in self.args.targets])
             self.typer.type_characters(characters, self.active_window)
