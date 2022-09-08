@@ -72,8 +72,6 @@ class WTypeTyper(Typer):
     def type_characters(self, characters: str, active_window: str) -> None:
         run([
             'wtype',
-            '-d',
-            '0',
             characters
         ])
 
