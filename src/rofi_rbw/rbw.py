@@ -6,7 +6,7 @@ from .entry import Entry
 
 
 class Rbw:
-    def get_entries(self) -> List[Entry]:
+    def list_entries(self) -> List[Entry]:
         rbw = run(
             ['rbw', 'ls', '--fields', 'folder,name,user'],
             encoding='utf-8',

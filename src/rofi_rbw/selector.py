@@ -2,6 +2,7 @@ from subprocess import run
 from typing import List, Tuple, Union
 
 from .abstractionhelper import is_wayland, is_installed
+from .credentials import Credentials
 from .entry import Entry
 from .models import Action, Target, Targets, CANCEL, DEFAULT
 
@@ -37,12 +38,37 @@ class Selector:
 
     def select_target(
         self,
-        targets: List[str],
+        credentials: Credentials,
         show_help_message: bool,
         additional_args: List[str]
     ) -> Tuple[Union[List[Target], CANCEL], Union[Action, DEFAULT, CANCEL]]:
         print('Could not find a valid way to show the selection. Please check the required dependencies.')
         exit(4)
+
+    def _format_entries(self, entries: List[Entry]) -> List[str]:
+        max_length = max(len(it) for it in entries)
+        return sorted(it.formatted_string(max_length) for it in entries)
+
+    def _format_targets_from_credential(self, credentials: Credentials) -> List[str]:
+        targets = []
+        if credentials.username:
+            targets.append(f'Username: {credentials.username}')
+        if credentials.password:
+            targets.append(f'Password: {credentials.password[0]}{"*" * (len(credentials.password) - 1)}')
+        if credentials.has_totp:
+            targets.append(f'TOTP: {credentials.totp}')
+        if len(credentials.uris) == 1:
+            targets.append(f'URI: {credentials.uris[0]}')
+        else:
+            for (key, value) in enumerate(credentials.uris):
+                targets.append(f'URI {key + 1}: {value}')
+        for (key, value) in credentials.further.items():
+            targets.append(f'{key}: {value[0]}{"*" * (len(value) - 1)}')
+
+        return targets
+
+    def _extract_targets(self, output: str) -> List[Target]:
+        return [Target(line.split(':')[0]) for line in output.strip().split('\n')]
 
 
 class Rofi(Selector):
@@ -86,12 +112,9 @@ class Rofi(Selector):
                 '<b>Alt+1</b>: Autotype username and password | <b>Alt+2</b> Type username | <b>Alt+3</b> Type password | <b>Alt+u</b> Copy username | <b>Alt+p</b> Copy password | <b>Alt+t</b> Copy totp'
             ])
 
-        max_length = max(len(it) for it in entries)
-        formatted_entries = sorted(it.formatted_string(max_length) for it in entries)
-
         rofi = run(
             parameters,
-            input='\n'.join(formatted_entries),
+            input='\n'.join(self._format_entries(entries)),
             capture_output=True,
             encoding='utf-8'
         )
@@ -127,7 +150,7 @@ class Rofi(Selector):
 
     def select_target(
         self,
-        targets: List[str],
+        credentials: Credentials,
         show_help_message: bool,
         additional_args: List[str]
     ) -> Tuple[Union[List[Target], CANCEL], Union[Action, DEFAULT, CANCEL]]:
@@ -151,7 +174,7 @@ class Rofi(Selector):
 
         rofi = run(
             parameters,
-            input='\n'.join(targets),
+            input='\n'.join(self._format_targets_from_credential(credentials)),
             capture_output=True,
             encoding='utf-8'
         )
@@ -165,9 +188,7 @@ class Rofi(Selector):
         else:
             action = DEFAULT()
 
-        targets = [Target(entry.split(':')[0]) for entry in rofi.stdout.strip().split('\n')]
-
-        return targets, action
+        return (self._extract_targets(rofi.stdout)), action
 
 
 class Wofi(Selector):
@@ -185,7 +206,7 @@ class Wofi(Selector):
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL],  Union[Entry, None]]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], Union[Entry, None]]:
         parameters = [
             'wofi',
             '--dmenu',
@@ -194,12 +215,9 @@ class Wofi(Selector):
             *additional_args
         ]
 
-        max_length = max(len(it) for it in entries)
-        formatted_entries = sorted(it.formatted_string(max_length) for it in entries)
-
         wofi = run(
             parameters,
-            input='\n'.join(formatted_entries),
+            input='\n'.join(self._format_entries(entries)),
             capture_output=True,
             encoding='utf-8'
         )
@@ -210,7 +228,7 @@ class Wofi(Selector):
 
     def select_target(
         self,
-        targets: List[str],
+        credentials: Credentials,
         show_help_message: bool,
         additional_args: List[str]
     ) -> Tuple[Union[List[Target], CANCEL], Union[Action, DEFAULT, CANCEL]]:
@@ -222,7 +240,7 @@ class Wofi(Selector):
 
         wofi = run(
             parameters,
-            input='\n'.join(targets),
+            input='\n'.join(self._format_targets_from_credential(credentials)),
             capture_output=True,
             encoding='utf-8'
         )
@@ -230,5 +248,6 @@ class Wofi(Selector):
         if wofi.returncode == 1:
             return CANCEL(), CANCEL()
 
-        return [Target(entry.split(':')[0]) for entry in wofi.stdout.strip().split('\n')], DEFAULT()
+        return self._extract_targets(wofi.stdout), DEFAULT()
+
 

@@ -118,7 +118,7 @@ class RofiRbw(object):
 
     def main(self) -> None:
         (selected_targets, selected_action, selected_entry) = self.selector.show_selection(
-            self.rbw.get_entries(),
+            self.rbw.list_entries(),
             self.args.prompt,
             self.args.show_help,
             self.args.selector_args
@@ -147,22 +147,9 @@ class RofiRbw(object):
         cred: Credentials,
         show_help_message: bool
     ) -> Tuple[List[Target], Union[Action, DEFAULT]]:
-        entries = []
-        if cred.username:
-            entries.append(f'Username: {cred.username}')
-        if cred.password:
-            entries.append(f'Password: {cred.password[0]}{"*" * (len(cred.password) - 1)}')
-        if cred.has_totp:
-            entries.append(f'TOTP: {cred.totp}')
-        if len(cred.uris) == 1:
-            entries.append(f'URI: {cred.uris[0]}')
-        else:
-            for (key, value) in enumerate(cred.uris):
-                entries.append(f'URI {key + 1}: {value}')
-        for (key, value) in cred.further.items():
-            entries.append(f'{key}: {value[0]}{"*" * (len(value) - 1)}')
 
-        targets, action = self.selector.select_target(entries, show_help_message, additional_args=self.args.selector_args)
+
+        targets, action = self.selector.select_target(cred, show_help_message, additional_args=self.args.selector_args)
 
         if targets == CANCEL():
             self.main()
