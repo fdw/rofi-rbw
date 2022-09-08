@@ -33,8 +33,7 @@ class Selector:
         show_help_message: bool,
         additional_args: List[str]
     ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], Union[Entry, None]]:
-        print('Could not find a valid way to show the selection. Please check the required dependencies.')
-        exit(4)
+        raise NoSelectorFoundException()
 
     def select_target(
         self,
@@ -42,8 +41,7 @@ class Selector:
         show_help_message: bool,
         additional_args: List[str]
     ) -> Tuple[Union[List[Target], CANCEL], Union[Action, DEFAULT, CANCEL]]:
-        print('Could not find a valid way to show the selection. Please check the required dependencies.')
-        exit(4)
+        raise NoSelectorFoundException()
 
     def _format_entries(self, entries: List[Entry]) -> List[str]:
         max_length = max(len(it) for it in entries)
@@ -251,3 +249,6 @@ class Wofi(Selector):
         return self._extract_targets(wofi.stdout), DEFAULT()
 
 
+class NoSelectorFoundException(Exception):
+    def __str__(self) -> str:
+        return 'Could not find a valid way to show the selection. Please check the required dependencies.'
