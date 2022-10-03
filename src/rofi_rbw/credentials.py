@@ -31,6 +31,8 @@ class Credentials(Entry):
             return ''
 
         command = ['rbw', 'code', self.name]
+        if self.username:
+            command.extend([self.username])
         if self.folder:
             command.extend(["--folder", self.folder])
         return run(
