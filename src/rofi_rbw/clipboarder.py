@@ -60,6 +60,8 @@ class XSelClipboarder(Clipboarder):
 
 
 class XClipClipboarder(Clipboarder):
+    __last_copied_characters: str
+
     @staticmethod
     def supported() -> bool:
         return not is_wayland() and is_installed('xclip')
@@ -79,9 +81,9 @@ class XClipClipboarder(Clipboarder):
             encoding='utf-8'
         )
 
-        self.previously_copied = characters
+        self.__last_copied_characters = characters
 
-    def get_clipboard(self) -> str:
+    def fetch_clipboard_content(self) -> str:
         return run([
             'xclip',
             '-o',
@@ -97,9 +99,9 @@ class XClipClipboarder(Clipboarder):
             time.sleep(clear)
 
             # Only clear clipboard if nothing has been copied since the password
-            if self.get_clipboard() == self.previously_copied:
+            if self.fetch_clipboard_content() == self.__last_copied_characters:
                 self.copy_to_clipboard("")
-                self.previously_copied = None
+                self.__last_copied_characters = None
 
 
 class WlClipboarder(Clipboarder):
