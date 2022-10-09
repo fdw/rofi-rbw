@@ -24,12 +24,10 @@ class Clipboarder:
         pass
 
     def copy_to_clipboard(self, characters: str) -> None:
-        print('Could not find a valid way to copy to clipboard. Please check the required dependencies.')
-        exit(6)
+        raise NoClipboarderFoundException()
 
     def clear_clipboard_after(self, clear: int) -> None:
-        print('Could not find a valid way to copy to clipboard. Please check the required dependencies.')
-        exit(6)
+        raise NoClipboarderFoundException()
 
 
 class XSelClipboarder(Clipboarder):
@@ -44,8 +42,8 @@ class XSelClipboarder(Clipboarder):
     def copy_to_clipboard(self, characters: str) -> None:
         run([
             'xsel',
-            '-i',
-            '-b'
+            '--input',
+            '--clipboard'
         ],
             input=characters,
             encoding='utf-8'
@@ -56,8 +54,8 @@ class XSelClipboarder(Clipboarder):
             time.sleep(clear)
             run([
                 'xsel',
-                '-d',
-                '-b'
+                '--clear',
+                '--clipboard'
             ])
 
 
@@ -73,7 +71,7 @@ class XClipClipboarder(Clipboarder):
     def copy_to_clipboard(self, characters: str) -> None:
         run([
             'xclip',
-            '-i',
+            '-in',
             '-selection',
             'clipboard'
         ],
@@ -107,3 +105,8 @@ class WlClipboarder(Clipboarder):
         if clear > 0:
             time.sleep(clear)
             run(['wl-copy', '--clear'])
+
+
+class NoClipboarderFoundException(Exception):
+    def __str__(self) -> str:
+        return 'Could not find a valid way to copy to clipboard. Please check the required dependencies.'
