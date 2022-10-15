@@ -24,12 +24,10 @@ class Typer:
         pass
 
     def get_active_window(self) -> str:
-        print('Could not find a valid way to type characters. Please check the required dependencies.')
-        exit(5)
+        raise NoTyperFoundException()
 
     def type_characters(self, characters: str, active_window: str) -> None:
-        print('Could not find a valid way to type characters. Please check the required dependencies.')
-        exit(5)
+        raise NoTyperFoundException()
 
 
 class XDoToolTyper(Typer):
@@ -53,6 +51,8 @@ class XDoToolTyper(Typer):
             active_window,
             'type',
             '--clearmodifiers',
+            '--delay',
+            '0',
             characters
         ])
 
@@ -93,5 +93,12 @@ class YDotoolTyper(Typer):
         run([
             'ydotool',
             'type',
+            '--key-delay',
+            '0',
             characters
         ])
+
+
+class NoTyperFoundException(Exception):
+    def __str__(self) -> str:
+        return 'Could not find a valid way to type characters. Please check the required dependencies.'

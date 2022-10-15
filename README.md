@@ -26,7 +26,7 @@ You can configure `rofi-rbw` either with cli arguments or with a config file cal
 | `--selector-args` |              |                                                      | Define arguments that will be passed through to `rofi` or `wofi`.<br/>Please note that you need to specify it as `--selector-args="<args>"` or `--selector-args " <args>"` because of a [bug in argparse](https://github.com/python/cpython/issues/53580) |
 | `--selector`      |              | `rofi`, `wofi`                                       | Show the selection dialog with this application. Chosen automatically by default.                                                                                                                                                                         |
 | `--clipboarder`   |              | `xsel`, `xclip`, `wl-copy`                           | Access the clipboard with this application. Chosen automatically by default.                                                                                                                                                                              |
-| `--typer`         |              | `xdotool`, `wtype`                                   | Type the characters using this application. Chosen automatically by default.                                                                                                                                                                              |
+| `--typer`         |              | `xdotool`, `wtype`, `ydotool`                        | Type the characters using this application. Chosen automatically by default.                                                                                                                                                                              |
 | `--clear-after`   |              | integer number >= 0 (default is `0`)                 | Limit the duration in seconds passwords stay in your clipboard (unless overwritten). When set to 0, passwords will be kept indefinitely.                                                                                                                  |
 | `--no-help`       |              |                                                      | Don't show the help message about the available shortcuts.                                                                                                                                                                                                |
 
@@ -46,5 +46,5 @@ Note that it needs `configargparse` to work.
 You also need:
 - Python 3.7 or higher
 - `rofi` or `wofi`
-- Something to programmatically type characters into other applications. Depending on your display server, it's `xdotool` or `wtype`.
+- Something to programmatically type characters into other applications. Depending on your display server, it's `xdotool`, `wtype` or `ydotool`.
 - Something to copy text to the clipboard. Again, depending on the display server, you want `xclip`, `xsel` or `wl-copy`.
