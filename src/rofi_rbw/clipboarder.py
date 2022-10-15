@@ -51,10 +51,29 @@ class XSelClipboarder(Clipboarder):
             encoding='utf-8'
         )
 
+        self.__last_copied_characters = characters
+
+    def fetch_clipboard_content(self) -> str:
+        return run([
+            'xsel',
+            '--output',
+            '--clipboard',
+        ],
+            capture_output=True,
+            text=True
+        ).stdout
+
     def clear_clipboard_after(self, clear: int) -> None:
         if clear > 0:
             time.sleep(clear)
-            run(['xsel', '-delete'])
+            # Only clear clipboard if nothing has been copied since the password
+            if self.fetch_clipboard_content() == self.__last_copied_characters:
+                run([
+                    'xsel',
+                    '--clear',
+                    '--clipboard'
+                ])
+                self.__last_copied_characters = None
 
 
 class XClipClipboarder(Clipboarder):
