@@ -6,7 +6,7 @@ import configargparse
 
 from .clipboarder import Clipboarder
 from .credentials import Credentials
-from .models import Action, Target, Targets, CANCEL, DEFAULT
+from .models import Action, Target, Targets, CANCEL, DEFAULT, SYNC
 from .paths import *
 from .rbw import Rbw
 from .selector import Selector
@@ -123,6 +123,16 @@ class RofiRbw(object):
             self.args.show_help,
             self.args.selector_args
         )
+        
+        if selected_action == SYNC():
+            self.rbw.sync()
+            (selected_targets, selected_action, selected_entry) = self.selector.show_selection(
+                self.rbw.list_entries(),
+                self.args.prompt,
+                self.args.show_help,
+                self.args.selector_args
+            )
+
         if selected_action == CANCEL():
             return
 
