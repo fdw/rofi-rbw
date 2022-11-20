@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from subprocess import run
-from typing import Union, Optional, List, Dict
+from typing import Dict, List, Optional, Union
 
 from .entry import Entry
 from .models import Target, Targets
@@ -8,7 +8,7 @@ from .models import Target, Targets
 
 @dataclass(frozen=True)
 class Credentials(Entry):
-    password: Optional[str] = ''
+    password: Optional[str] = ""
     has_totp: bool = False
     uris: List[str] = field(default_factory=list)
     further: Dict[str, str] = field(default_factory=dict)
@@ -28,16 +28,11 @@ class Credentials(Entry):
     @property
     def totp(self):
         if not self.has_totp:
-            return ''
+            return ""
 
-        command = ['rbw', 'code', self.name]
+        command = ["rbw", "code", self.name]
         if self.username:
             command.extend([self.username])
         if self.folder:
             command.extend(["--folder", self.folder])
-        return run(
-            command,
-            capture_output=True,
-            encoding='utf-8'
-        ).stdout.strip()
-
+        return run(command, capture_output=True, encoding="utf-8").stdout.strip()

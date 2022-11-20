@@ -16,13 +16,15 @@ class Target:
 
     def __init__(self, input: str):
         prepared_input = input.strip()
-        if prepared_input.lower() in ('username', 'password', 'menu', 'totp') or prepared_input.lower().startswith('uri'):
+        if prepared_input.lower() in ("username", "password", "menu", "totp") or prepared_input.lower().startswith(
+            "uri"
+        ):
             self.__value = prepared_input.lower()
         else:
             self.__value = prepared_input
 
     def is_uri(self) -> bool:
-        return self.__value.startswith('uri')
+        return self.__value.startswith("uri")
 
     def uri_index(self) -> int:
         if not self.is_uri():

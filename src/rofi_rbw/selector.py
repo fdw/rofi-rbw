@@ -53,12 +53,12 @@ class Selector:
         if credentials.password:
             targets.append(f'Password: {credentials.password[0]}{"*" * (len(credentials.password) - 1)}')
         if credentials.has_totp:
-            targets.append(f'TOTP: {credentials.totp}')
+            targets.append(f"TOTP: {credentials.totp}")
         if len(credentials.uris) == 1:
             targets.append(f"URI: {credentials.uris[0]}")
         else:
             for (key, value) in enumerate(credentials.uris):
-                targets.append(f'URI {key + 1}: {value}')
+                targets.append(f"URI {key + 1}: {value}")
         for (key, value) in credentials.further.items():
             targets.append(f'{key}: {value[0]}{"*" * (len(value) - 1)}')
 
@@ -75,7 +75,7 @@ class Rofi(Selector):
 
     @staticmethod
     def name() -> str:
-        return 'rofi'
+        return "rofi"
 
     def show_selection(
         self,
@@ -86,12 +86,12 @@ class Rofi(Selector):
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None], Union[Entry, None]]:
         parameters = [
-            'rofi',
-            '-markup-rows',
-            '-dmenu',
-            '-i',
-            '-sort',
-            '-p',
+            "rofi",
+            "-markup-rows",
+            "-dmenu",
+            "-i",
+            "-sort",
+            "-p",
             prompt,
             *self.__build_parameters_for_keybindings(keybindings),
             *additional_args,
@@ -100,12 +100,7 @@ class Rofi(Selector):
         if show_help_message and keybindings:
             parameters.extend(self.__format_keybindings_message(keybindings))
 
-        rofi = run(
-            parameters,
-            input='\n'.join(self.__format_entries(entries)),
-            capture_output=True,
-            encoding='utf-8'
-        )
+        rofi = run(parameters, input="\n".join(self.__format_entries(entries)), capture_output=True, encoding="utf-8")
 
         if rofi.returncode == 1:
             return None, Action.CANCEL, None
@@ -121,7 +116,10 @@ class Rofi(Selector):
 
     def __format_entries(self, entries: List[Entry]) -> List[str]:
         max_width = max(len(it) for it in entries)
-        return [f"{it.folder}{'/' if it.folder else ''}<b>{it.name.ljust(max_width - len(it.folder))}</b>{it.username}" for it in entries]
+        return [
+            f"{it.folder}{'/' if it.folder else ''}<b>{it.name.ljust(max_width - len(it.folder))}</b>{it.username}"
+            for it in entries
+        ]
 
     def __parse_formatted_string(self, formatted_string: str) -> Entry:
         match = re.compile("(?:(?P<folder>.+)/)?<b>(?P<name>.*?) *</b>(?P<username>.*)").search(formatted_string)
@@ -140,7 +138,7 @@ class Rofi(Selector):
             "-markup-rows",
             "-dmenu",
             "-p",
-            'Choose target',
+            "Choose target",
             "-i",
             *self.__build_parameters_for_keybindings(keybindings),
             *additional_args,
@@ -151,9 +149,9 @@ class Rofi(Selector):
 
         rofi = run(
             parameters,
-            input='\n'.join(self._format_targets_from_credential(credentials)),
+            input="\n".join(self._format_targets_from_credential(credentials)),
             capture_output=True,
-            encoding='utf-8'
+            encoding="utf-8",
         )
 
         if rofi.returncode == 1:
@@ -197,11 +195,11 @@ class Rofi(Selector):
 class Wofi(Selector):
     @staticmethod
     def supported() -> bool:
-        return is_wayland() and is_installed('wofi')
+        return is_wayland() and is_installed("wofi")
 
     @staticmethod
     def name() -> str:
-        return 'wofi'
+        return "wofi"
 
     def show_selection(
         self,
@@ -221,7 +219,10 @@ class Wofi(Selector):
 
     def __format_entries(self, entries: List[Entry]) -> List[str]:
         max_width = max(len(it) for it in entries)
-        return [f"{it.folder}{'/' if it.folder else ''}{it.name.ljust(max_width - len(it.folder))}{it.username}" for it in entries]
+        return [
+            f"{it.folder}{'/' if it.folder else ''}{it.name.ljust(max_width - len(it.folder))}{it.username}"
+            for it in entries
+        ]
 
     def __parse_formatted_string(self, formatted_string: str) -> Entry:
         match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) *(?P<username>.*)").search(formatted_string)
@@ -235,7 +236,7 @@ class Wofi(Selector):
         keybindings: Dict[str, Action],
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None]]:
-        parameters = ["wofi", "--dmenu",'-p', 'Choose target', *additional_args]
+        parameters = ["wofi", "--dmenu", "-p", "Choose target", *additional_args]
 
         wofi = run(
             parameters,
@@ -252,4 +253,4 @@ class Wofi(Selector):
 
 class NoSelectorFoundException(Exception):
     def __str__(self) -> str:
-        return 'Could not find a valid way to show the selection. Please check the required dependencies.'
+        return "Could not find a valid way to show the selection. Please check the required dependencies."

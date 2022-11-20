@@ -1,6 +1,33 @@
-[build-system]
-requires = [
-    "setuptools>=47",
-    "wheel"
+[tool.poetry]
+name = "rofi-rbw"
+version = "1.2.0-dev1"
+description = "Rofi frontend for Bitwarden"
+authors = ["Fabian Winter <5821180+fdw@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/fdw/rofi-rbw"
+repository = "https://github.com/fdw/rofi-rbw"
+packages =[
+    { include = "rofi_rbw", from = "src" }
 ]
-build-backend = "setuptools.build_meta"
+
+[tool.poetry.scripts]
+rofi-rbw = 'rofi_rbw.__main__:main'
+
+[tool.poetry.dependencies]
+python = "^3.8"
+ConfigArgParse = ">0.15,<2.0.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.10.0"
+isort = "^5.10.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"

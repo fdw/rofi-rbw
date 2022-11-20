@@ -4,6 +4,7 @@ from typing import List, Tuple, Union
 
 import configargparse
 
+from . import __version__
 from .clipboarder import Clipboarder
 from .credentials import Credentials
 from .models import Action, Keybinding, Target, Targets
@@ -11,8 +12,6 @@ from .paths import *
 from .rbw import Rbw
 from .selector import Selector
 from .typer import Typer
-
-__version__ = "1.0.1"
 
 
 class RofiRbw(object):
@@ -26,81 +25,69 @@ class RofiRbw(object):
 
     def __parse_arguments(self) -> argparse.Namespace:
         parser = configargparse.ArgumentParser(
-            description='Insert or copy passwords and usernames from Bitwarden using rofi.',
-            default_config_files=config_file_locations
+            description="Insert or copy passwords and usernames from Bitwarden using rofi.",
+            default_config_files=config_file_locations,
         )
-        parser.add_argument('--version', action='version', version='rofi-rbw ' + __version__)
+        parser.add_argument("--version", action="version", version="rofi-rbw " + __version__)
         parser.add_argument(
-            '--action',
-            '-a',
-            dest='action',
-            action='store',
+            "--action",
+            "-a",
+            dest="action",
+            action="store",
             choices=[action.value for action in Action],
             default=Action.TYPE.value,
-            help='What to do with the selected entry'
+            help="What to do with the selected entry",
         )
         parser.add_argument(
-            '--target',
-            '-t',
-            dest='targets',
-            action='append',
-            help='Which part of the entry do you want?'
+            "--target", "-t", dest="targets", action="append", help="Which part of the entry do you want?"
         )
         parser.add_argument(
-            '--prompt',
-            '-r',
-            dest='prompt',
-            action='store',
-            default='Choose entry',
-            help='Set rofi-rbw\'s  prompt'
+            "--prompt", "-r", dest="prompt", action="store", default="Choose entry", help="Set rofi-rbw's  prompt"
         )
         parser.add_argument(
-            '--selector-args',
-            dest='selector_args',
-            action='store',
-            default='',
-            help='A string of arguments to give to the selector'
+            "--selector-args",
+            dest="selector_args",
+            action="store",
+            default="",
+            help="A string of arguments to give to the selector",
         )
         parser.add_argument(
-            '--selector',
-            dest='selector',
-            action='store',
+            "--selector",
+            dest="selector",
+            action="store",
             type=str,
-            choices=['rofi', 'wofi'],
+            choices=["rofi", "wofi"],
             default=None,
-            help='Choose the application to select the characters with'
+            help="Choose the selector frontend",
         )
         parser.add_argument(
-            '--clipboarder',
-            dest='clipboarder',
-            action='store',
+            "--clipboarder",
+            dest="clipboarder",
+            action="store",
             type=str,
-            choices=['xsel', 'xclip', 'wl-copy'],
+            choices=["xsel", "xclip", "wl-copy"],
             default=None,
-            help='Choose the application to access the clipboard with'
+            help="Choose the application to access the clipboard with",
         )
         parser.add_argument(
-            '--typer',
-            dest='typer',
-            action='store',
+            "--typer",
+            dest="typer",
+            action="store",
             type=str,
-            choices=['xdotool', 'wtype', 'ydotool'],
+            choices=["xdotool", "wtype", "ydotool"],
             default=None,
-            help='Choose the application to type with'
+            help="Choose the application to type with",
         )
         parser.add_argument(
-            '--clear-after',
-            dest='clear',
-            action='store',
+            "--clear-after",
+            dest="clear",
+            action="store",
             type=int,
             default=0,
-            help='Limit the duration in seconds passwords stay in your clipboard. When not set or <= 0, passwords stay indefinitely.'
+            help="Limit the duration in seconds passwords stay in your clipboard. When not set or <= 0, passwords stay indefinitely.",
         )
         parser.add_argument(
-            '--no-help',
-            dest='show_help',
-            action='store_false',
-            help='Don\'t show a help message about the shortcuts'
+            "--no-help", dest="show_help", action="store_false", help="Don't show a help message about the shortcuts"
         )
         parser.add_argument(
             "--keybindings",
@@ -192,7 +179,10 @@ class RofiRbw(object):
             self.args.action = selected_action
 
         if Targets.MENU in self.args.targets:
-            targets, action = self.__show_target_menu(credential, self.args.show_help, )
+            targets, action = self.__show_target_menu(
+                credential,
+                self.args.show_help,
+            )
             self.args.targets = targets
             if action is not None:
                 self.args.action = action
@@ -214,7 +204,7 @@ class RofiRbw(object):
 
     def __execute_action(self, cred: Credentials) -> None:
         if self.args.action == Action.TYPE:
-            characters = '\t'.join([cred[target] for target in self.args.targets])
+            characters = "\t".join([cred[target] for target in self.args.targets])
             self.typer.type_characters(characters, self.active_window)
             if Targets.PASSWORD in self.args.targets and cred.totp != "":
                 self.clipboarder.copy_to_clipboard(cred.totp)
@@ -224,4 +214,4 @@ class RofiRbw(object):
             if len(self.args.targets) == 1 and self.args.targets[0] == Targets.PASSWORD:
                 self.clipboarder.clear_clipboard_after(self.args.clear)
         elif self.args.action == Action.PRINT:
-            print('\n'.join([cred[target] for target in self.args.targets]))
+            print("\n".join([cred[target] for target in self.args.targets]))

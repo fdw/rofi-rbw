@@ -1,6 +1,7 @@
 # [NEXT]
 ## Changed
 - Added customizable shortcuts.
+- `rofi-rbw` is now being built py [Poetry](https://python-poetry.org/).
 
 ## Added
 - A shortcut to sync the local database. (#60)
