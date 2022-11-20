@@ -1,10 +1,14 @@
+from dataclasses import dataclass
 from enum import Enum
+from typing import List, Union
 
 
 class Action(Enum):
-    TYPE = 'type'
-    COPY = 'copy'
-    PRINT = 'print'
+    TYPE = "type"
+    COPY = "copy"
+    PRINT = "print"
+    SYNC = "sync"
+    CANCEL = "cancel"
 
 
 class Target:
@@ -38,22 +42,14 @@ class Target:
 
 
 class Targets:
-    USERNAME = Target('username')
-    PASSWORD = Target('password')
-    TOTP = Target('totp')
-    MENU = Target('menu')
+    USERNAME = Target("username")
+    PASSWORD = Target("password")
+    TOTP = Target("totp")
+    MENU = Target("menu")
 
 
-class CANCEL:
-    def __eq__(self, other):
-        return isinstance(other, CANCEL)
-
-
-class SYNC:
-    def __eq__(self, other):
-        return isinstance(other, SYNC)
-
-
-class DEFAULT:
-    def __eq__(self, other):
-        return isinstance(other, DEFAULT)
+@dataclass
+class Keybinding:
+    shortcut: str
+    action: Action
+    targets: Union[List[Target], None]

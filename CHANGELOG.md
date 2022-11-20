@@ -1,4 +1,7 @@
 # [NEXT]
+## Changed
+- Added customizable shortcuts.
+
 ## Added
 - A shortcut to sync the local database. (#60)
 - Modifier keys should not be stuck anymore. (#56)

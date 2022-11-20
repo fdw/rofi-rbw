@@ -6,13 +6,13 @@ import configargparse
 
 from .clipboarder import Clipboarder
 from .credentials import Credentials
-from .models import Action, Target, Targets, CANCEL, DEFAULT, SYNC
+from .models import Action, Keybinding, Target, Targets
 from .paths import *
 from .rbw import Rbw
 from .selector import Selector
 from .typer import Typer
 
-__version__ = '1.0.1'
+__version__ = "1.0.1"
 
 
 class RofiRbw(object):
@@ -102,6 +102,33 @@ class RofiRbw(object):
             action='store_false',
             help='Don\'t show a help message about the shortcuts'
         )
+        parser.add_argument(
+            "--keybindings",
+            dest="keybindings",
+            action="store",
+            type=str,
+            default=",".join(
+                [
+                    "Alt+1:type:username:password",
+                    "Alt+2:type:username",
+                    "Alt+3:type:password",
+                    "Alt+c:copy:password",
+                    "Alt+u:copy:username",
+                    "Alt+t:copy:totp",
+                    "Alt+m::menu",
+                    "Alt+s:sync",
+                ]
+            ),
+            help="Define keyboard shortcuts in the format <shortcut>:<action>:<target>, separated with a comma",
+        )
+        parser.add_argument(
+            "--menu-keybindings",
+            dest="menu_keybindings",
+            action="store",
+            type=str,
+            default=",".join(["Alt+t:type", "Alt+c:copy"]),
+            help="Define the keyboard shortcuts in the target menu in the format <shortcut>:<action> separated with a comma",
+        )
 
         parsed_args = parser.parse_args()
 
@@ -114,6 +141,24 @@ class RofiRbw(object):
         else:
             parsed_args.targets = [Targets.USERNAME, Targets.PASSWORD]
 
+        parsed_args.parsed_keybindings = []
+        for keybinding in parsed_args.keybindings.split(","):
+            elements = keybinding.split(":")
+            parsed_args.parsed_keybindings.append(
+                Keybinding(
+                    elements[0],
+                    Action(elements[1]) if elements[1] else None,
+                    [Target(target_string) for target_string in elements[2:]],
+                )
+            )
+
+        parsed_args.parsed_menu_keybindings = []
+        for keybinding in parsed_args.menu_keybindings.split(","):
+            elements = keybinding.split(":")
+            parsed_args.parsed_menu_keybindings.append(
+                Keybinding(elements[0], Action(elements[1]) if elements[1] else None, None)
+            )
+
         return parsed_args
 
     def main(self) -> None:
@@ -121,49 +166,49 @@ class RofiRbw(object):
             self.rbw.list_entries(),
             self.args.prompt,
             self.args.show_help,
-            self.args.selector_args
+            self.args.parsed_keybindings,
+            self.args.selector_args,
         )
-        
-        if selected_action == SYNC():
+
+        if selected_action == Action.SYNC:
             self.rbw.sync()
             (selected_targets, selected_action, selected_entry) = self.selector.show_selection(
                 self.rbw.list_entries(),
                 self.args.prompt,
                 self.args.show_help,
-                self.args.selector_args
+                self.args.parsed_keybindings,
+                self.args.selector_args,
             )
 
-        if selected_action == CANCEL():
+        if selected_action == Action.CANCEL:
             return
 
         credential = self.rbw.fetch_credentials(selected_entry)
 
-        if selected_targets != DEFAULT():
+        if selected_targets is not None:
             self.args.targets = selected_targets
 
-        if selected_action != DEFAULT():
+        if selected_action is not None:
             self.args.action = selected_action
 
         if Targets.MENU in self.args.targets:
             targets, action = self.__show_target_menu(credential, self.args.show_help, )
             self.args.targets = targets
-            if action != DEFAULT():
+            if action is not None:
                 self.args.action = action
 
         self.__execute_action(credential)
 
     def __show_target_menu(
-        self,
-        cred: Credentials,
-        show_help_message: bool
-    ) -> Tuple[List[Target], Union[Action, DEFAULT]]:
+        self, cred: Credentials, show_help_message: bool
+    ) -> Tuple[List[Target], Union[Action, None]]:
+        targets, action = self.selector.select_target(
+            cred, show_help_message, self.args.parsed_menu_keybindings, additional_args=self.args.selector_args
+        )
 
-
-        targets, action = self.selector.select_target(cred, show_help_message, additional_args=self.args.selector_args)
-
-        if targets == CANCEL():
+        if action == Action.CANCEL:
             self.main()
-            return
+            exit(0)
 
         return targets, action
 
