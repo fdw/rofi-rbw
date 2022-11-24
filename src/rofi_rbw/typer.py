@@ -55,6 +55,15 @@ class XDoToolTyper(Typer):
             '0',
             characters
         ])
+        # workaround for https://github.com/jordansissel/xdotool/issues/43
+        run([
+            "xdotool",
+            "keyup",
+            "Shift_L",
+            "Shift_R",
+            "Alt_L",
+            "Alt_R"
+        ])
 
 
 class WTypeTyper(Typer):
