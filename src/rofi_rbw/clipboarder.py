@@ -58,7 +58,7 @@ class XSelClipboarder(Clipboarder):
             '--clipboard',
         ],
             capture_output=True,
-            text=True
+            encoding='utf-8'
         ).stdout
 
     def clear_clipboard_after(self, clear: int) -> None:
@@ -107,7 +107,7 @@ class XClipClipboarder(Clipboarder):
             'clipboard'
         ],
             capture_output=True,
-            text=True
+            encoding='utf-8'
         ).stdout
 
     def clear_clipboard_after(self, clear: int) -> None:
