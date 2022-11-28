@@ -4,7 +4,7 @@ from typing import List, Tuple, Union
 from .abstractionhelper import is_wayland, is_installed
 from .credentials import Credentials
 from .entry import Entry
-from .models import Action, Target, Targets, CANCEL, DEFAULT
+from .models import Action, Target, Targets, CANCEL, DEFAULT, SYNC
 
 
 class Selector:
@@ -32,7 +32,7 @@ class Selector:
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], Union[Entry, None]]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL, SYNC], Union[Entry, None]]:
         raise NoSelectorFoundException()
 
     def select_target(
@@ -84,7 +84,7 @@ class Rofi(Selector):
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], Union[Entry, None]]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL, SYNC], Union[Entry, None]]:
         parameters = [
             'rofi',
             '-markup-rows',
@@ -101,13 +101,15 @@ class Rofi(Selector):
             'Alt+t',
             '-kb-custom-14',
             'Alt+m',
+            '-kb-custom-15',
+            'Alt+s',
             *additional_args
         ]
 
         if show_help_message:
             parameters.extend([
                 '-mesg',
-                '<b>Alt+1</b>: Autotype username and password | <b>Alt+2</b> Type username | <b>Alt+3</b> Type password | <b>Alt+u</b> Copy username | <b>Alt+p</b> Copy password | <b>Alt+t</b> Copy totp'
+                '<b>Alt+1</b>: Autotype username and password | <b>Alt+2</b> Type username | <b>Alt+3</b> Type password | <b>Alt+u</b> Copy username | <b>Alt+p</b> Copy password | <b>Alt+t</b> Copy totp | <b>Alt+s</b> Sync'
             ])
 
         rofi = run(
@@ -119,6 +121,8 @@ class Rofi(Selector):
 
         if rofi.returncode == 1:
             return CANCEL(), CANCEL(), None
+        elif rofi.returncode == 24:
+            return DEFAULT(), SYNC(), None
         elif rofi.returncode == 10:
             return_action = Action.TYPE
             return_targets = [Targets.USERNAME, Targets.PASSWORD]
@@ -204,7 +208,7 @@ class Wofi(Selector):
         prompt: str,
         show_help_message: bool,
         additional_args: List[str]
-    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL], Union[Entry, None]]:
+    ) -> Tuple[Union[List[Target], DEFAULT, CANCEL], Union[Action, DEFAULT, CANCEL, SYNC], Union[Entry, None]]:
         parameters = [
             'wofi',
             '--dmenu',

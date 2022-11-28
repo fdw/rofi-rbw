@@ -73,3 +73,6 @@ class Rbw:
             capture_output=True,
             encoding='utf-8'
         ).stdout
+
+    def sync(self):
+        run(['rbw', 'sync'])

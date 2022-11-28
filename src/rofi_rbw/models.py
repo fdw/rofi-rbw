@@ -49,6 +49,11 @@ class CANCEL:
         return isinstance(other, CANCEL)
 
 
+class SYNC:
+    def __eq__(self, other):
+        return isinstance(other, SYNC)
+
+
 class DEFAULT:
     def __eq__(self, other):
         return isinstance(other, DEFAULT)

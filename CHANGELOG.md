@@ -1,3 +1,7 @@
+# [NEXT]
+## Added
+- A shortcut to sync the local database. (#60)
+
 # [1.0.1]
 ## Fixed
 - Fixed interaction with `wofi`. (#51)
