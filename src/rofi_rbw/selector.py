@@ -1,3 +1,4 @@
+import re
 from subprocess import run
 from typing import List, Tuple, Union
 
@@ -42,10 +43,6 @@ class Selector:
         additional_args: List[str]
     ) -> Tuple[Union[List[Target], CANCEL], Union[Action, DEFAULT, CANCEL]]:
         raise NoSelectorFoundException()
-
-    def _format_entries(self, entries: List[Entry]) -> List[str]:
-        max_length = max(len(it) for it in entries)
-        return sorted(it.formatted_string(max_length) for it in entries)
 
     def _format_targets_from_credential(self, credentials: Credentials) -> List[str]:
         targets = []
@@ -112,12 +109,7 @@ class Rofi(Selector):
                 '<b>Alt+1</b>: Autotype username and password | <b>Alt+2</b> Type username | <b>Alt+3</b> Type password | <b>Alt+u</b> Copy username | <b>Alt+p</b> Copy password | <b>Alt+t</b> Copy totp | <b>Alt+s</b> Sync'
             ])
 
-        rofi = run(
-            parameters,
-            input='\n'.join(self._format_entries(entries)),
-            capture_output=True,
-            encoding='utf-8'
-        )
+        rofi = run(parameters, input="\n".join(self.__format_entries(entries)), capture_output=True, encoding="utf-8")
 
         if rofi.returncode == 1:
             return CANCEL(), CANCEL(), None
@@ -148,7 +140,16 @@ class Rofi(Selector):
             return_action = DEFAULT()
             return_targets = DEFAULT()
 
-        return return_targets, return_action, Entry.parse_formatted_string(rofi.stdout)
+        return return_targets, return_action, self.__parse_formatted_string(rofi.stdout)
+
+    def __format_entries(self, entries: List[Entry]) -> List[str]:
+        max_width = max(len(it) for it in entries)
+        return [f"{it.folder}/<b>{it.name.ljust(max_width - len(it.folder))}</b>{it.username}" for it in entries]
+
+    def __parse_formatted_string(self, formatted_string: str) -> Entry:
+        match = re.compile("(?P<folder>.*)/<b>(?P<name>.*)</b>(?P<username>.*)").search(formatted_string)
+
+        return Entry(match.group("name").strip(), match.group("folder"), match.group("username").strip())
 
     def select_target(
         self,
@@ -219,16 +220,20 @@ class Wofi(Selector):
             *additional_args
         ]
 
-        wofi = run(
-            parameters,
-            input='\n'.join(self._format_entries(entries)),
-            capture_output=True,
-            encoding='utf-8'
-        )
+        wofi = run(parameters, input="\n".join(self.__format_entries(entries)), capture_output=True, encoding="utf-8")
         if wofi.returncode == 0:
-            return DEFAULT(), DEFAULT(), Entry.parse_formatted_string(wofi.stdout)
+            return DEFAULT(), DEFAULT(), self.__parse_formatted_string(wofi.stdout)
         else:
             return CANCEL(), CANCEL(), None
+
+    def __format_entries(self, entries: List[Entry]) -> List[str]:
+        max_width = max(len(it) for it in entries)
+        return [f"{it.folder}/{it.name.ljust(max_width - len(it.folder))}{it.username}" for it in entries]
+
+    def __parse_formatted_string(self, formatted_string: str) -> Entry:
+        match = re.compile("(?P<folder>.*)/(?P<name>.*)(?P<username>.*)").search(formatted_string)
+
+        return Entry(match.group("name").strip(), match.group("folder"), match.group("username").strip())
 
     def select_target(
         self,

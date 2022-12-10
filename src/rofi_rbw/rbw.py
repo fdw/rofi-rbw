@@ -18,7 +18,7 @@ class Rbw:
             print(rbw.stderr)
             exit(2)
 
-        return [self.__parse_rbw_output(it) for it in (rbw.stdout.strip().split('\n'))]
+        return sorted([self.__parse_rbw_output(it) for it in (rbw.stdout.strip().split("\n"))], key=lambda x: x.folder.lower() + x.name.lower())
 
     def __parse_rbw_output(self, rbw_string: str) -> 'Entry':
         fields = rbw_string.split('\t')
