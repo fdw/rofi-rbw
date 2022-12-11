@@ -160,6 +160,8 @@ class Rofi(Selector):
             'rofi',
             '-markup-rows',
             '-dmenu',
+            '-p',
+            'Choose target',
             '-i',
             '-kb-custom-11',
             'Alt+t',
@@ -237,6 +239,8 @@ class Wofi(Selector):
         parameters = [
             'wofi',
             '--dmenu',
+            '-p',
+            'Choose target',
             *additional_args
         ]
 

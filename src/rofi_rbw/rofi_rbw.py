@@ -51,7 +51,7 @@ class RofiRbw(object):
             '-r',
             dest='prompt',
             action='store',
-            default='Select entry',
+            default='Choose entry',
             help='Set rofi-rbw\'s  prompt'
         )
         parser.add_argument(
