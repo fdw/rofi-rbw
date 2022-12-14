@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
 from subprocess import run
 from typing import Union, Optional, List, Dict
 
-from .entry import Entry
-from .models import Target, Targets
+from entry import Entry
+from models import Target, Targets
 
 
 @dataclass(frozen=True)

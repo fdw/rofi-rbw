@@ -1,10 +1,10 @@
 from subprocess import run
 from typing import List, Tuple, Union
 
-from .abstractionhelper import is_wayland, is_installed
-from .credentials import Credentials
-from .entry import Entry
-from .models import Action, Target, Targets, CANCEL, DEFAULT, SYNC
+from abstractionhelper import is_wayland, is_installed
+from credentials import Credentials
+from entry import Entry
+from models import Action, Target, Targets, CANCEL, DEFAULT, SYNC
 
 
 class Selector:

@@ -1,4 +1,4 @@
-from .rofi_rbw import RofiRbw
+from rofi_rbw import RofiRbw
 
 
 def main():

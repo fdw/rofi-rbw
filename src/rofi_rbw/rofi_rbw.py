@@ -4,13 +4,13 @@ from typing import List, Tuple, Union
 
 import configargparse
 
-from .clipboarder import Clipboarder
-from .credentials import Credentials
-from .models import Action, Target, Targets, CANCEL, DEFAULT, SYNC
-from .paths import *
-from .rbw import Rbw
-from .selector import Selector
-from .typer import Typer
+from clipboarder import Clipboarder
+from credentials import Credentials
+from models import Action, Target, Targets, CANCEL, DEFAULT, SYNC
+from paths import *
+from rbw import Rbw
+from selector import Selector
+from typer import Typer
 
 __version__ = '1.0.1'
 
@@ -123,7 +123,7 @@ class RofiRbw(object):
             self.args.show_help,
             self.args.selector_args
         )
-        
+
         if selected_action == SYNC():
             self.rbw.sync()
             (selected_targets, selected_action, selected_entry) = self.selector.show_selection(

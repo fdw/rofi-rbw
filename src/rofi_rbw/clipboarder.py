@@ -1,7 +1,7 @@
 import time
 from subprocess import run
 
-from .abstractionhelper import is_wayland, is_installed
+from abstractionhelper import is_wayland, is_installed
 
 
 class Clipboarder:

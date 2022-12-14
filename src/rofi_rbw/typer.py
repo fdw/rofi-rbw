@@ -1,7 +1,7 @@
 from subprocess import run
 import time
 
-from .abstractionhelper import is_wayland, is_installed
+from abstractionhelper import is_wayland, is_installed
 
 
 class Typer:

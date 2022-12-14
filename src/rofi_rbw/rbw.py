@@ -1,8 +1,8 @@
 from subprocess import run
 from typing import List, Optional
 
-from .credentials import Credentials
-from .entry import Entry
+from credentials import Credentials
+from entry import Entry
 
 
 class Rbw:
