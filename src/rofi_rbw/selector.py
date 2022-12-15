@@ -144,12 +144,12 @@ class Rofi(Selector):
 
     def __format_entries(self, entries: List[Entry]) -> List[str]:
         max_width = max(len(it) for it in entries)
-        return [f"{it.folder}/<b>{it.name.ljust(max_width - len(it.folder))}</b>{it.username}" for it in entries]
+        return [f"{it.folder}{'/' if it.folder else ''}<b>{it.name.ljust(max_width - len(it.folder))}</b>{it.username}" for it in entries]
 
     def __parse_formatted_string(self, formatted_string: str) -> Entry:
-        match = re.compile("(?P<folder>.*)/<b>(?P<name>.*)</b>(?P<username>.*)").search(formatted_string)
+        match = re.compile("(?:(?P<folder>.+)/)?<b>(?P<name>.*?) *</b>(?P<username>.*)").search(formatted_string)
 
-        return Entry(match.group("name").strip(), match.group("folder"), match.group("username").strip())
+        return Entry(match.group("name"), match.group("folder"), match.group("username").strip())
 
     def select_target(
         self,
@@ -228,10 +228,10 @@ class Wofi(Selector):
 
     def __format_entries(self, entries: List[Entry]) -> List[str]:
         max_width = max(len(it) for it in entries)
-        return [f"{it.folder}/{it.name.ljust(max_width - len(it.folder))}{it.username}" for it in entries]
+        return [f"{it.folder}{'/' if it.folder else ''}{it.name.ljust(max_width - len(it.folder))}{it.username}" for it in entries]
 
     def __parse_formatted_string(self, formatted_string: str) -> Entry:
-        match = re.compile("(?P<folder>.*)/(?P<name>.*)(?P<username>.*)").search(formatted_string)
+        match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) *(?P<username>.*)").search(formatted_string)
 
         return Entry(match.group("name").strip(), match.group("folder"), match.group("username").strip())
 
