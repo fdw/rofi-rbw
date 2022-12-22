@@ -1,6 +1,11 @@
 # [NEXT]
 ## Added
 - A shortcut to sync the local database. (#60)
+- Modifier keys should not be stuck anymore. (#56)
+
+## Fixed
+- When using TOTP, the username is now also taken into consideration for identically named entries. (#59)
+- Entries are formatted correctly when not using folders. (#64)
 
 # [1.0.1]
 ## Fixed
