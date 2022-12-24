@@ -14,7 +14,7 @@
          \[**\--prompt** *PROMPT*] \[**\--selector-args** *SELECTOR_ARGS*]
          \[**\--clipboarder** *CLIPBOARDER*] \[**\--typer** *TYPER*] \[**\--selector** *SELECTOR*]
          \[**\--clear-after** *NUMBER*]
-         \[**\--no-help**]
+         \[**\--no-help**] \[**\--no-folder**]
          \[**\--keybindings** *KEYBINDINGS*] \[**\--menu-keybindings** *MENU_KEYBINDINGS*]
 
 # DESCRIPTION
@@ -69,13 +69,17 @@ Type, copy or print your credentials from Bitwarden using rofi.
 
       Choose the selector application manually. Usually `rofi`, but for Wayland, you may want `wofi`.
 
+\--clear-after _SECONDS_
+
+: Clear the password from the clipboard after _SECONDS_ seconds. Set to `0` to disable
+
 \--no-help
 
 : Don't show the help message about available keyboard shortcuts
 
-\--clear-after _SECONDS_
+\--no-folder
 
-: Clear the password from the clipboard after _SECONDS_ seconds. Set to `0` to disable
+: Don't show folders in the list of possible entries
 
 \--keybindings _KEYBINDINGS_
 

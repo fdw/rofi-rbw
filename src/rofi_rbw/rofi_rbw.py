@@ -90,6 +90,10 @@ class RofiRbw(object):
             "--no-help", dest="show_help", action="store_false", help="Don't show a help message about the shortcuts"
         )
         parser.add_argument(
+            "--no-folder", dest="show_folders", action="store_false", help="Don't show the entry's folder"
+        )
+        parser.set_defaults(show_folders=True)
+        parser.add_argument(
             "--keybindings",
             dest="keybindings",
             action="store",
@@ -153,6 +157,7 @@ class RofiRbw(object):
             self.rbw.list_entries(),
             self.args.prompt,
             self.args.show_help,
+            self.args.show_folders,
             self.args.parsed_keybindings,
             self.args.selector_args,
         )
@@ -163,6 +168,7 @@ class RofiRbw(object):
                 self.rbw.list_entries(),
                 self.args.prompt,
                 self.args.show_help,
+                self.args.show_folders,
                 self.args.parsed_keybindings,
                 self.args.selector_args,
             )

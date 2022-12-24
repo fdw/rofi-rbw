@@ -30,8 +30,9 @@ client rbw
 \f[I]SELECTOR_ARGS\f[R]] [\f[B]--clipboarder\f[R] \f[I]CLIPBOARDER\f[R]]
 [\f[B]--typer\f[R] \f[I]TYPER\f[R]] [\f[B]--selector\f[R]
 \f[I]SELECTOR\f[R]] [\f[B]--clear-after\f[R] \f[I]NUMBER\f[R]]
-[\f[B]--no-help\f[R]] [\f[B]--keybindings\f[R] \f[I]KEYBINDINGS\f[R]]
-[\f[B]--menu-keybindings\f[R] \f[I]MENU_KEYBINDINGS\f[R]]
+[\f[B]--no-help\f[R]] [\f[B]--no-folder\f[R]] [\f[B]--keybindings\f[R]
+\f[I]KEYBINDINGS\f[R]] [\f[B]--menu-keybindings\f[R]
+\f[I]MENU_KEYBINDINGS\f[R]]
 .SH DESCRIPTION
 .PP
 Type, copy or print your credentials from Bitwarden using rofi.
@@ -88,12 +89,15 @@ Choose the selector application manually.
 Usually \f[V]rofi\f[R], but for Wayland, you may want \f[V]wofi\f[R].
 .RE
 .TP
---no-help
-Don\[cq]t show the help message about available keyboard shortcuts
-.TP
 --clear-after \f[I]SECONDS\f[R]
 Clear the password from the clipboard after \f[I]SECONDS\f[R] seconds.
 Set to \f[V]0\f[R] to disable
+.TP
+--no-help
+Don\[cq]t show the help message about available keyboard shortcuts
+.TP
+--no-folder
+Don\[cq]t show folders in the list of possible entries
 .TP
 --keybindings \f[I]KEYBINDINGS\f[R]
 Format: ::.

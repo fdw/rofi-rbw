@@ -60,7 +60,7 @@ class Rbw:
         if username:
             command.append(username)
 
-        if folder != "":
+        if folder:
             command.extend(["--folder", folder])
 
         return run(command, capture_output=True, encoding="utf-8").stdout

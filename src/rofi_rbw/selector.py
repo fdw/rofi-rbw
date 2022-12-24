@@ -32,6 +32,7 @@ class Selector:
         entries: List[Entry],
         prompt: str,
         show_help_message: bool,
+        show_folders: bool,
         keybindings: Dict[str, Tuple[Action, List[Target]]],
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None], Union[Entry, None]]:
@@ -64,8 +65,26 @@ class Selector:
 
         return targets
 
-    def _extract_targets(self, output: str) -> List[Target]:
+    @staticmethod
+    def _extract_targets(output: str) -> List[Target]:
         return [Target(line.split(":")[0]) for line in output.strip().split("\n")]
+
+    @staticmethod
+    def _calculate_max_width(entries: List[Entry], show_folders: bool) -> int:
+        if show_folders:
+            return max(len(it.name) + len(it.folder) + 1 for it in entries)
+        else:
+            return max(len(it.name) for it in entries)
+
+    @staticmethod
+    def _format_folder(entry: Entry, show_folders: bool) -> str:
+        if not show_folders or not entry.folder:
+            return ""
+        return f"{entry.folder}/"
+
+    @staticmethod
+    def justify(entry: Entry, max_width: int, show_folders: bool) -> str:
+        return " " * (max_width - len(entry.name) - ((len(entry.folder) + 1) if show_folders else 0))
 
 
 class Rofi(Selector):
@@ -82,6 +101,7 @@ class Rofi(Selector):
         entries: List[Entry],
         prompt: str,
         show_help_message: bool,
+        show_folders: bool,
         keybindings: List[Keybinding],
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None], Union[Entry, None]]:
@@ -100,7 +120,12 @@ class Rofi(Selector):
         if show_help_message and keybindings:
             parameters.extend(self.__format_keybindings_message(keybindings))
 
-        rofi = run(parameters, input="\n".join(self.__format_entries(entries)), capture_output=True, encoding="utf-8")
+        rofi = run(
+            parameters,
+            input="\n".join(self.__format_entries(entries, show_folders)),
+            capture_output=True,
+            encoding="utf-8",
+        )
 
         if rofi.returncode == 1:
             return None, Action.CANCEL, None
@@ -114,10 +139,10 @@ class Rofi(Selector):
 
         return return_targets, return_action, self.__parse_formatted_string(rofi.stdout)
 
-    def __format_entries(self, entries: List[Entry]) -> List[str]:
-        max_width = max(len(it) for it in entries)
+    def __format_entries(self, entries: List[Entry], show_folders: bool) -> List[str]:
+        max_width = self._calculate_max_width(entries, show_folders)
         return [
-            f"{it.folder}{'/' if it.folder else ''}<b>{it.name.ljust(max_width - len(it.folder))}</b>{it.username}"
+            f"{self._format_folder(it, show_folders)}<b>{it.name}</b>{self.justify(it, max_width, show_folders)}  {it.username}"
             for it in entries
         ]
 
@@ -206,26 +231,32 @@ class Wofi(Selector):
         entries: List[Entry],
         prompt: str,
         show_help_message: bool,
+        show_folders: bool,
         keybindings: Dict[str, Tuple[Action, List[Target]]],
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None], Union[Entry, None]]:
         parameters = ["wofi", "--dmenu", "-p", prompt, *additional_args]
 
-        wofi = run(parameters, input="\n".join(self.__format_entries(entries)), capture_output=True, encoding="utf-8")
+        wofi = run(
+            parameters,
+            input="\n".join(self.__format_entries(entries, show_folders)),
+            capture_output=True,
+            encoding="utf-8",
+        )
         if wofi.returncode == 0:
             return None, None, self.__parse_formatted_string(wofi.stdout)
         else:
             return None, Action.CANCEL, None
 
-    def __format_entries(self, entries: List[Entry]) -> List[str]:
-        max_width = max(len(it) for it in entries)
+    def __format_entries(self, entries: List[Entry], show_folders: bool) -> List[str]:
+        max_width = self._calculate_max_width(entries, show_folders)
         return [
-            f"{it.folder}{'/' if it.folder else ''}{it.name.ljust(max_width - len(it.folder))}{it.username}"
+            f"{self._format_folder(it, show_folders)}{it.name}{self.justify(it, max_width, show_folders)}  {it.username}"
             for it in entries
         ]
 
     def __parse_formatted_string(self, formatted_string: str) -> Entry:
-        match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) *(?P<username>.*)").search(formatted_string)
+        match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) *  (?P<username>.*)").search(formatted_string)
 
         return Entry(match.group("name").strip(), match.group("folder"), match.group("username").strip())
 
