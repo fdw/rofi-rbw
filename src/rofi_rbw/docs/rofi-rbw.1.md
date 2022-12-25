@@ -13,7 +13,9 @@
          \[**\--target** {*username*,*password*,*totp*,*OTHER*}]
          \[**\--prompt** *PROMPT*] \[**\--selector-args** *SELECTOR_ARGS*]
          \[**\--clipboarder** *CLIPBOARDER*] \[**\--typer** *TYPER*] \[**\--selector** *SELECTOR*]
-         \[**--clear-after** *NUMBER*]
+         \[**\--clear-after** *NUMBER*]
+         \[**\--no-help**]
+         \[**\--keybindings** *KEYBINDINGS*] \[**\--menu-keybindings** *MENU_KEYBINDINGS*]
 
 # DESCRIPTION
 
@@ -74,6 +76,18 @@ Type, copy or print your credentials from Bitwarden using rofi.
 \--clear-after _SECONDS_
 
 : Clear the password from the clipboard after _SECONDS_ seconds. Set to `0` to disable
+
+\--keybindings _KEYBINDINGS_
+
+: Format: <shortcut>:<action>:<target>.
+
+      Define your own keybindings. Multiple keybindings can be concatenated with `,`; multiple targets for one shortcut can be concatenated with `:`.
+
+\--menu-keybindings _KEYBINDINGS_
+
+: Format: <shortcut>:<action>.
+
+      Define your own keybindings for the target menu. Multiple keybindings can be concatenated with `,`.
 
 # KEYBINDINGS
 
