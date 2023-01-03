@@ -10,6 +10,9 @@ repository = "https://github.com/fdw/rofi-rbw"
 packages =[
     { include = "rofi_rbw", from = "src" }
 ]
+include = [
+    "docs/rofi-rbw.1"
+]
 
 [tool.poetry.scripts]
 rofi-rbw = 'rofi_rbw.__main__:main'
