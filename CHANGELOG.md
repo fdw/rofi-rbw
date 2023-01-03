@@ -1,11 +1,12 @@
-# [NEXT]
-## Changed
-- Added customizable shortcuts.
-- `rofi-rbw` is now being built py [Poetry](https://python-poetry.org/).
-
+# [1.1.0]
 ## Added
-- A shortcut to sync the local database. (#60)
+- Shortcuts can be customized.
+- There is a shortcut to sync the local database. (#60)
 - Modifier keys should not be stuck anymore. (#56)
+- With `--no-folder`, the entry's folder won't be shown in the list. (#64)
+
+## Changed
+- `rofi-rbw` is now being built py [Poetry](https://python-poetry.org/).
 
 ## Fixed
 - When using TOTP, the username is now also taken into consideration for identically named entries. (#59)

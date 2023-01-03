@@ -14,7 +14,7 @@
 . ftr VB CB
 . ftr VBI CBI
 .\}
-.TH "ROFI-RBW" "1" "May 22, 2022" "Version 1.0.1" "Rofi Third-party Add-on Documentation"
+.TH "ROFI-RBW" "1" "January 03, 2023" "Version 1.1.0" "Rofi Third-party Add-on Documentation"
 .hy
 .SH NAME
 .PP
@@ -106,6 +106,7 @@ Format: ::.
 Define your own keybindings.
 Multiple keybindings can be concatenated with \f[V],\f[R]; multiple
 targets for one shortcut can be concatenated with \f[V]:\f[R].
+This feature is only available in supported \[dq]selectors\[dq].
 .RE
 .TP
 --menu-keybindings \f[I]KEYBINDINGS\f[R]
@@ -114,18 +115,21 @@ Format: :.
 .PP
 Define your own keybindings for the target menu.
 Multiple keybindings can be concatenated with \f[V],\f[R].
+This feature is only available in supported \[dq]selectors\[dq].
 .RE
-.SH KEYBINDINGS
+.SH DEFAULT KEYBINDINGS
 .PP
 \f[I]enter\f[R] to use the default action
 .PP
-\f[I]alt+p\f[R] to copy the password
+\f[I]alt+c\f[R] to copy the password
 .PP
 \f[I]alt+u\f[R] to copy the username
 .PP
 \f[I]alt+t\f[R] to copy the TOTP
 .PP
 \f[I]alt+m\f[R] to show a menu of the entry\[cq]s components
+.PP
+\f[I]alt+s\f[R] to sync the contents of the vault
 .PP
 \f[I]alt+1\f[R] to autotype username and password, separated with a
 \f[V]tab\f[R] character

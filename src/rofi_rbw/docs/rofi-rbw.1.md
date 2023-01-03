@@ -1,6 +1,6 @@
-% ROFI-RBW(1) Version 1.0.1 | Rofi Third-party Add-on Documentation
+% ROFI-RBW(1) Version 1.1.0 | Rofi Third-party Add-on Documentation
 % Fabian Winter
-% May 22, 2022
+% January 03, 2023
 
 # NAME
 
@@ -86,24 +86,28 @@ Type, copy or print your credentials from Bitwarden using rofi.
 : Format: <shortcut>:<action>:<target>.
 
       Define your own keybindings. Multiple keybindings can be concatenated with `,`; multiple targets for one shortcut can be concatenated with `:`.
+      This feature is only available in supported \"selectors\".
 
 \--menu-keybindings _KEYBINDINGS_
 
 : Format: <shortcut>:<action>.
 
       Define your own keybindings for the target menu. Multiple keybindings can be concatenated with `,`.
+      This feature is only available in supported \"selectors\".
 
-# KEYBINDINGS
+# DEFAULT KEYBINDINGS
 
 *enter* to use the default action
 
-*alt+p* to copy the password
+*alt+c* to copy the password
 
 *alt+u* to copy the username
 
 *alt+t* to copy the TOTP
 
 *alt+m* to show a menu of the entry's components
+
+*alt+s* to sync the contents of the vault
 
 *alt+1* to autotype username and password, separated with a `tab` character
 

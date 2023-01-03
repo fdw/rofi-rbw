@@ -25,7 +25,7 @@ class RofiRbw(object):
 
     def __parse_arguments(self) -> argparse.Namespace:
         parser = configargparse.ArgumentParser(
-            description="Insert or copy passwords and usernames from Bitwarden using rofi.",
+            description="Insert or copy passwords and usernames from Bitwarden using rofi or rofi-likes.",
             default_config_files=config_file_locations,
         )
         parser.add_argument("--version", action="version", version="rofi-rbw " + __version__)
