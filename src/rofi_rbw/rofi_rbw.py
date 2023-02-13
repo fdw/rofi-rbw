@@ -74,7 +74,7 @@ class RofiRbw(object):
             dest="typer",
             action="store",
             type=str,
-            choices=["xdotool", "wtype", "ydotool"],
+            choices=["xdotool", "wtype", "ydotool", "dotool"],
             default=None,
             help="Choose the application to type with",
         )

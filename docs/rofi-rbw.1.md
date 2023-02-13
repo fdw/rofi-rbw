@@ -59,7 +59,7 @@ Type, copy or print your credentials from Bitwarden using rofi.
 
 \--typer _TYPER_
 
-: Possible values: xdotool, wtype, ydotool
+: Possible values: xdotool, wtype, ydotool, dotool
 
       Choose the application to type with manually.
 
