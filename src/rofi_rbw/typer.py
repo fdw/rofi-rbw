@@ -92,6 +92,21 @@ class YDotoolTyper(Typer):
         time.sleep(0.05)
         run(["ydotool", "type", "--key-delay", "0", characters])
 
+class DotoolTyper(Typer):
+    @staticmethod
+    def supported() -> bool:
+        return is_installed("dotool")
+
+    @staticmethod
+    def name() -> str:
+        return "dotool"
+
+    def get_active_window(self) -> str:
+        return "not possible with dotool"
+
+    def type_characters(self, characters: str, active_window: str) -> None:
+        run(["dotool"], text=True, input=f"type {characters}")
+
 
 class NoTyperFoundException(Exception):
     def __str__(self) -> str:
