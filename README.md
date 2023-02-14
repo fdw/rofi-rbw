@@ -49,5 +49,5 @@ Note that it needs `configargparse` to work.
 You also need:
 - Python 3.7 or higher
 - `rofi` or `wofi`
-- Something to programmatically type characters into other applications. Depending on your display server, it's `xdotool`, `wtype` or `ydotool`.
+- Something to programmatically type characters into other applications. Depending on your display server, it's `xdotool`, `wtype`, `ydotool` or `dotool`.
 - Something to copy text to the clipboard. Again, depending on the display server, you want `xclip`, `xsel` or `wl-copy`.
