@@ -1,3 +1,4 @@
+import json
 from subprocess import run
 from typing import List, Optional
 
@@ -33,30 +34,33 @@ class Rbw:
         uris = []
         further = {}
 
-        line, *rest = self.__load_from_rbw(entry.name, entry.username, entry.folder).strip().split("\n")
-        if len(line.split(": ", 1)) == 2:
-            # First line contains ': ' and thus there is no password
-            rest = [line] + rest
-        else:
-            password = line
+        data = json.loads(self.__load_from_rbw(entry.name, entry.username, entry.folder).strip())
 
-        for line in rest:
-            try:
-                key, value = line.split(": ", 1)
-                if key == "URI":
-                    uris.append(value)
-                elif key == "TOTP Secret":
+        if data['data']:
+            if data['data']['password']:
+                password = data['data']['password']
+
+            for key in data['data']:
+                value = data['data'][key]
+                if value:
+                    further[key] = value
+                if key == 'totp':
                     has_totp = True
-                elif key == "Match type" or key == "username":
-                    pass
-                else:
+                if key == 'uris':
+                    uris = list(map(lambda x: x['uri'], value))
+
+        for record in data['fields']:
+            try:
+                key = record['name']
+                value = record['value']
+                if value:
                     further[key] = value
             except ValueError:
                 pass
         return Credentials(entry.name, entry.folder, entry.username, password, has_totp, uris, further)
 
     def __load_from_rbw(self, name: str, username: str, folder: Optional[str]) -> str:
-        command = ["rbw", "get", "--full", name]
+        command = ["rbw", "get", "--raw", name]
         if username:
             command.append(username)
 
