@@ -90,7 +90,8 @@ class YDotoolTyper(Typer):
 
     def type_characters(self, characters: str, active_window: str) -> None:
         time.sleep(0.05)
-        run(["ydotool", "type", "--key-delay", "0", characters])
+        run(["ydotool", "type", "--escape=0", "--key-delay=0", characters])
+
 
 class DotoolTyper(Typer):
     @staticmethod
