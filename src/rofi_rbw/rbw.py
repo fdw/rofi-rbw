@@ -33,11 +33,20 @@ class Rbw:
         try:
             data = json.loads(self.__load_from_rbw(entry.name, entry.username, entry.folder).strip())
 
+            if data["data"] is None or "password" not in data["data"]:
+                print('rofi-rbw only supports logins')
+                return Credentials(
+                    entry.name,
+                    entry.folder,
+                    entry.username,
+                    further={item["name"]: item["value"] for item in data["fields"]},
+                )
+
             return Credentials(
                 entry.name,
                 entry.folder,
                 entry.username,
-                data["data"]["password"],
+                data["data"]["password"] or "",
                 data["data"]["totp"] is not None,
                 [item["uri"] for item in data["data"]["uris"]],
                 {item["name"]: item["value"] for item in data["fields"]},
