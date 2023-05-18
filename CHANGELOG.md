@@ -1,3 +1,7 @@
+# [NEXT]
+## Changed
+- Use json output from `rbw`.
+
 # [1.1.0]
 ## Added
 - Shortcuts can be customized.

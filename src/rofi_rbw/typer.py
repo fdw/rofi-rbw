@@ -92,6 +92,7 @@ class YDotoolTyper(Typer):
         time.sleep(0.05)
         run(["ydotool", "type", "--key-delay", "0", characters])
 
+
 class DotoolTyper(Typer):
     @staticmethod
     def supported() -> bool:
