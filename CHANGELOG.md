@@ -1,4 +1,7 @@
-# [NEXT]
+# [1.2.0]
+## Added
+- Added `dotool` support. (#70, #72)
+
 ## Changed
 - Use json output from `rbw`.
 
