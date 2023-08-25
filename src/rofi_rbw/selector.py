@@ -84,7 +84,12 @@ class Selector:
 
     @staticmethod
     def justify(entry: Entry, max_width: int, show_folders: bool) -> str:
-        return " " * (max_width - len(entry.name) - ((len(entry.folder) + 1) if show_folders else 0))
+        whitespace_length = max_width - len(entry.name)
+        if show_folders:
+            whitespace_length -= len(entry.folder)
+            if entry.folder:
+                whitespace_length -= 1
+        return " " * whitespace_length
 
 
 class Rofi(Selector):
