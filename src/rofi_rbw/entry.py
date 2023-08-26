@@ -35,19 +35,20 @@ class Entry:
         return f"{start:<{max_width}}  {self.username}"
 
     @staticmethod
-    def parse(formatted_string: str, use_markup: bool) -> "Entry":
+    def parse(formatted_string: str) -> "Entry":
         """Parse str as Entry.
 
-        >>> Entry.parse('path/sub/<b>test</b>  joe', True)
+        >>> Entry.parse('path/sub/<b>test</b>  joe')
         Entry(name='test', folder='path/sub', username='joe')
-        >>> Entry.parse('path/sub/<b>test</b>                      joe', True)
+        >>> Entry.parse('path/sub/<b>test</b>                      joe')
         Entry(name='test', folder='path/sub', username='joe')
-        >>> Entry.parse('path/sub/test                             joe', False)
+        >>> Entry.parse('path/sub/test                             joe')
         Entry(name='test', folder='path/sub', username='joe')
-        >>> Entry.parse('<b>name_only</b>                          ', True)
+        >>> Entry.parse('<b>name_only</b>                          ')
         Entry(name='name_only', folder=None, username=None)
         """
 
+        use_markup = "<b>" in formatted_string
         match = (RE if use_markup else RE_NO_M).search(formatted_string)
         return Entry(**match.groupdict())
 

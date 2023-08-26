@@ -59,9 +59,9 @@ class Selector:
         if len(credentials.uris) == 1:
             targets.append(f"URI: {credentials.uris[0]}")
         else:
-            for (key, value) in enumerate(credentials.uris):
+            for key, value in enumerate(credentials.uris):
                 targets.append(f"URI {key + 1}: {value}")
-        for (key, value) in credentials.further.items():
+        for key, value in credentials.further.items():
             targets.append(f'{key}: {value[0]}{"*" * (len(value) - 1)}')
 
         return targets
@@ -133,7 +133,7 @@ class Rofi(Selector):
             return_action = None
             return_targets = None
 
-        entry = Entry.parse(rofi.stdout, use_markup=True)
+        entry = Entry.parse(rofi.stdout)
 
         if use_cache:
             cache.update(entry)
@@ -238,7 +238,7 @@ class Wofi(Selector):
             encoding="utf-8",
         )
         if wofi.returncode == 0:
-            return None, None, Entry.parse(wofi.stdout, use_markup=False)
+            return None, None, Entry.parse(wofi.stdout)
         else:
             return None, Action.CANCEL, None
 

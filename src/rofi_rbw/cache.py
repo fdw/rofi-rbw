@@ -16,7 +16,7 @@ class Cache:
             for line in f:
                 if line.strip():
                     n, entry = line.strip().split(" ", maxsplit=1)
-                    self.cache.append((int(n), Entry.parse(entry, use_markup=True)))
+                    self.cache.append((int(n), Entry.parse(entry)))
 
     def sort(self, entries: List[Entry]) -> List[Entry]:
         for _, entry in self.cache:
