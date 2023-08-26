@@ -1,4 +1,3 @@
-import re
 from subprocess import run
 from typing import Dict, List, Tuple, Union
 
@@ -138,16 +137,11 @@ class Rofi(Selector):
         if use_cache:
             cache.update(rofi.stdout.strip())
 
-        return return_targets, return_action, self.__parse_formatted_string(rofi.stdout)
+        return return_targets, return_action, Entry.parse(rofi.stdout, use_markup=True)
 
     def __format_entries(self, entries: List[Entry], show_folders: bool) -> List[str]:
         max_width = self._calculate_max_width(entries, show_folders)
         return [it.format(max_width, show_folders, use_markup=True) for it in entries]
-
-    def __parse_formatted_string(self, formatted_string: str) -> Entry:
-        match = re.compile("(?:(?P<folder>.+)/)?<b>(?P<name>.*?) *</b>(?P<username>.*)").search(formatted_string)
-
-        return Entry(match.group("name"), match.group("folder"), match.group("username").strip())
 
     def select_target(
         self,
@@ -243,18 +237,13 @@ class Wofi(Selector):
             encoding="utf-8",
         )
         if wofi.returncode == 0:
-            return None, None, self.__parse_formatted_string(wofi.stdout)
+            return None, None, Entry.parse(wofi.stdout, use_markup=False)
         else:
             return None, Action.CANCEL, None
 
     def __format_entries(self, entries: List[Entry], show_folders: bool) -> List[str]:
         max_width = self._calculate_max_width(entries, show_folders)
         return [it.format(max_width, show_folders, use_markup=False) for it in entries]
-
-    def __parse_formatted_string(self, formatted_string: str) -> Entry:
-        match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) *  (?P<username>.*)").search(formatted_string)
-
-        return Entry(match.group("name").strip(), match.group("folder"), match.group("username").strip())
 
     def select_target(
         self,
