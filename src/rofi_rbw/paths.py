@@ -1,6 +1,11 @@
 import os
 from pathlib import Path
 
+if os.environ.get("XDG_CACHE_HOME"):
+    cache_file = Path(os.environ.get("XDG_CACHE_HOME")) / "rofi-rbw.runcache"
+else:
+    cache_file = Path.home() / ".cache" / "rofi-rbw.runcache"
+
 if os.environ.get("XDG_CONFIG_HOME"):
     config_home = Path(os.environ.get("XDG_CONFIG_HOME"))
 else:
