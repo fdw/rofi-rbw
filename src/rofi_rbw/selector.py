@@ -3,7 +3,7 @@ from subprocess import run
 from typing import Dict, List, Tuple, Union
 
 from .abstractionhelper import is_installed, is_wayland
-from .cache import cached_entries_first, update_cache
+from .cache import cached_entries_first, read_cache, update_cache
 from .credentials import Credentials
 from .entry import Entry
 from .models import Action, Keybinding, Target, Targets
@@ -125,7 +125,8 @@ class Rofi(Selector):
 
         entries = self.__format_entries(entries, show_folders)
         if use_cache:
-            entries = cached_entries_first(entries)
+            cache = read_cache()
+            entries = cached_entries_first(cache, entries)
 
         rofi = run(
             parameters,
@@ -145,7 +146,7 @@ class Rofi(Selector):
             return_targets = None
 
         if use_cache:
-            update_cache(rofi.stdout.strip())
+            update_cache(cache, rofi.stdout.strip())
 
         return return_targets, return_action, self.__parse_formatted_string(rofi.stdout)
 
