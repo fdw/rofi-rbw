@@ -17,7 +17,7 @@ class Cache:
                     n, entry = line.strip().split(" ", maxsplit=1)
                     self.cache.append((int(n), entry))
 
-    def cached_entries_first(self, entries: List[str]) -> List[str]:
+    def sort(self, entries: List[str]) -> List[str]:
         for _, entry in self.cache:
             if entry in entries:
                 entries.remove(entry)
@@ -25,7 +25,7 @@ class Cache:
 
         return entries
 
-    def update_cache(self, entry: str):
+    def update(self, entry: str):
         entries = defaultdict(int, {e: n for n, e in self.cache})
         entries[entry] += 1
         with cache_file.open("w") as f:

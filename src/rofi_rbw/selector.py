@@ -126,7 +126,7 @@ class Rofi(Selector):
         entries = self.__format_entries(entries, show_folders)
         if use_cache:
             cache = Cache()
-            entries = cache.cached_entries_first(entries)
+            entries = cache.sort(entries)
 
         rofi = run(
             parameters,
@@ -146,7 +146,7 @@ class Rofi(Selector):
             return_targets = None
 
         if use_cache:
-            cache.update_cache(rofi.stdout.strip())
+            cache.update(rofi.stdout.strip())
 
         return return_targets, return_action, self.__parse_formatted_string(rofi.stdout)
 
