@@ -112,14 +112,13 @@ class Rofi(Selector):
         if show_help_message and keybindings:
             parameters.extend(self.__format_keybindings_message(keybindings))
 
-        entries = self.__format_entries(entries, show_folders)
         if use_cache:
             cache = Cache()
             entries = cache.sort(entries)
 
         rofi = run(
             parameters,
-            input="\n".join(entries),
+            input="\n".join(self.__format_entries(entries, show_folders)),
             capture_output=True,
             encoding="utf-8",
         )
@@ -134,10 +133,12 @@ class Rofi(Selector):
             return_action = None
             return_targets = None
 
-        if use_cache:
-            cache.update(rofi.stdout.strip())
+        entry = Entry.parse(rofi.stdout, use_markup=True)
 
-        return return_targets, return_action, Entry.parse(rofi.stdout, use_markup=True)
+        if use_cache:
+            cache.update(entry)
+
+        return return_targets, return_action, entry
 
     def __format_entries(self, entries: List[Entry], show_folders: bool) -> List[str]:
         max_width = self._calculate_max_width(entries, show_folders)
