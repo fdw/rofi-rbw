@@ -78,16 +78,6 @@ class Selector:
         else:
             return max(len(it.name) for it in entries)
 
-    @staticmethod
-    def _format_folder(entry: Entry, show_folders: bool) -> str:
-        if not show_folders or not entry.folder:
-            return ""
-        return f"{entry.folder}/"
-
-    @staticmethod
-    def justify(entry: Entry, max_width: int, show_folders: bool) -> str:
-        return " " * (max_width - len(entry.name) - ((len(entry.folder) + 1) if show_folders else 0))
-
 
 class Rofi(Selector):
     @staticmethod
@@ -152,10 +142,7 @@ class Rofi(Selector):
 
     def __format_entries(self, entries: List[Entry], show_folders: bool) -> List[str]:
         max_width = self._calculate_max_width(entries, show_folders)
-        return [
-            f"{self._format_folder(it, show_folders)}<b>{it.name}</b>{self.justify(it, max_width, show_folders)}  {it.username}"
-            for it in entries
-        ]
+        return [it.format(max_width, show_folders, use_markup=True) for it in entries]
 
     def __parse_formatted_string(self, formatted_string: str) -> Entry:
         match = re.compile("(?:(?P<folder>.+)/)?<b>(?P<name>.*?) *</b>(?P<username>.*)").search(formatted_string)
@@ -262,10 +249,7 @@ class Wofi(Selector):
 
     def __format_entries(self, entries: List[Entry], show_folders: bool) -> List[str]:
         max_width = self._calculate_max_width(entries, show_folders)
-        return [
-            f"{self._format_folder(it, show_folders)}{it.name}{self.justify(it, max_width, show_folders)}  {it.username}"
-            for it in entries
-        ]
+        return [it.format(max_width, show_folders, use_markup=False) for it in entries]
 
     def __parse_formatted_string(self, formatted_string: str) -> Entry:
         match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) *  (?P<username>.*)").search(formatted_string)
