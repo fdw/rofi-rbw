@@ -17,7 +17,7 @@ class Rbw:
             exit(2)
 
         return sorted(
-            [self.__parse_rbw_output(it) for it in (rbw.stdout.strip("\n").split("\n"))],
+            [self.__parse_rbw_output(it) for it in rbw.stdout.strip("\n").split("\n") if it],
             key=lambda x: x.folder.lower() + x.name.lower(),
         )
 
