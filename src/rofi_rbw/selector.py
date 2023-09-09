@@ -63,9 +63,14 @@ class Selector:
             for (key, value) in enumerate(credentials.uris):
                 targets.append(f"URI {key + 1}: {value}")
         for (key, value) in credentials.further.items():
-            targets.append(f'{key}: {value[0]}{"*" * (len(value) - 1)}')
+            targets.append(f'{self._format_further_item_name(key)}: {value[0]}{"*" * (len(value) - 1)}')
 
         return targets
+
+    def _format_further_item_name(self, key: str) -> str:
+        if key.lower() in ["username", "password", "totp"] or re.match(r'^URI \d+$', key):
+            return f'{key} (field)'
+        return key
 
     @staticmethod
     def _extract_targets(output: str) -> List[Target]:

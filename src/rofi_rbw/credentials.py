@@ -26,7 +26,7 @@ class Credentials(Entry):
         elif target.is_uri():
             return self.uris[target.uri_index()]
         else:
-            return self.further.get(target.raw, None)
+            return self.further.get(target.raw.removesuffix(' (field)'), None)
 
     @property
     def totp(self):
