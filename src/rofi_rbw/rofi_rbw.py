@@ -93,6 +93,8 @@ class RofiRbw(object):
             "--no-folder", dest="show_folders", action="store_false", help="Don't show the entry's folder"
         )
         parser.set_defaults(show_folders=True)
+        parser.add_argument("--no-cache", dest="use_cache", action="store_false", help="Don't save history in cache")
+        parser.set_defaults(use_cache=True)
         parser.add_argument(
             "--keybindings",
             dest="keybindings",
@@ -159,6 +161,7 @@ class RofiRbw(object):
             self.args.prompt,
             self.args.show_help,
             self.args.show_folders,
+            self.args.use_cache,
             self.args.parsed_keybindings,
             self.args.selector_args,
         )
@@ -170,6 +173,7 @@ class RofiRbw(object):
                 self.args.prompt,
                 self.args.show_help,
                 self.args.show_folders,
+                self.args.use_cache,
                 self.args.parsed_keybindings,
                 self.args.selector_args,
             )
