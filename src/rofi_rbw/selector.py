@@ -3,6 +3,7 @@ from subprocess import run
 from typing import Dict, List, Tuple, Union
 
 from .abstractionhelper import is_installed, is_wayland
+from .cache import Cache
 from .credentials import Credentials
 from .entry import Entry
 from .models import Action, Keybinding, Target, Targets
@@ -33,6 +34,7 @@ class Selector:
         prompt: str,
         show_help_message: bool,
         show_folders: bool,
+        use_cache: bool,
         keybindings: Dict[str, Tuple[Action, List[Target]]],
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None], Union[Entry, None]]:
@@ -114,6 +116,7 @@ class Rofi(Selector):
         prompt: str,
         show_help_message: bool,
         show_folders: bool,
+        use_cache: bool,
         keybindings: List[Keybinding],
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None], Union[Entry, None]]:
@@ -132,6 +135,10 @@ class Rofi(Selector):
         if show_help_message and keybindings:
             parameters.extend(self.__format_keybindings_message(keybindings))
 
+        if use_cache:
+            cache = Cache()
+            entries = cache.sort(entries)
+
         rofi = run(
             parameters,
             input="\n".join(self.__format_entries(entries, show_folders)),
@@ -149,7 +156,12 @@ class Rofi(Selector):
             return_action = None
             return_targets = None
 
-        return return_targets, return_action, self.__parse_formatted_string(rofi.stdout)
+        entry = self.__parse_formatted_string(rofi.stdout)
+
+        if use_cache:
+            cache.update(entry)
+
+        return return_targets, return_action, entry
 
     def __format_entries(self, entries: List[Entry], show_folders: bool) -> List[str]:
         max_width = self._calculate_max_width(entries, show_folders)
@@ -244,6 +256,7 @@ class Wofi(Selector):
         prompt: str,
         show_help_message: bool,
         show_folders: bool,
+        use_cache: bool,
         keybindings: Dict[str, Tuple[Action, List[Target]]],
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None], Union[Entry, None]]:
