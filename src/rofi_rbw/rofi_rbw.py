@@ -103,6 +103,7 @@ class RofiRbw(object):
                     "Alt+1:type:username:password",
                     "Alt+2:type:username",
                     "Alt+3:type:password",
+                    "Alt+4:type:totp",
                     "Alt+c:copy:password",
                     "Alt+u:copy:username",
                     "Alt+t:copy:totp",
