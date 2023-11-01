@@ -55,6 +55,8 @@ class Selector:
             targets.append(f'Password: {credentials.password[0]}{"*" * (len(credentials.password) - 1)}')
         if credentials.has_totp:
             targets.append(f"TOTP: {credentials.totp}")
+        if credentials.notes:
+            targets.append(f"Notes: {credentials.notes}")
         if len(credentials.uris) == 1:
             targets.append(f"URI: {credentials.uris[0]}")
         else:

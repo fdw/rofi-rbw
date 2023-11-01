@@ -1,3 +1,7 @@
+# [Unreleased]
+## Added
+- Added `notes` as a field. (#85)
+
 # [1.2.0]
 ## Added
 - Added `dotool` support. (#70, #72)

@@ -10,6 +10,7 @@ from .models import Target, Targets
 class Credentials(Entry):
     password: Optional[str] = ""
     has_totp: bool = False
+    notes: Optional[str] = ""
     uris: List[str] = field(default_factory=list)
     further: Dict[str, str] = field(default_factory=dict)
 
@@ -20,6 +21,8 @@ class Credentials(Entry):
             return self.password
         elif target == Targets.TOTP:
             return self.totp
+        elif target == Targets.NOTES:
+            return self.notes
         elif target.is_uri():
             return self.uris[target.uri_index()]
         else:

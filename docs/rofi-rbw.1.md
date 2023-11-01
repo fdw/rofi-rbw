@@ -39,7 +39,7 @@ Type, copy or print your credentials from Bitwarden using rofi.
 
 \--target, -t
 
-: Possible values: username, password, totp, _CUSTOM FIELD NAME_
+: Possible values: username, password, totp, notes, _CUSTOM FIELD NAME_
 
       Choose which component of the selected entry to type/copy/print. Can be passed multiple times to use multiple targets.
 

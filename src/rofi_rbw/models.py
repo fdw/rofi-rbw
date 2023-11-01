@@ -16,9 +16,13 @@ class Target:
 
     def __init__(self, input: str):
         prepared_input = input.strip()
-        if prepared_input.lower() in ("username", "password", "menu", "totp") or prepared_input.lower().startswith(
-            "uri"
-        ):
+        if prepared_input.lower() in (
+            "username",
+            "password",
+            "menu",
+            "totp",
+            "notes",
+        ) or prepared_input.lower().startswith("uri"):
             self.__value = prepared_input.lower()
         else:
             self.__value = prepared_input
@@ -47,6 +51,7 @@ class Targets:
     USERNAME = Target("username")
     PASSWORD = Target("password")
     TOTP = Target("totp")
+    NOTES = Target("notes")
     MENU = Target("menu")
 
 
