@@ -39,6 +39,7 @@ class Rbw:
                     entry.name,
                     entry.folder,
                     entry.username,
+                    notes=data["notes"],
                     further={item["name"]: item["value"] for item in data["fields"]},
                 )
 
@@ -48,6 +49,7 @@ class Rbw:
                 entry.username,
                 data["data"]["password"] or "",
                 data["data"]["totp"] is not None,
+                data["notes"],
                 [item["uri"] for item in data["data"]["uris"]],
                 {item["name"]: item["value"] for item in data["fields"]},
             )

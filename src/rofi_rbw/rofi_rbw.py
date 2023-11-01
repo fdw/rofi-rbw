@@ -42,7 +42,7 @@ class RofiRbw(object):
             "--target", "-t", dest="targets", action="append", help="Which part of the entry do you want?"
         )
         parser.add_argument(
-            "--prompt", "-r", dest="prompt", action="store", default="Choose entry", help="Set rofi-rbw's  prompt"
+            "--prompt", "-r", dest="prompt", action="store", default="Choose entry", help="Set rofi-rbw's prompt"
         )
         parser.add_argument(
             "--selector-args",
@@ -104,9 +104,11 @@ class RofiRbw(object):
                     "Alt+2:type:username",
                     "Alt+3:type:password",
                     "Alt+4:type:totp",
+                    "Alt+5:type:notes",
                     "Alt+c:copy:password",
                     "Alt+u:copy:username",
                     "Alt+t:copy:totp",
+                    "Alt+n:copy:notes",
                     "Alt+m::menu",
                     "Alt+s:sync",
                 ]
