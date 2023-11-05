@@ -6,7 +6,7 @@ Based on the alternative [Bitwarden](https://bitwarden.com/) CLI [rbw](https://g
 ## Features
 - Autotype password or username (`Enter`/`Alt+3` and `Alt+2`, respectively)
 - Autotype username and password (with a `tab` character in between) with `Alt+1` (and copy TOTP to clipboard)
-- Copy username, password, TOTP, or notes to the clipboard (`Alt+u`, `Alt+p`, `Alt+t`, and `Alt+n` respectively)
+- Copy username, password or TOTP to the clipboard (`Alt+u`, `Alt+p` and `Alt+t`, respectively)
 - Show an autotype menu with all fields
 
 ## Usage
