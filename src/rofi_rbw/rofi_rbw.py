@@ -5,6 +5,7 @@ from typing import List, Tuple, Union
 import configargparse
 
 from . import __version__
+from .cache import Cache
 from .clipboarder import Clipboarder
 from .credentials import Credentials
 from .models import Action, Keybinding, Target, Targets
@@ -156,12 +157,17 @@ class RofiRbw(object):
         return parsed_args
 
     def main(self) -> None:
+        entries = self.rbw.list_entries()
+
+        if self.args.use_cache:
+            cache = Cache(entries)
+            entries = cache.sorted()
+
         (selected_targets, selected_action, selected_entry) = self.selector.show_selection(
-            self.rbw.list_entries(),
+            entries,
             self.args.prompt,
             self.args.show_help,
             self.args.show_folders,
-            self.args.use_cache,
             self.args.parsed_keybindings,
             self.args.selector_args,
         )
@@ -173,13 +179,15 @@ class RofiRbw(object):
                 self.args.prompt,
                 self.args.show_help,
                 self.args.show_folders,
-                self.args.use_cache,
                 self.args.parsed_keybindings,
                 self.args.selector_args,
             )
 
         if selected_action == Action.CANCEL:
             return
+
+        if self.args.use_cache:
+            cache.update(selected_entry)
 
         credential = self.rbw.fetch_credentials(selected_entry)
 
