@@ -32,5 +32,5 @@ class Cache:
     def update(self, entry: Entry):
         self.cache[entry.sha1][0] += 1
         with cache_file.open("w") as f:
-            for n, e in self.cache.values():
-                f.write(f"{n} {e.sha1}\n")
+            for sha1, (n, _) in self.cache.items():
+                f.write(f"{n} {sha1}\n")
