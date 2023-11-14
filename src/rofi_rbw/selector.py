@@ -62,7 +62,7 @@ class Selector:
         if len(credentials.uris) == 1:
             targets.append(f"URI: {credentials.uris[0]}")
         else:
-            for (key, value) in enumerate(credentials.uris):
+            for key, value in enumerate(credentials.uris):
                 targets.append(f"URI {key + 1}: {value}")
         for (key, value) in credentials.further.items():
             targets.append(f'{self._format_further_item_name(key)}: {value[0]}{"*" * (len(value) - 1)}')
@@ -136,8 +136,8 @@ class Rofi(Selector):
             parameters.extend(self.__format_keybindings_message(keybindings))
 
         if use_cache:
-            cache = Cache()
-            entries = cache.sort(entries)
+            cache = Cache(entries)
+            entries = cache.sorted()
 
         rofi = run(
             parameters,
