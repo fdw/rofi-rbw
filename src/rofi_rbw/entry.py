@@ -14,6 +14,8 @@ class Entry:
     def sha1(self) -> str:
         m = sha1()
         m.update(self.name.encode())
-        m.update(self.folder.encode())
-        m.update(self.username.encode())
+        if self.folder:
+            m.update(self.folder.encode())
+        if self.username:
+            m.update(self.username.encode())
         return m.hexdigest()
