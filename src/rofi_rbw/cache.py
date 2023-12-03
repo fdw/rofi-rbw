@@ -9,8 +9,9 @@ class Cache:
         cache_file.parent.mkdir(exist_ok=True)
         self.cache = dict()
 
-    def sorted(self, entries: List[Entry]):) -> List[Entry]:
-        self.cache = {entry.sha1: [0, entry] for entry in entries}
+    def sorted(self, entries: List[Entry]) -> List[Entry]:
+        entries = {entry.sha1: entry for entry in entries}
+        sorted_entries = []
 
         if cache_file.exists():
             with cache_file.open() as f:
@@ -18,20 +19,15 @@ class Cache:
                     sline = line.strip()
                     if sline:
                         n, sha1 = sline.split(" ", maxsplit=1)
-                        if sha1 in self.cache:
-                            self.cache[sha1][0] = int(n)
+                        self.cache[sha1] = int(n)
+                        sorted_entries.append(entries[sha1])
+                        del entries[sha1]
 
-        return [
-            e
-            for _, e in sorted(
-                self.cache.values(),
-                key=lambda t: t[0],
-                reverse=True,
-            )
-        ]
+        return [*sorted_entries, *entries.values()]
 
     def update(self, entry: Entry):
-        self.cache[entry.sha1][0] += 1
+        self.cache[entry.sha1] = self.cache.get(entry.sha1, 0) + 1
+
         with cache_file.open("w") as f:
-            for sha1, (n, _) in self.cache.items():
+            for sha1, n in sorted(self.cache.items(), key=lambda i: i[1], reverse=True):
                 f.write(f"{n} {sha1}\n")
