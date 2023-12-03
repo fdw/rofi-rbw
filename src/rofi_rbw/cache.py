@@ -19,9 +19,10 @@ class Cache:
                     sline = line.strip()
                     if sline:
                         n, sha1 = sline.split(" ", maxsplit=1)
-                        self.cache[sha1] = int(n)
-                        sorted_entries.append(entries[sha1])
-                        del entries[sha1]
+                        if sha1 in entries:
+                            self.cache[sha1] = int(n)
+                            sorted_entries.append(entries[sha1])
+                            del entries[sha1]
 
         return [*sorted_entries, *entries.values()]
 
