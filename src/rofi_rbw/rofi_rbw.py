@@ -160,8 +160,8 @@ class RofiRbw(object):
         entries = self.rbw.list_entries()
 
         if self.args.use_cache:
-            cache = Cache(entries)
-            entries = cache.sorted()
+            cache = Cache()
+            entries = cache.sorted(entries)
 
         (selected_targets, selected_action, selected_entry) = self.selector.show_selection(
             entries,

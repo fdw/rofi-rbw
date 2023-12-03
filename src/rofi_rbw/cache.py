@@ -5,9 +5,11 @@ from .paths import cache_file
 
 
 class Cache:
-    def __init__(self, entries: List[Entry]):
+    def __init__(self):
         cache_file.parent.mkdir(exist_ok=True)
+        self.cache = dict()
 
+    def sorted(self, entries: List[Entry]):) -> List[Entry]:
         self.cache = {entry.sha1: [0, entry] for entry in entries}
 
         if cache_file.exists():
@@ -19,7 +21,6 @@ class Cache:
                         if sha1 in self.cache:
                             self.cache[sha1][0] = int(n)
 
-    def sorted(self) -> List[Entry]:
         return [
             e
             for _, e in sorted(
