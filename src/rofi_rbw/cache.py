@@ -1,3 +1,4 @@
+from math import floor
 from typing import List
 
 from .entry import Entry
@@ -28,8 +29,8 @@ class Cache:
         return [*sorted_entries, *entries.values()]
 
     def update(self, entry: Entry):
-        self.cache[entry.sha1] = self.cache.get(entry.sha1, 0) + 1
+        self.cache[entry.sha1] = self.cache.get(entry.sha1, 0) + 1.1
 
         with cache_file.open("w") as f:
             for sha1, n in sorted(self.cache.items(), key=lambda i: i[1], reverse=True):
-                f.write(f"{n} {sha1}\n")
+                f.write(f"{floor(n)} {sha1}\n")
