@@ -11,7 +11,7 @@ class Entry:
     username: Optional[str] = ""
 
     @cached_property
-    def sha1(self) -> str:
+    def hashed(self) -> str:
         m = sha1()
         m.update(self.name.encode())
         if self.folder:
