@@ -68,8 +68,8 @@ class Selector:
         return targets
 
     def _format_further_item_name(self, key: str) -> str:
-        if key.lower() in ["username", "password", "totp"] or re.match(r'^URI \d+$', key):
-            return f'{key} (field)'
+        if key.lower() in ["username", "password", "totp"] or re.match(r"^URI \d+$", key):
+            return f"{key} (field)"
         return key
 
     @staticmethod
