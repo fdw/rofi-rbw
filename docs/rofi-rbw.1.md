@@ -47,40 +47,6 @@ Type, copy or print your credentials from Bitwarden using rofi.
 
 :  Set the text for the prompt.
 
-\--selector-args _SELECTOR-ARGS_
-
-:  A string of arguments to give to the selector.
-
-\--clipboarder _CLIPBOARDER_
-
-: Possible values: xsel, xclip, wl-copy
-
-      Choose the application to access the clipboard with manually.
-
-\--typer _TYPER_
-
-: Possible values: xdotool, wtype, ydotool, dotool
-
-      Choose the application to type with manually.
-
-\--selector _SELECTOR_
-
-: Possible values: rofi, wofi
-
-      Choose the selector application manually. Usually `rofi`, but for Wayland, you may want `wofi`.
-
-\--clear-after _SECONDS_
-
-: Clear the password from the clipboard after _SECONDS_ seconds. Set to `0` to disable
-
-\--no-help
-
-: Don't show the help message about available keyboard shortcuts
-
-\--no-folder
-
-: Don't show folders in the list of possible entries
-
 \--keybindings _KEYBINDINGS_
 
 : Format: <shortcut>:<action>:<target>.
@@ -94,6 +60,44 @@ Type, copy or print your credentials from Bitwarden using rofi.
 
       Define your own keybindings for the target menu. Multiple keybindings can be concatenated with `,`.
       This feature is only available in supported \"selectors\".
+
+\--clear-after _SECONDS_
+
+: Clear the password from the clipboard after _SECONDS_ seconds. Set to `0` to disable.
+
+\--no-cache
+
+: Disable the automatic frecency cache. It contains sha1-hashes of the selected entries and how often they were used.
+
+\--no-help
+
+: Don't show the help message about available keyboard shortcuts.
+
+\--no-folder
+
+: Don't show folders in the list of possible entries.
+
+\--selector-args _SELECTOR-ARGS_
+
+:  A string of arguments to give to the selector.
+
+\--selector _SELECTOR_
+
+: Possible values: rofi, wofi
+
+      Choose the selector application manually. Usually `rofi`, but for Wayland, you may want `wofi`.
+
+\--clipboarder _CLIPBOARDER_
+
+: Possible values: xsel, xclip, wl-copy
+
+      Choose the application to access the clipboard with manually.
+
+\--typer _TYPER_
+
+: Possible values: xdotool, wtype, ydotool, dotool
+
+      Choose the application to type with manually.
 
 # DEFAULT KEYBINDINGS
 
@@ -122,6 +126,13 @@ Please note that wofi does not support keybindings other than *enter*.
 Args that start with "\--" (eg. \--version) can also be set in a config file.
 
 Config file syntax allows: key=value, flag=true, stuff=[a,b,c]. If an arg is specified in more than one place, then commandline values override values from the config file.
+
+# FILES
+
+*~/.cache/rofi-rbw.runcache*
+
+: Saves the number pf times an entry has been used, so that they can be sorted first. Entries are hashed with sha1 so as not to leak any secrets.
+
 
 # WEBSITE
 
