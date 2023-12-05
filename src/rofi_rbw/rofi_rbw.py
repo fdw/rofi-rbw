@@ -186,10 +186,10 @@ class RofiRbw(object):
         if selected_action == Action.CANCEL:
             return
 
-        if self.args.use_cache:
-            cache.update(selected_entry)
-
         credential = self.rbw.fetch_credentials(selected_entry)
+
+        if self.args.use_cache:
+            cache.update(credential)
 
         if selected_targets is not None:
             self.args.targets = selected_targets

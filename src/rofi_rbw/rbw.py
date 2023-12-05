@@ -37,7 +37,7 @@ class Rbw:
                 print('rofi-rbw only supports logins')
                 return Credentials(
                     entry.name,
-                    entry.folder,
+                    data['folder'],
                     entry.username,
                     notes=data["notes"],
                     further={item["name"]: item["value"] for item in data["fields"]},
@@ -45,7 +45,7 @@ class Rbw:
 
             return Credentials(
                 entry.name,
-                entry.folder,
+                data['folder'],
                 entry.username,
                 data["data"]["password"] or "",
                 data["data"]["totp"] is not None,
