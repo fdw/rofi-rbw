@@ -1,7 +1,10 @@
-# [Unreleased]
+# [1.3.0] - 2023-12-07
 ## Added
 - The entries are sorted by frecency. (#79)
 - Added `notes` as a field. (#85)
+
+## Changed
+- Custom fields can have reserved names (f.e. `password`). (#77)
 
 # [1.2.0] - 2023-05-22
 ## Added
