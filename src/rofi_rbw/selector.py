@@ -2,7 +2,7 @@ import re
 from subprocess import run
 from typing import Dict, List, Tuple, Union
 
-from .abstractionhelper import is_installed, is_wayland
+from .abstractionhelper import is_installed, is_wayland, is_x_window_system
 from .credentials import Credentials
 from .entry import Entry
 from .models import Action, Keybinding, Target, Targets
@@ -102,7 +102,7 @@ class Selector:
 class Rofi(Selector):
     @staticmethod
     def supported() -> bool:
-        return is_installed("rofi")
+        return is_x_window_system() and is_installed("rofi")
 
     @staticmethod
     def name() -> str:
