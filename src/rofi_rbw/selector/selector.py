@@ -10,10 +10,11 @@ from rofi_rbw.models import Action, Target
 class Selector(ABC):
     @staticmethod
     def best_option(name: str = None) -> "Selector":
+        from .bemenu import Bemenu
         from .rofi import Rofi
         from .wofi import Wofi
 
-        available_selectors = [Rofi, Wofi]
+        available_selectors = [Rofi, Wofi, Bemenu]
 
         if name is not None:
             try:
