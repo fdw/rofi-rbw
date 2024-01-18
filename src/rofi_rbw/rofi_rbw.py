@@ -6,13 +6,13 @@ import configargparse
 
 from . import __version__
 from .cache import Cache
-from .clipboarder import Clipboarder
+from .clipboarder.clipboarder import Clipboarder
 from .credentials import Credentials
 from .models import Action, Keybinding, Target, Targets
 from .paths import *
 from .rbw import Rbw
-from .selector import Selector
-from .typer import Typer
+from .selector.selector import Selector
+from .typer.typer import Typer
 
 
 class RofiRbw(object):
