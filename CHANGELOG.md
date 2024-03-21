@@ -1,3 +1,7 @@
+# [NEXT]
+## Added
+- Support low-level typing actions like `delay`, `enter` or `tab`. (#89)
+
 # [1.3.0] - 2023-12-07
 ## Added
 - The entries are sorted by frecency. (#79)

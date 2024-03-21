@@ -1,8 +1,4 @@
-import time
 from abc import ABC, abstractmethod
-from subprocess import run
-
-from rofi_rbw.abstractionhelper import is_installed, is_wayland
 
 
 class Typer(ABC):
