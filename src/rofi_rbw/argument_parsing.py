@@ -4,7 +4,7 @@ import shlex
 import configargparse
 
 from . import __version__
-from .models import Action, Keybinding, Target, Targets
+from .models import Action, Keybinding, Target, Targets, TypeTarget
 from .paths import *
 
 
@@ -83,7 +83,7 @@ def parse_arguments() -> argparse.Namespace:
         type=str,
         default=",".join(
             [
-                "Alt+1:type:username:password",
+                "Alt+1:type:username:tab:password",
                 "Alt+2:type:username",
                 "Alt+3:type:password",
                 "Alt+4:type:totp",
@@ -131,7 +131,7 @@ def parse_arguments() -> argparse.Namespace:
             Keybinding(
                 elements[0],
                 Action(elements[1]) if elements[1] else None,
-                [Target(target_string) for target_string in elements[2:]],
+                [TypeTarget(target_string) for target_string in elements[2:]],
             )
         )
 

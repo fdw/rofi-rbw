@@ -1,7 +1,7 @@
 from subprocess import run
 
 from ..abstractionhelper import is_installed, is_wayland
-from .typer import Typer
+from .typer import Typer, Key
 
 
 class XDoToolTyper(Typer):
@@ -32,3 +32,13 @@ class XDoToolTyper(Typer):
         )
         # workaround for https://github.com/jordansissel/xdotool/issues/43
         run(["xdotool", "keyup", "Shift_L", "Shift_R", "Alt_L", "Alt_R"])
+
+    def press_key(self, key: Key) -> None:
+        if key == Key.ENTER:
+            key_name = "enter"
+        elif key == Key.TAB:
+            key_name = "tab"
+        else:
+            raise Exception("Unknown key")
+
+        run(["xdotool", "key", key_name])

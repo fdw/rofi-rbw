@@ -1,13 +1,14 @@
+import time
 from typing import List, Tuple, Union
 
 from .argument_parsing import parse_arguments
 from .cache import Cache
 from .clipboarder.clipboarder import Clipboarder
 from .credentials import Credentials
-from .models import Action, Target, Targets
+from .models import Action, Target, Targets, TypeTargets
 from .rbw import Rbw
 from .selector.selector import Selector
-from .typer.typer import Typer
+from .typer.typer import Typer, Key
 
 
 class RofiRbw(object):
@@ -86,10 +87,7 @@ class RofiRbw(object):
 
     def __execute_action(self, cred: Credentials) -> None:
         if self.args.action == Action.TYPE:
-            characters = "\t".join([cred[target] for target in self.args.targets])
-            self.typer.type_characters(characters, self.args.key_delay, self.active_window)
-            if Targets.PASSWORD in self.args.targets and cred.totp != "":
-                self.clipboarder.copy_to_clipboard(cred.totp)
+            self.__type_targets(cred)
         elif self.args.action == Action.COPY:
             for target in self.args.targets:
                 self.clipboarder.copy_to_clipboard(cred[target])
@@ -97,3 +95,16 @@ class RofiRbw(object):
                 self.clipboarder.clear_clipboard_after(self.args.clear)
         elif self.args.action == Action.PRINT:
             print("\n".join([cred[target] for target in self.args.targets]))
+
+    def __type_targets(self, cred):
+        for target in self.args.targets:
+            if target == TypeTargets.DELAY:
+                time.sleep(1)
+            elif target == TypeTargets.ENTER:
+                self.typer.press_key(Key.ENTER)
+            elif target == TypeTargets.TAB:
+                self.typer.press_key(Key.TAB)
+            else:
+                self.typer.type_characters(cred[target], self.args.key_delay, self.active_window)
+        if Targets.PASSWORD in self.args.targets and cred.totp != "":
+            self.clipboarder.copy_to_clipboard(cred.totp)

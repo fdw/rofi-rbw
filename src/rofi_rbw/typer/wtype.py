@@ -1,7 +1,7 @@
 from subprocess import run
 
 from ..abstractionhelper import is_installed, is_wayland
-from .typer import Typer
+from .typer import Typer, Key
 
 
 class WTypeTyper(Typer):
@@ -18,3 +18,13 @@ class WTypeTyper(Typer):
 
     def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
         run(["wtype", "-d", str(key_delay), characters])
+
+    def press_key(self, key: Key) -> None:
+        if key == Key.ENTER:
+            key_name = "return"
+        elif key == Key.TAB:
+            key_name = "tab"
+        else:
+            raise Exception("Unknown key")
+
+        run(["wtype", "-k", key_name])

@@ -1,8 +1,5 @@
-import time
+import enum
 from abc import ABC, abstractmethod
-from subprocess import run
-
-from rofi_rbw.abstractionhelper import is_installed, is_wayland
 
 
 class Typer(ABC):
@@ -39,7 +36,16 @@ class Typer(ABC):
     def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
         pass
 
+    @abstractmethod
+    def press_key(self, key: "Key") -> None:
+        pass
+
 
 class NoTyperFoundException(Exception):
     def __str__(self) -> str:
         return "Could not find a valid way to type characters. Please check the required dependencies."
+
+
+class Key(enum.Enum):
+    ENTER = "enter"
+    TAB = "tab"

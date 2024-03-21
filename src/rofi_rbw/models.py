@@ -47,6 +47,10 @@ class Target:
         return self.__value == other.__value
 
 
+class TypeTarget(Target):
+    pass
+
+
 class Targets:
     USERNAME = Target("username")
     PASSWORD = Target("password")
@@ -55,8 +59,14 @@ class Targets:
     MENU = Target("menu")
 
 
+class TypeTargets:
+    DELAY = TypeTarget("delay")
+    ENTER = TypeTarget("enter")
+    TAB = TypeTarget("tab")
+
+
 @dataclass
 class Keybinding:
     shortcut: str
     action: Action
-    targets: Union[List[Target], None]
+    targets: Union[List[TypeTarget], None]

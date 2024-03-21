@@ -1,4 +1,4 @@
-from .typer import NoTyperFoundException, Typer
+from .typer import NoTyperFoundException, Typer, Key
 
 
 class NoopTyper(Typer):
@@ -14,4 +14,7 @@ class NoopTyper(Typer):
         raise NoTyperFoundException()
 
     def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
+        raise NoTyperFoundException()
+
+    def press_key(self, key: Key) -> None:
         raise NoTyperFoundException()

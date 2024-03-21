@@ -1,7 +1,7 @@
 from subprocess import run
 
 from ..abstractionhelper import is_installed
-from .typer import Typer
+from .typer import Typer, Key
 
 
 class DotoolTyper(Typer):
@@ -17,4 +17,14 @@ class DotoolTyper(Typer):
         return "not possible with dotool"
 
     def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
-        run(["dotool"], text=True, input=f"typedelay {key_delay} type {characters}")
+        run(["dotool"], input=f"typedelay {key_delay}\ntype {characters}", encoding="utf-8")
+
+    def press_key(self, key: Key) -> None:
+        if key == Key.ENTER:
+            key_name = "enter"
+        elif key == Key.TAB:
+            key_name = "tab"
+        else:
+            raise Exception("Unknown key")
+
+        run(["dotool"], input=f"key {key_name}", encoding="utf-8")
