@@ -26,7 +26,7 @@ class XDoToolTyper(Typer):
                 "type",
                 "--clearmodifiers",
                 "--delay",
-                "0",
+                "6",
                 characters,
             ]
         )

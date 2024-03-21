@@ -22,8 +22,8 @@ python = "^3.8"
 ConfigArgParse = ">0.15,<2.0.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^22.10.0"
-isort = "^5.10.1"
+black = "^24.3.0"
+isort = "^5.13.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
