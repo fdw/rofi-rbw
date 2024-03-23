@@ -13,5 +13,5 @@ class NoopTyper(Typer):
     def get_active_window(self) -> str:
         raise NoTyperFoundException()
 
-    def type_characters(self, characters: str, active_window: str) -> None:
+    def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
         raise NoTyperFoundException()

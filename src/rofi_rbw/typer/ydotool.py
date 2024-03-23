@@ -16,6 +16,5 @@ class YDotoolTyper(Typer):
     def get_active_window(self) -> str:
         return "not possible with ydotool"
 
-    def type_characters(self, characters: str, active_window: str) -> None:
-        time.sleep(0.05)
-        run(["ydotool", "type", "--key-delay", "0", characters])
+    def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
+        run(["ydotool", "type", "--key-delay", str(key_delay), characters])

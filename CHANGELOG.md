@@ -1,3 +1,7 @@
+# [NEXT]
+## Added
+- Added a parameter to set a key delay when typing. (#88)
+
 # [1.3.0] - 2023-12-07
 ## Added
 - The entries are sorted by frecency. (#79)

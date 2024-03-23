@@ -16,7 +16,7 @@ class XDoToolTyper(Typer):
     def get_active_window(self) -> str:
         return run(args=["xdotool", "getactivewindow"], capture_output=True, encoding="utf-8").stdout[:-1]
 
-    def type_characters(self, characters: str, active_window: str) -> None:
+    def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
         run(
             [
                 "xdotool",
@@ -26,7 +26,7 @@ class XDoToolTyper(Typer):
                 "type",
                 "--clearmodifiers",
                 "--delay",
-                "6",
+                str(key_delay),
                 characters,
             ]
         )

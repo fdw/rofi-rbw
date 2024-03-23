@@ -87,7 +87,7 @@ class RofiRbw(object):
     def __execute_action(self, cred: Credentials) -> None:
         if self.args.action == Action.TYPE:
             characters = "\t".join([cred[target] for target in self.args.targets])
-            self.typer.type_characters(characters, self.active_window)
+            self.typer.type_characters(characters, self.args.key_delay, self.active_window)
             if Targets.PASSWORD in self.args.targets and cred.totp != "":
                 self.clipboarder.copy_to_clipboard(cred.totp)
         elif self.args.action == Action.COPY:

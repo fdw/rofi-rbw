@@ -16,5 +16,5 @@ class WTypeTyper(Typer):
     def get_active_window(self) -> str:
         return "not possible with wtype"
 
-    def type_characters(self, characters: str, active_window: str) -> None:
-        run(["wtype", characters])
+    def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
+        run(["wtype", "-d", str(key_delay), characters])

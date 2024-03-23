@@ -104,6 +104,14 @@ def parse_arguments() -> argparse.Namespace:
         default=",".join(["Alt+t:type", "Alt+c:copy"]),
         help="Define the keyboard shortcuts in the target menu in the format <shortcut>:<action> separated with a comma",
     )
+    parser.add_argument(
+        "--typing-key-delay",
+        dest="key_delay",
+        action="store",
+        type=int,
+        default=0,
+        help="Set the delay between key presses when typing.",
+    )
 
     parsed_args = parser.parse_args()
 

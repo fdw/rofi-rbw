@@ -13,7 +13,7 @@
          \[**\--target** {*username*,*password*,*totp*,*OTHER*}]
          \[**\--prompt** *PROMPT*] \[**\--selector-args** *SELECTOR_ARGS*]
          \[**\--clipboarder** *CLIPBOARDER*] \[**\--typer** *TYPER*] \[**\--selector** *SELECTOR*]
-         \[**\--clear-after** *NUMBER*]
+         \[**\--clear-after** *NUMBER*] \[**\--typing-key-delay** *NUMBER*]
          \[**\--no-help**] \[**\--no-folder**]
          \[**\--keybindings** *KEYBINDINGS*] \[**\--menu-keybindings** *MENU_KEYBINDINGS*]
 
@@ -64,6 +64,10 @@ Type, copy or print your credentials from Bitwarden using rofi.
 \--clear-after _SECONDS_
 
 : Clear the password from the clipboard after _SECONDS_ seconds. Set to `0` to disable.
+
+\--typing-key-delay _MILLISECONDS_
+
+: Set a small delay between keypresses when typing. `0` by default.
 
 \--no-cache
 
