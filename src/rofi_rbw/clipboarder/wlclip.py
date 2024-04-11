@@ -15,7 +15,7 @@ class WlClipboarder(Clipboarder):
         return "wl-copy"
 
     def copy_to_clipboard(self, characters: str) -> None:
-        run(["wl-copy"], input=characters, encoding="utf-8")
+        run(["wl-copy", "--type", "x-kde-passwordManagerHint"], input=characters, encoding="utf-8")
 
     def clear_clipboard_after(self, clear: int) -> None:
         if clear > 0:
