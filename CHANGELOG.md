@@ -1,6 +1,8 @@
 # [NEXT]
 ## Added
 - Added a parameter to set a key delay when typing. (#88)
+- Characters `enter`, `tab` can be used in autotyping, as can a `delay` of one second. (#89)
+- Autotyping will use a field `_autotype` on a credential.
 
 # [1.3.0] - 2023-12-07
 ## Added

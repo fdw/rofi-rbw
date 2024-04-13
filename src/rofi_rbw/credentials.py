@@ -3,7 +3,7 @@ from subprocess import run
 from typing import Dict, List, Optional, Union
 
 from .entry import Entry
-from .models import Target, Targets
+from .models import Target, Targets, TypeTarget
 
 
 @dataclass(frozen=True)
@@ -39,3 +39,10 @@ class Credentials(Entry):
         if self.folder:
             command.extend(["--folder", self.folder])
         return run(command, capture_output=True, encoding="utf-8").stdout.strip()
+
+    @property
+    def autotype_sequence(self) -> Union[List[TypeTarget], None]:
+        if "_autotype" not in self.further:
+            return None
+
+        return [TypeTarget(target_string) for target_string in self.further["_autotype"].strip().split(":")]

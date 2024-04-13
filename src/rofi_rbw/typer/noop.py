@@ -1,4 +1,4 @@
-from .typer import NoTyperFoundException, Typer, Key
+from .typer import Key, NoTyperFoundException, Typer
 
 
 class NoopTyper(Typer):

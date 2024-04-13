@@ -6,6 +6,7 @@ Based on the alternative [Bitwarden](https://bitwarden.com/) CLI [rbw](https://g
 ## Features
 - Autotype password or username (`Enter`/`Alt+3` and `Alt+2`, respectively)
 - Autotype username and password (with a `tab` character in between) with `Alt+1` (and copy TOTP to clipboard)
+- Configure autotyping either as a keybinding or by having a `_autotype` field in your credential
 - Copy username, password or TOTP to the clipboard (`Alt+u`, `Alt+p` and `Alt+t`, respectively)
 - Show an autotype menu with all fields
 
@@ -34,8 +35,10 @@ You can configure `rofi-rbw` either with cli arguments or with a config file cal
 | `--selector`         |              | `rofi`, `wofi`                                                | Show the selection dialog with this application. Chosen automatically by default.                                                                                                                                                                                           |
 | `--clipboarder`      |              | `xsel`, `xclip`, `wl-copy`                                    | Access the clipboard with this application. Chosen automatically by default.                                                                                                                                                                                                |
 | `--typer`            |              | `xdotool`, `wtype`, `ydotool`, `dotool`                       | Type the characters using this application. Chosen automatically by default.                                                                                                                                                                                                |
+## Autotyping
+By default, `Alt+1` will type username and password, separated with a `tab` character. However, you can change this behavior by defining your own keybinding (if your selector supports this). For example, `Alt+1:type:username:enter:delay:password:enter` will type the username, `enter`, wait for a second and then type the password and `enter` again.
 
-
+This sequence can also be defined as a field `_autotype` on each credential.
 
 # Installation
 

@@ -1,7 +1,7 @@
 from subprocess import run
 
 from ..abstractionhelper import is_installed
-from .typer import Typer, Key
+from .typer import Key, Typer
 
 
 class DotoolTyper(Typer):

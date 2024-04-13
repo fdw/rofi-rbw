@@ -8,7 +8,7 @@ from .credentials import Credentials
 from .models import Action, Target, Targets, TypeTargets
 from .rbw import Rbw
 from .selector.selector import Selector
-from .typer.typer import Typer, Key
+from .typer.typer import Key, Typer
 
 
 class RofiRbw(object):
@@ -61,7 +61,7 @@ class RofiRbw(object):
         if selected_action is not None:
             self.args.action = selected_action
 
-        if Targets.MENU in self.args.targets:
+        if self.args.targets is not None and Targets.MENU in self.args.targets:
             targets, action = self.__show_target_menu(
                 credential,
                 self.args.show_help,
@@ -86,18 +86,32 @@ class RofiRbw(object):
         return targets, action
 
     def __execute_action(self, cred: Credentials) -> None:
+        targets = self.__configure_targets(cred)
         if self.args.action == Action.TYPE:
-            self.__type_targets(cred)
+            self.__type_targets(cred, targets)
         elif self.args.action == Action.COPY:
-            for target in self.args.targets:
+            for target in targets:
                 self.clipboarder.copy_to_clipboard(cred[target])
-            if len(self.args.targets) == 1 and self.args.targets[0] == Targets.PASSWORD:
+            if len(targets) == 1 and targets[0] == Targets.PASSWORD:
                 self.clipboarder.clear_clipboard_after(self.args.clear)
         elif self.args.action == Action.PRINT:
-            print("\n".join([cred[target] for target in self.args.targets]))
+            print("\n".join([cred[target] for target in targets]))
 
-    def __type_targets(self, cred):
-        for target in self.args.targets:
+    def __configure_targets(self, cred: Credentials) -> List[Target]:
+        if self.args.targets:
+            return self.args.targets
+
+        if self.args.action == Action.TYPE:
+            if cred.autotype_sequence is not None:
+                return cred.autotype_sequence
+            else:
+                return [Targets.USERNAME, TypeTargets.TAB, Targets.PASSWORD]
+
+        return [Targets.USERNAME, Targets.PASSWORD]
+
+    def __type_targets(self, cred: Credentials, targets: List[Target]):
+        print(targets)
+        for target in targets:
             if target == TypeTargets.DELAY:
                 time.sleep(1)
             elif target == TypeTargets.ENTER:
@@ -106,5 +120,5 @@ class RofiRbw(object):
                 self.typer.press_key(Key.TAB)
             else:
                 self.typer.type_characters(cred[target], self.args.key_delay, self.active_window)
-        if Targets.PASSWORD in self.args.targets and cred.totp != "":
+        if Targets.PASSWORD in targets and cred.totp != "":
             self.clipboarder.copy_to_clipboard(cred.totp)

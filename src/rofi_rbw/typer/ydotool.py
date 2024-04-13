@@ -2,7 +2,7 @@ import time
 from subprocess import run
 
 from ..abstractionhelper import is_installed, is_wayland
-from .typer import Typer, Key
+from .typer import Key, Typer
 
 
 class YDotoolTyper(Typer):

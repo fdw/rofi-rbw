@@ -122,7 +122,7 @@ def parse_arguments() -> argparse.Namespace:
     if parsed_args.targets:
         parsed_args.targets = [Target(target) for target in parsed_args.targets]
     else:
-        parsed_args.targets = [Targets.USERNAME, Targets.PASSWORD]
+        parsed_args.targets = None
 
     parsed_args.parsed_keybindings = []
     for keybinding in parsed_args.keybindings.split(","):
