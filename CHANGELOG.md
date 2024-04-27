@@ -1,4 +1,4 @@
-# [NEXT]
+# [1.4.0] - 2024-04-27
 ## Added
 - Added a parameter to set a key delay when typing. (#88)
 - Characters `enter`, `tab` can be used in autotyping, as can a `delay` of one second. (#89)
