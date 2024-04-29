@@ -37,7 +37,7 @@ class XDoToolTyper(Typer):
         if key == Key.ENTER:
             key_name = "enter"
         elif key == Key.TAB:
-            key_name = "tab"
+            key_name = "Tab"
         else:
             raise Exception("Unknown key")
 
