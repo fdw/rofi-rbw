@@ -35,7 +35,7 @@ class XDoToolTyper(Typer):
 
     def press_key(self, key: Key) -> None:
         if key == Key.ENTER:
-            key_name = "enter"
+            key_name = "Return"
         elif key == Key.TAB:
             key_name = "Tab"
         else:

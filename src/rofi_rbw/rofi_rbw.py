@@ -110,7 +110,6 @@ class RofiRbw(object):
         return [Targets.USERNAME, Targets.PASSWORD]
 
     def __type_targets(self, cred: Credentials, targets: List[Target]):
-        print(targets)
         for target in targets:
             if target == TypeTargets.DELAY:
                 time.sleep(1)
