@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rofi-rbw"
-version = "1.4.0"
+version = "1.4.1"
 description = "Rofi frontend for Bitwarden"
 authors = ["Fabian Winter <5821180+fdw@users.noreply.github.com>"]
 license = "MIT"

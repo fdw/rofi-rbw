@@ -1,3 +1,7 @@
+# [1.4.1] - 2024-05-01
+## Fixed
+- Typing `tab` and `enter` with `xdotool`. (#94)
+
 # [1.4.0] - 2024-04-27
 ## Added
 - Added a parameter to set a key delay when typing. (#88)
