@@ -17,7 +17,13 @@ class WTypeTyper(Typer):
         return "not possible with wtype"
 
     def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
-        run(["wtype", "-d", str(key_delay), characters])
+        args = ['wtype']
+
+        if key_delay > 0:
+            args = args + ['-d', str(key_delay)]
+
+        args.append(characters)
+        run(args)
 
     def press_key(self, key: Key) -> None:
         if key == Key.ENTER:
