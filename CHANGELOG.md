@@ -1,3 +1,7 @@
+# [NEXT]
+## Fixed
+- `wtype` works without setting a delay. (#95)
+
 # [1.4.1] - 2024-05-01
 ## Fixed
 - Typing `tab` and `enter` with `xdotool`. (#94)
