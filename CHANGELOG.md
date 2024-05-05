@@ -1,4 +1,4 @@
-# [NEXT]
+# [1.4.2] - 2024-05-05
 ## Fixed
 - `wtype` works without setting a delay. (#95)
 
