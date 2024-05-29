@@ -27,7 +27,7 @@ class Rbw:
         try:
             return Entry(fields[1], fields[0], fields[2] if len(fields) > 2 else "")
         except IndexError:
-            raise Exception("Entry is incorrectly formatted and cannot be parsed")
+            raise Exception(f"Entry '{rbw_string}' cannot be parsed")
 
     def fetch_credentials(self, entry: Entry) -> "Credentials":
         try:
