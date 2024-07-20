@@ -74,8 +74,8 @@ class Selector(ABC):
         else:
             for key, value in enumerate(credentials.uris):
                 targets.append(f"URI {key + 1}: {value}")
-        for key, value in credentials.further.items():
-            targets.append(f'{self._format_further_item_name(key)}: {value[0]}{"*" * (len(value) - 1)}')
+        for field in credentials.fields:
+            targets.append(f"{self._format_further_item_name(field.key)}: {field.masked_string()}")
 
         return targets
 

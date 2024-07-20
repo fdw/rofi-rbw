@@ -3,7 +3,7 @@ from json import JSONDecodeError
 from subprocess import run
 from typing import List, Optional
 
-from .credentials import Credentials
+from .credentials import Credentials, Field, FieldType
 from .entry import Entry
 
 
@@ -40,7 +40,7 @@ class Rbw:
                     data["folder"],
                     entry.username,
                     notes=data["notes"],
-                    further={item["name"]: item["value"] for item in data["fields"]},
+                    fields=[Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
                 )
 
             return Credentials(
@@ -51,7 +51,7 @@ class Rbw:
                 data["data"]["totp"] is not None,
                 data["notes"],
                 [item["uri"] for item in data["data"]["uris"]],
-                {item["name"]: item["value"] for item in data["fields"]},
+                fields=[Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
             )
 
         except JSONDecodeError as exception:

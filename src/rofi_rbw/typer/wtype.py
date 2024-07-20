@@ -17,10 +17,10 @@ class WTypeTyper(Typer):
         return "not possible with wtype"
 
     def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
-        args = ['wtype']
+        args = ["wtype"]
 
         if key_delay > 0:
-            args = args + ['-d', str(key_delay)]
+            args = args + ["-d", str(key_delay)]
 
         args.append(characters)
         run(args)

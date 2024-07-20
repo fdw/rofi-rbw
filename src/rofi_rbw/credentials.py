@@ -1,9 +1,30 @@
 from dataclasses import dataclass, field
+from enum import Enum
 from subprocess import run
 from typing import Dict, List, Optional, Union
 
 from .entry import Entry
 from .models import Target, Targets, TypeTarget
+
+
+class FieldType(Enum):
+    HIDDEN = "hidden"
+    TEXT = "text"
+    BOOLEAN = "boolean"
+    LINKED = "linked"
+
+
+@dataclass
+class Field:
+    key: str
+    value: str
+    type: Optional[FieldType]
+
+    def masked_string(self):
+        if self.type == FieldType.HIDDEN:
+            return self.value[0] + ("*" * (len(self.value) - 1))
+
+        return self.value
 
 
 @dataclass(frozen=True)
@@ -12,7 +33,7 @@ class Credentials(Entry):
     has_totp: bool = False
     notes: Optional[str] = ""
     uris: List[str] = field(default_factory=list)
-    further: Dict[str, str] = field(default_factory=dict)
+    fields: List[Field] = field(default_factory=list)
 
     def __getitem__(self, target: Target) -> Optional[Union[str, List[str]]]:
         if target == Targets.USERNAME:
@@ -26,7 +47,7 @@ class Credentials(Entry):
         elif target.is_uri():
             return self.uris[target.uri_index()]
         else:
-            return self.further.get(target.raw.removesuffix(" (field)"), None)
+            return next((field for field in self.fields if field.key == target.raw.removesuffix(" (field)")), None)
 
     @property
     def totp(self):
@@ -42,7 +63,8 @@ class Credentials(Entry):
 
     @property
     def autotype_sequence(self) -> Union[List[TypeTarget], None]:
-        if "_autotype" not in self.further:
+        sequence = next((field for field in self.fields if field.key == '_autotype'), None)
+        if sequence is None:
             return None
 
-        return [TypeTarget(target_string) for target_string in self.further["_autotype"].strip().split(":")]
+        return [TypeTarget(target_string) for target_string in sequence.value.strip().split(":")]

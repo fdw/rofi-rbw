@@ -1,3 +1,7 @@
+# [NEXT]
+## Changed
+- Fields are shown in plain text or hidden based on their type. (#17)
+
 # [1.4.2] - 2024-05-05
 ## Fixed
 - `wtype` works without setting a delay. (#95)
