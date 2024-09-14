@@ -1,3 +1,4 @@
+from subprocess import run
 import time
 from typing import List, Tuple, Union
 
@@ -121,3 +122,5 @@ class RofiRbw(object):
                 self.typer.type_characters(cred[target], self.args.key_delay, self.active_window)
         if Targets.PASSWORD in targets and cred.totp != "":
             self.clipboarder.copy_to_clipboard(cred.totp)
+            if self.args.use_notify_send:
+                run(["notify-send", "-u", "normal", "-t", "3000", "rofi-rbw", "totp copied to clipboard"], check=True)
