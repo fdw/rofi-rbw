@@ -76,6 +76,8 @@ def parse_arguments() -> argparse.Namespace:
     parser.set_defaults(show_folders=True)
     parser.add_argument("--no-cache", dest="use_cache", action="store_false", help="Don't save history in cache")
     parser.set_defaults(use_cache=True)
+    parser.add_argument("--use-notify-send", dest="use_notify_send", action="store_true", help="Send desktop notification after copying TOTP")
+    parser.set_defaults(use_notify_send=False)
     parser.add_argument(
         "--keybindings",
         dest="keybindings",
