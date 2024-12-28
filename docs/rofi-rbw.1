@@ -18,6 +18,7 @@ client rbw
 [\f[B]\-\-no\-help\f[R]] [\f[B]\-\-no\-folder\f[R]]
 [\f[B]\-\-keybindings\f[R] \f[I]KEYBINDINGS\f[R]]
 [\f[B]\-\-menu\-keybindings\f[R] \f[I]MENU_KEYBINDINGS\f[R]]
+[\f[B]\-\-use\-notify\-send\f[R]]
 .SH DESCRIPTION
 Type, copy or print your credentials from Bitwarden using rofi.
 .SH OPTIONS
@@ -110,6 +111,10 @@ Possible values: xdotool, wtype, ydotool, dotool
 .RS
 .PP
 Choose the application to type with manually.
+.RE
+.TP
+\-\-use\-notify\-send
+Send desktop notification after copying TOTP.
 .RE
 .SH DEFAULT KEYBINDINGS
 \f[I]enter\f[R] to use the default action
