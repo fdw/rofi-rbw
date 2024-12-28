@@ -16,6 +16,7 @@
          \[**\--clear-after** *NUMBER*] \[**\--typing-key-delay** *NUMBER*]
          \[**\--no-help**] \[**\--no-folder**]
          \[**\--keybindings** *KEYBINDINGS*] \[**\--menu-keybindings** *MENU_KEYBINDINGS*]
+         \[**\--use-notify-send**]
 
 # DESCRIPTION
 
@@ -102,6 +103,10 @@ Type, copy or print your credentials from Bitwarden using rofi.
 : Possible values: xdotool, wtype, ydotool, dotool
 
       Choose the application to type with manually.
+
+\--use-notify-send
+
+: Send desktop notification after copying TOTP.
 
 # DEFAULT KEYBINDINGS
 
