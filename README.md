@@ -38,6 +38,7 @@ You can configure `rofi-rbw` either with cli arguments or with a config file cal
 | `--selector`         |              | `rofi`, `wofi`                                                | Show the selection dialog with this application. Chosen automatically by default.                                                                                                                                                                                           |
 | `--clipboarder`      |              | `xsel`, `xclip`, `wl-copy`                                    | Access the clipboard with this application. Chosen automatically by default.                                                                                                                                                                                                |
 | `--typer`            |              | `xdotool`, `wtype`, `ydotool`, `dotool`                       | Type the characters using this application. Chosen automatically by default.                                                                                                                                                                                                |
+| `--use-notify-send`  |              |                                                               | Send desktop notification after copying TOTP.                                                                                                                                                                                                                               |
 ## Autotyping
 By default, `Alt+1` will type username and password, separated with a `tab` character. However, you can change this behavior by defining your own keybinding (if your selector supports this). For example, `Alt+1:type:username:enter:delay:password:enter` will type the username, `enter`, wait for a second and then type the password and `enter` again.
 
@@ -61,3 +62,4 @@ You also need:
 - `rofi` or `wofi`
 - Something to programmatically type characters into other applications. Depending on your display server, it's `xdotool`, `wtype`, `ydotool` or `dotool`.
 - Something to copy text to the clipboard. Again, depending on the display server, you want `xclip`, `xsel` or `wl-copy`.
+- Optionally `libnotify` to provide `notify-send` needed for `--use-notify-send`
