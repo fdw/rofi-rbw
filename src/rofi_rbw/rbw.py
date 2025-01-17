@@ -33,6 +33,31 @@ class Rbw:
         try:
             data = json.loads(self.__load_from_rbw(entry.name, entry.username, entry.folder).strip())
 
+            if data["data"] is not None and "number" in data["data"].keys():
+                print("rofi-rbw only supports logins")
+                fields = []
+                if "cardholder_name" in data["data"].keys():
+                    fields.append(Field("Cardholder", data["data"]["cardholder_name"], FieldType.TEXT))
+                if "brand" in data["data"].keys():
+                    fields.append(Field("Card Brand", data["data"]["brand"], FieldType.TEXT))
+                if "number" in data["data"].keys():
+                    fields.append(Field("Card Number", data["data"]["number"], FieldType.HIDDEN))
+                if "exp_month" in data["data"].keys():
+                    fields.append(Field("Card Expiry Month", data["data"]["exp_month"], FieldType.TEXT))
+                if "exp_year" in data["data"].keys():
+                    fields.append(Field("Card Expiry Year", data["data"]["exp_year"], FieldType.TEXT))
+                if "exp_month" in data["data"].keys() and "exp_year" in data["data"].keys():
+                    fields.append(Field("Card Expiry", f'{int(data["data"]["exp_month"]):02}/{data["data"]["exp_year"]}', FieldType.TEXT))
+                if "code" in data["data"].keys():
+                    fields.append(Field("Card Code", data["data"]["code"], FieldType.HIDDEN))
+                return Credentials(
+                    entry.name,
+                    data["folder"],
+                    data["data"]["number"],
+                    notes=data["notes"],
+                    fields=[Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]] + fields,
+                )
+
             if data["data"] is None or "password" not in data["data"]:
                 print("rofi-rbw only supports logins")
                 return Credentials(
