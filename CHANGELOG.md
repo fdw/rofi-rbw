@@ -1,6 +1,7 @@
 # [NEXT]
 ## Changed
 - Fields are shown in plain text or hidden based on their type. (#17)
+- Stopped support for Python 3.8.
 
 # [1.4.2] - 2024-05-05
 ## Fixed

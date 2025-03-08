@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple, Union
 from ..abstractionhelper import is_installed, is_wayland
 from ..credentials import Credentials
 from ..entry import Entry
-from ..models import Action, Keybinding, Target, Targets
+from ..models import Action, Target
 from .selector import Selector
 
 

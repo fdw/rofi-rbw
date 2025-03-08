@@ -1,4 +1,3 @@
-import time
 from subprocess import run
 
 from ..abstractionhelper import is_installed, is_wayland

@@ -64,7 +64,7 @@ class Selector(ABC):
         if credentials.username:
             targets.append(f"Username: {credentials.username}")
         if credentials.password:
-            targets.append(f'Password: {credentials.password[0]}{"*" * (len(credentials.password) - 1)}')
+            targets.append(f"Password: {credentials.password[0]}{'*' * (len(credentials.password) - 1)}")
         if credentials.has_totp:
             targets.append(f"TOTP: {credentials.totp}")
         if credentials.notes:

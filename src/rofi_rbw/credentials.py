@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from subprocess import run
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Union
 
 from .entry import Entry
 from .models import Target, Targets, TypeTarget
@@ -63,7 +63,7 @@ class Credentials(Entry):
 
     @property
     def autotype_sequence(self) -> Union[List[TypeTarget], None]:
-        sequence = next((field for field in self.fields if field.key == '_autotype'), None)
+        sequence = next((field for field in self.fields if field.key == "_autotype"), None)
         if sequence is None:
             return None
 

@@ -1,5 +1,5 @@
-from subprocess import run
 import time
+from subprocess import run
 from typing import List, Tuple, Union
 
 from .argument_parsing import parse_arguments

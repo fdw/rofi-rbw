@@ -1,8 +1,8 @@
 import re
 from subprocess import run
-from typing import Dict, List, Tuple, Union
+from typing import List, Tuple, Union
 
-from ..abstractionhelper import is_installed, is_wayland
+from ..abstractionhelper import is_installed
 from ..credentials import Credentials
 from ..entry import Entry
 from ..models import Action, Keybinding, Target, Targets
