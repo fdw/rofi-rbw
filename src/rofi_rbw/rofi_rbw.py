@@ -5,7 +5,7 @@ from typing import List, Tuple, Union
 from .argument_parsing import parse_arguments
 from .cache import Cache
 from .clipboarder.clipboarder import Clipboarder
-from .credentials import Credentials
+from .credentials import Credentials, Field
 from .models import Action, Target, Targets, TypeTargets
 from .rbw import Rbw
 from .selector.selector import Selector
@@ -92,7 +92,10 @@ class RofiRbw(object):
             self.__type_targets(cred, targets)
         elif self.args.action == Action.COPY:
             for target in targets:
-                self.clipboarder.copy_to_clipboard(cred[target])
+                if type(cred[target]) is Field:
+                    self.clipboarder.copy_to_clipboard(cred[target].value)
+                else:
+                    self.clipboarder.copy_to_clipboard(cred[target])
             if len(targets) == 1 and targets[0] == Targets.PASSWORD:
                 self.clipboarder.clear_clipboard_after(self.args.clear)
         elif self.args.action == Action.PRINT:
@@ -119,7 +122,10 @@ class RofiRbw(object):
             elif target == TypeTargets.TAB:
                 self.typer.press_key(Key.TAB)
             else:
-                self.typer.type_characters(cred[target], self.args.key_delay, self.active_window)
+                if type(cred[target]) is Field:
+                    self.typer.type_characters(cred[target].value, self.args.key_delay, self.active_window)
+                else:
+                    self.typer.type_characters(cred[target], self.args.key_delay, self.active_window)
         if Targets.PASSWORD in targets and cred.totp != "":
             self.clipboarder.copy_to_clipboard(cred.totp)
             if self.args.use_notify_send:
