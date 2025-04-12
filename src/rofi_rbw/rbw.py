@@ -1,9 +1,9 @@
 import json
 from json import JSONDecodeError
 from subprocess import run
-from typing import List, Optional
+from typing import List, Optional, Union
 
-from .credentials import Credentials, Field, FieldType
+from .credentials import Card, Credentials, Field, FieldType
 from .entry import Entry
 
 
@@ -21,7 +21,7 @@ class Rbw:
             key=lambda x: x.folder.lower() + x.name.lower(),
         )
 
-    def __parse_rbw_output(self, rbw_string: str) -> "Entry":
+    def __parse_rbw_output(self, rbw_string: str) -> Entry:
         fields = rbw_string.split("\t")
 
         try:
@@ -29,30 +29,39 @@ class Rbw:
         except IndexError:
             raise Exception(f"Entry '{rbw_string}' cannot be parsed")
 
-    def fetch_credentials(self, entry: Entry) -> "Credentials":
+    def fetch_credentials(self, entry: Entry) -> Union[Credentials, Card]:
         try:
             data = json.loads(self.__load_from_rbw(entry.name, entry.username, entry.folder).strip())
 
-            if data["data"] is None or "password" not in data["data"]:
-                print("rofi-rbw only supports logins")
+            if data["data"] is not None and "password" in data["data"]:
                 return Credentials(
                     entry.name,
                     data["folder"],
                     entry.username,
-                    notes=data["notes"],
+                    data["data"]["password"] or "",
+                    data["data"]["totp"] is not None,
+                    data["notes"],
+                    [item["uri"] for item in data["data"]["uris"]],
                     fields=[Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
                 )
 
-            return Credentials(
-                entry.name,
-                data["folder"],
-                entry.username,
-                data["data"]["password"] or "",
-                data["data"]["totp"] is not None,
-                data["notes"],
-                [item["uri"] for item in data["data"]["uris"]],
-                fields=[Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
-            )
+            if data["data"] is not None and "number" in data["data"]:
+                return Card(
+                    entry.name,
+                    entry.folder,
+                    entry.username,
+                    data["data"]["cardholder_name"],
+                    data["data"]["number"],
+                    data["data"]["brand"],
+                    data["data"]["exp_month"],
+                    data["data"]["exp_year"],
+                    data["data"]["code"],
+                    data["notes"],
+                    fields=[Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
+                )
+
+            print("rofi-rbw only supports logins")
+            exit(7)
 
         except JSONDecodeError as exception:
             print(f"Could not parse the output: {exception.msg}")

@@ -3,7 +3,7 @@ from subprocess import run
 from typing import Dict, List, Tuple, Union
 
 from ..abstractionhelper import is_installed, is_wayland
-from ..credentials import Credentials
+from ..credentials import Card, Credentials
 from ..entry import Entry
 from ..models import Action, Target
 from .selector import Selector
@@ -54,7 +54,7 @@ class Fuzzel(Selector):
 
     def select_target(
         self,
-        credentials: Credentials,
+        entry: Union[Credentials, Card],
         show_help_message: bool,
         keybindings: Dict[str, Action],
         additional_args: List[str],
@@ -63,7 +63,7 @@ class Fuzzel(Selector):
 
         fuzzel = run(
             parameters,
-            input="\n".join(self._format_targets_from_credential(credentials)),
+            input="\n".join(self._format_targets_from_entry(entry)),
             capture_output=True,
             encoding="utf-8",
         )

@@ -3,7 +3,7 @@ from subprocess import run
 from typing import List, Tuple, Union
 
 from ..abstractionhelper import is_installed
-from ..credentials import Credentials
+from ..credentials import Card, Credentials
 from ..entry import Entry
 from ..models import Action, Keybinding, Target, Targets
 from .selector import Selector
@@ -75,7 +75,7 @@ class Rofi(Selector):
 
     def select_target(
         self,
-        credentials: Credentials,
+        entry: Union[Credentials, Card],
         show_help_message: bool,
         keybindings: List[Keybinding],
         additional_args: List[str],
@@ -96,7 +96,7 @@ class Rofi(Selector):
 
         rofi = run(
             parameters,
-            input="\n".join(self._format_targets_from_credential(credentials)),
+            input="\n".join(self._format_targets_from_entry(entry)),
             capture_output=True,
             encoding="utf-8",
         )

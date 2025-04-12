@@ -5,7 +5,7 @@ from typing import List, Tuple, Union
 from .argument_parsing import parse_arguments
 from .cache import Cache
 from .clipboarder.clipboarder import Clipboarder
-from .credentials import Credentials
+from .credentials import Card, Credentials
 from .models import Action, Target, Targets, TypeTargets
 from .rbw import Rbw
 from .selector.selector import Selector
@@ -51,10 +51,10 @@ class RofiRbw(object):
         if selected_action == Action.CANCEL:
             return
 
-        credential = self.rbw.fetch_credentials(selected_entry)
+        entry = self.rbw.fetch_credentials(selected_entry)
 
         if self.args.use_cache:
-            cache.update(credential)
+            cache.update(entry)
 
         if selected_targets is not None:
             self.args.targets = selected_targets
@@ -64,20 +64,20 @@ class RofiRbw(object):
 
         if self.args.targets is not None and Targets.MENU in self.args.targets:
             targets, action = self.__show_target_menu(
-                credential,
+                entry,
                 self.args.show_help,
             )
             self.args.targets = targets
             if action is not None:
                 self.args.action = action
 
-        self.__execute_action(credential)
+        self.__execute_action(entry)
 
     def __show_target_menu(
-        self, cred: Credentials, show_help_message: bool
+        self, entry: Union[Credentials, Card], show_help_message: bool
     ) -> Tuple[List[Target], Union[Action, None]]:
         targets, action = self.selector.select_target(
-            cred, show_help_message, self.args.parsed_menu_keybindings, additional_args=self.args.selector_args
+            entry, show_help_message, self.args.parsed_menu_keybindings, additional_args=self.args.selector_args
         )
 
         if action == Action.CANCEL:

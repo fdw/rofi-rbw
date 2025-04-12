@@ -2,7 +2,7 @@ import re
 from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple, Union
 
-from rofi_rbw.credentials import Credentials
+from rofi_rbw.credentials import Card, Credentials
 from rofi_rbw.entry import Entry
 from rofi_rbw.models import Action, Target
 
@@ -53,12 +53,18 @@ class Selector(ABC):
     @abstractmethod
     def select_target(
         self,
-        credentials: Credentials,
+        credentials: Union[Credentials, Card],
         show_help_message: bool,
         keybindings: Dict[str, Action],
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None]]:
         pass
+
+    def _format_targets_from_entry(self, entry: Union[Credentials, Card]) -> List[str]:
+        if isinstance(entry, Credentials):
+            return self._format_targets_from_credential(entry)
+        elif isinstance(entry, Card):
+            return self._format_targets_from_card(entry)
 
     def _format_targets_from_credential(self, credentials: Credentials) -> List[str]:
         targets = []
@@ -76,6 +82,25 @@ class Selector(ABC):
             for key, value in enumerate(credentials.uris):
                 targets.append(f"URI {key + 1}: {value}")
         for field in credentials.fields:
+            targets.append(f"{self._format_further_item_name(field.key)}: {field.masked_string()}")
+
+        return targets
+
+    def _format_targets_from_card(self, card: Card) -> List[str]:
+        targets = []
+        if card.number:
+            targets.append(f"Number: {card.number}")
+        if card.cardholder_name:
+            targets.append(f"Cardholder: {card.cardholder_name}")
+        if card.brand:
+            targets.append(f"Brand: {card.brand}")
+        if card.exp_month and card.exp_year:
+            targets.append(f"Expiry: {card.exp_year:0>4}-{card.exp_month:0>2}")
+        if card.code:
+            targets.append(f"Code: {card.code[0]}{'*' * (len(card.code) - 1)}")
+        if card.notes:
+            targets.append(f"Notes: {card.notes}")
+        for field in card.fields:
             targets.append(f"{self._format_further_item_name(field.key)}: {field.masked_string()}")
 
         return targets
