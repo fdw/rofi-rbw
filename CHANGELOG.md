@@ -1,4 +1,4 @@
-# [NEXT]
+# [1.5.0] - 2025-05-10
 ## Changed
 - Fields are shown in plain text or hidden based on their type. (#17)
 - Stopped support for Python 3.8.
