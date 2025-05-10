@@ -23,7 +23,7 @@ rofi-rbw = "rofi_rbw.__main__:main"
 requires = ["hatchling>=1.18"]
 build-backend = "hatchling.build"
 
-[tool.hatch.build]
+[tool.hatch.build.targets.sdist]
 packages = ["src/rofi_rbw"]
 include = ["docs/rofi-rbw.1"]
 
