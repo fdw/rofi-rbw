@@ -3,6 +3,11 @@
 - Fields are shown in plain text or hidden based on their type. (#17)
 - Stopped support for Python 3.8.
 
+## Added
+- Show a notification after copying TOTP. (#101)
+- Support for fuzzel. (#109)
+- Support cards.
+
 # [1.4.2] - 2024-05-05
 ## Fixed
 - `wtype` works without setting a delay. (#95)
