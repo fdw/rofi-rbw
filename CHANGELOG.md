@@ -1,3 +1,7 @@
+# [1.5.1] - 2025-05-11
+## Fixed
+- The build process builds a wheel file with `rofi-rbw` again. (#112)
+
 # [1.5.0] - 2025-05-10
 ## Changed
 - Fields are shown in plain text or hidden based on their type. (#17)
