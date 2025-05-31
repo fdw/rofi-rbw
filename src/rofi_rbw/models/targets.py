@@ -1,16 +1,3 @@
-from dataclasses import dataclass
-from enum import Enum
-from typing import List, Union
-
-
-class Action(Enum):
-    TYPE = "type"
-    COPY = "copy"
-    PRINT = "print"
-    SYNC = "sync"
-    CANCEL = "cancel"
-
-
 class Target:
     __value: str
 
@@ -73,10 +60,3 @@ class TypeTargets:
     DELAY = TypeTarget("delay")
     ENTER = TypeTarget("enter")
     TAB = TypeTarget("tab")
-
-
-@dataclass
-class Keybinding:
-    shortcut: str
-    action: Action
-    targets: Union[List[TypeTarget], None]

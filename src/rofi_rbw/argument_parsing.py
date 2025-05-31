@@ -4,7 +4,9 @@ import shlex
 import configargparse
 
 from . import __version__
-from .models import Action, Keybinding, Target, TypeTarget
+from .models.action import Action
+from .models.keybinding import Keybinding
+from .models.targets import Target, TypeTarget
 from .paths import config_file_locations
 
 

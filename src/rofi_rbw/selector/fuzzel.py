@@ -3,9 +3,10 @@ from subprocess import run
 from typing import Dict, List, Tuple, Union
 
 from ..abstractionhelper import is_installed, is_wayland
-from ..credentials import Card, Credentials
-from ..entry import Entry
-from ..models import Action, Target
+from ..models.action import Action
+from ..models.detailed_entry import DetailedEntry
+from ..models.entry import Entry
+from ..models.targets import Target
 from .selector import Selector
 
 
@@ -54,7 +55,7 @@ class Fuzzel(Selector):
 
     def select_target(
         self,
-        entry: Union[Credentials, Card],
+        entry: DetailedEntry,
         show_help_message: bool,
         keybindings: Dict[str, Action],
         additional_args: List[str],

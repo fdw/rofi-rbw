@@ -1,7 +1,7 @@
 from math import floor
 from typing import List
 
-from .entry import Entry
+from .models.entry import Entry
 from .paths import cache_file
 
 

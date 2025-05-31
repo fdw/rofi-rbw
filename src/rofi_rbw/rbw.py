@@ -1,10 +1,14 @@
 import json
 from json import JSONDecodeError
 from subprocess import run
-from typing import List, Optional, Union
+from typing import List, Optional
 
-from .credentials import Card, Credentials, Field, FieldType
-from .entry import Entry
+from .models.card import Card
+from .models.credentials import Credentials
+from .models.detailed_entry import DetailedEntry
+from .models.entry import Entry
+from .models.field import Field, FieldType
+from .models.note import Note
 
 
 class Rbw:
@@ -29,7 +33,7 @@ class Rbw:
         except IndexError:
             raise Exception(f"Entry '{rbw_string}' cannot be parsed")
 
-    def fetch_credentials(self, entry: Entry) -> Union[Credentials, Card]:
+    def fetch_credentials(self, entry: Entry) -> DetailedEntry:
         try:
             data = json.loads(self.__load_from_rbw(entry.name, entry.username, entry.folder).strip())
 
@@ -37,19 +41,19 @@ class Rbw:
                 return Credentials(
                     entry.name,
                     data["folder"],
+                    [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
                     entry.username,
                     data["data"]["password"] or "",
                     data["data"]["totp"] is not None,
                     data["notes"],
                     [item["uri"] for item in data["data"]["uris"]],
-                    fields=[Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
                 )
 
             if data["data"] is not None and "number" in data["data"]:
                 return Card(
                     entry.name,
                     entry.folder,
-                    entry.username,
+                    [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
                     data["data"]["cardholder_name"],
                     data["data"]["number"],
                     data["data"]["brand"],
@@ -57,7 +61,14 @@ class Rbw:
                     data["data"]["exp_year"],
                     data["data"]["code"],
                     data["notes"],
-                    fields=[Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
+                )
+
+            if data["notes"] is not None:
+                return Note(
+                    entry.name,
+                    entry.folder,
+                    [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
+                    data["notes"],
                 )
 
             print("rofi-rbw only supports logins")

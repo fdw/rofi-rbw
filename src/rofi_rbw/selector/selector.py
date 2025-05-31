@@ -2,9 +2,13 @@ import re
 from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple, Union
 
-from rofi_rbw.credentials import Card, Credentials
-from rofi_rbw.entry import Entry
-from rofi_rbw.models import Action, Target
+from ..models.action import Action
+from ..models.card import Card
+from ..models.credentials import Credentials
+from ..models.detailed_entry import DetailedEntry
+from ..models.entry import Entry
+from ..models.note import Note
+from ..models.targets import Target
 
 
 class Selector(ABC):
@@ -53,18 +57,21 @@ class Selector(ABC):
     @abstractmethod
     def select_target(
         self,
-        credentials: Union[Credentials, Card],
+        entry: DetailedEntry,
         show_help_message: bool,
         keybindings: Dict[str, Action],
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None]]:
         pass
 
-    def _format_targets_from_entry(self, entry: Union[Credentials, Card]) -> List[str]:
+    def _format_targets_from_entry(self, entry: DetailedEntry) -> List[str]:
         if isinstance(entry, Credentials):
             return self._format_targets_from_credential(entry)
         elif isinstance(entry, Card):
             return self._format_targets_from_card(entry)
+        elif isinstance(entry, Note):
+            return self._format_targets_from_note(entry)
+        return []
 
     def _format_targets_from_credential(self, credentials: Credentials) -> List[str]:
         targets = []
@@ -101,6 +108,15 @@ class Selector(ABC):
         if card.notes:
             targets.append(f"Notes: {card.notes}")
         for field in card.fields:
+            targets.append(f"{self._format_further_item_name(field.key)}: {field.masked_string()}")
+
+        return targets
+
+    def _format_targets_from_note(self, note: Note) -> List[str]:
+        targets = []
+        if note.notes:
+            targets.append(f"Notes: {note.notes.replace('\n', '|')}")
+        for field in note.fields:
             targets.append(f"{self._format_further_item_name(field.key)}: {field.masked_string()}")
 
         return targets

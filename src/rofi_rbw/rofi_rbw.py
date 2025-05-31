@@ -5,8 +5,10 @@ from typing import List, Tuple, Union
 from .argument_parsing import parse_arguments
 from .cache import Cache
 from .clipboarder.clipboarder import Clipboarder
-from .credentials import Card, Credentials
-from .models import Action, Target, Targets, TypeTargets
+from .models.action import Action
+from .models.credentials import Credentials
+from .models.detailed_entry import DetailedEntry
+from .models.targets import Target, Targets, TypeTargets
 from .rbw import Rbw
 from .selector.selector import Selector
 from .typer.typer import Key, Typer
@@ -54,7 +56,7 @@ class RofiRbw(object):
         entry = self.rbw.fetch_credentials(selected_entry)
 
         if self.args.use_cache:
-            cache.update(entry)
+            cache.update(selected_entry)
 
         if selected_targets is not None:
             self.args.targets = selected_targets
@@ -74,7 +76,7 @@ class RofiRbw(object):
         self.__execute_action(entry)
 
     def __show_target_menu(
-        self, entry: Union[Credentials, Card], show_help_message: bool
+        self, entry: DetailedEntry, show_help_message: bool
     ) -> Tuple[List[Target], Union[Action, None]]:
         targets, action = self.selector.select_target(
             entry, show_help_message, self.args.parsed_menu_keybindings, additional_args=self.args.selector_args
