@@ -7,6 +7,7 @@ from rofi_rbw.models.entry import Entry
 from ..abstractionhelper import is_installed, is_wayland
 from ..models.action import Action
 from ..models.detailed_entry import DetailedEntry
+from ..models.keybinding import Keybinding
 from ..models.targets import Target
 from .selector import Selector
 
@@ -26,7 +27,7 @@ class Wofi(Selector):
         prompt: str,
         show_help_message: bool,
         show_folders: bool,
-        keybindings: Dict[str, Tuple[Action, List[Target]]],
+        keybindings: List[Keybinding],
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None], Union[Entry, None]]:
         parameters = ["wofi", "--dmenu", "-p", prompt, *additional_args]

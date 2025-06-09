@@ -8,5 +8,5 @@ from .targets import TypeTarget
 @dataclass
 class Keybinding:
     shortcut: str
-    action: Action
+    action: Action | None
     targets: Union[List[TypeTarget], None]

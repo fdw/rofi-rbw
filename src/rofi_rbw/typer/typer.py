@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 class Typer(ABC):
     @staticmethod
-    def best_option(name: str = None) -> "Typer":
+    def best_option(name: str | None = None) -> "Typer":
         from .dotool import DotoolTyper
         from .noop import NoopTyper
         from .wtype import WTypeTyper

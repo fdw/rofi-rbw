@@ -88,31 +88,31 @@ class RofiRbw(object):
 
         return targets, action
 
-    def __execute_action(self, cred: Credentials) -> None:
-        targets = self.__configure_targets(cred)
+    def __execute_action(self, detailed_entry: DetailedEntry) -> None:
+        targets = self.__configure_targets(detailed_entry)
         if self.args.action == Action.TYPE:
-            self.__type_targets(cred, targets)
+            self.__type_targets(detailed_entry, targets)
         elif self.args.action == Action.COPY:
             for target in targets:
-                self.clipboarder.copy_to_clipboard(cred[target])
+                self.clipboarder.copy_to_clipboard(detailed_entry[target])
             if len(targets) == 1 and targets[0] == Targets.PASSWORD:
                 self.clipboarder.clear_clipboard_after(self.args.clear)
         elif self.args.action == Action.PRINT:
-            print("\n".join([cred[target] for target in targets]))
+            print("\n".join([detailed_entry[target] for target in targets]))
 
-    def __configure_targets(self, cred: Credentials) -> List[Target]:
+    def __configure_targets(self, detailed_entry: DetailedEntry) -> List[Target]:
         if self.args.targets:
             return self.args.targets
 
         if self.args.action == Action.TYPE:
-            if cred.autotype_sequence is not None:
-                return cred.autotype_sequence
+            if detailed_entry.autotype_sequence is not None:
+                return detailed_entry.autotype_sequence
             else:
                 return [Targets.USERNAME, TypeTargets.TAB, Targets.PASSWORD]
 
         return [Targets.USERNAME, Targets.PASSWORD]
 
-    def __type_targets(self, cred: Credentials, targets: List[Target]):
+    def __type_targets(self, detailed_entry: DetailedEntry, targets: List[Target]):
         for target in targets:
             if target == TypeTargets.DELAY:
                 time.sleep(1)
@@ -121,8 +121,8 @@ class RofiRbw(object):
             elif target == TypeTargets.TAB:
                 self.typer.press_key(Key.TAB)
             else:
-                self.typer.type_characters(cred[target], self.args.key_delay, self.active_window)
-        if Targets.PASSWORD in targets and cred.totp != "":
-            self.clipboarder.copy_to_clipboard(cred.totp)
+                self.typer.type_characters(detailed_entry[target], self.args.key_delay, self.active_window)
+        if Targets.PASSWORD in targets and isinstance(detailed_entry, Credentials) and detailed_entry.totp != "":
+            self.clipboarder.copy_to_clipboard(detailed_entry.totp)
             if self.args.use_notify_send:
                 run(["notify-send", "-u", "normal", "-t", "3000", "rofi-rbw", "totp copied to clipboard"], check=True)

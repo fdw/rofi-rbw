@@ -6,7 +6,7 @@ from .clipboarder import Clipboarder
 
 
 class XClipClipboarder(Clipboarder):
-    __last_copied_characters: str
+    __last_copied_characters: str | None
 
     @staticmethod
     def supported() -> bool:
@@ -21,14 +21,14 @@ class XClipClipboarder(Clipboarder):
 
         self.__last_copied_characters = characters
 
-    def fetch_clipboard_content(self) -> str:
-        return run(["xclip", "-o", "-selection", "clipboard"], capture_output=True, encoding="utf-8").stdout
-
     def clear_clipboard_after(self, clear: int) -> None:
         if clear > 0:
             time.sleep(clear)
 
             # Only clear clipboard if nothing has been copied since the password
-            if self.fetch_clipboard_content() == self.__last_copied_characters:
+            if self.__fetch_clipboard_content() == self.__last_copied_characters:
                 self.copy_to_clipboard("")
                 self.__last_copied_characters = None
+
+    def __fetch_clipboard_content(self) -> str:
+        return run(["xclip", "-o", "-selection", "clipboard"], capture_output=True, encoding="utf-8").stdout

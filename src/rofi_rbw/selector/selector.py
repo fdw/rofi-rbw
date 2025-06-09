@@ -7,13 +7,14 @@ from ..models.card import Card
 from ..models.credentials import Credentials
 from ..models.detailed_entry import DetailedEntry
 from ..models.entry import Entry
+from ..models.keybinding import Keybinding
 from ..models.note import Note
 from ..models.targets import Target
 
 
 class Selector(ABC):
     @staticmethod
-    def best_option(name: str = None) -> "Selector":
+    def best_option(name: str | None = None) -> "Selector":
         from .bemenu import Bemenu
         from .fuzzel import Fuzzel
         from .rofi import Rofi
@@ -49,7 +50,7 @@ class Selector(ABC):
         prompt: str,
         show_help_message: bool,
         show_folders: bool,
-        keybindings: Dict[str, Tuple[Action, List[Target]]],
+        keybindings: List[Keybinding],
         additional_args: List[str],
     ) -> Tuple[Union[List[Target], None], Union[Action, None], Union[Entry, None]]:
         pass
@@ -147,9 +148,8 @@ class Selector(ABC):
     def justify(entry: Entry, max_width: int, show_folders: bool) -> str:
         whitespace_length = max_width - len(entry.name)
         if show_folders:
-            whitespace_length -= len(entry.folder)
             if entry.folder:
-                whitespace_length -= 1
+                whitespace_length -= len(entry.folder) + 1
         return " " * whitespace_length
 
 

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class Clipboarder(ABC):
     @staticmethod
-    def best_option(name: str = None) -> "Clipboarder":
+    def best_option(name: str | None = None) -> "Clipboarder":
         from .noop import NoopClipboarder
         from .wlclip import WlClipboarder
         from .xclip import XClipClipboarder

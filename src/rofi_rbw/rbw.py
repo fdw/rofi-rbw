@@ -71,7 +71,7 @@ class Rbw:
                     data["notes"],
                 )
 
-            print("rofi-rbw only supports logins")
+            print(f"Unsupported type: {data}")
             exit(7)
 
         except JSONDecodeError as exception:
