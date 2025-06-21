@@ -20,7 +20,7 @@ class Selector(ABC):
         from .rofi import Rofi
         from .wofi import Wofi
 
-        available_selectors = [Rofi, Wofi, Bemenu, Fuzzel]
+        available_selectors = [Rofi, Wofi, Fuzzel, Bemenu]
 
         if name is not None:
             try:

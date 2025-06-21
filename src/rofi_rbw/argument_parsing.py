@@ -41,7 +41,7 @@ def parse_arguments() -> argparse.Namespace:
         dest="selector",
         action="store",
         type=str,
-        choices=["rofi", "wofi", "fuzzel"],
+        choices=["rofi", "wofi", "fuzzel", "bemenu"],
         default=None,
         help="Choose the selector frontend",
     )
