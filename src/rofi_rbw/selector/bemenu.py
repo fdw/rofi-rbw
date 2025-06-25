@@ -51,7 +51,7 @@ class Bemenu(Selector):
         ]
 
     def __parse_formatted_string(self, formatted_string: str) -> Entry:
-        match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) *  (?P<username>.*)").search(formatted_string)
+        match = re.compile("(?:(?P<folder>.+?)/)?(?P<name>.*?) *  (?P<username>.*)").search(formatted_string)
 
         return Entry(match.group("name").strip(), match.group("folder"), match.group("username").strip())
 
