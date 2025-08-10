@@ -74,3 +74,21 @@ class Fuzzel(Selector):
             return None, Action.CANCEL
 
         return self._extract_targets(fuzzel.stdout), None
+
+    def show_input_dialog(self, prompt: str, default_value: str = "") -> str | None:
+        """Show an input dialog using fuzzel."""
+        from subprocess import run
+        
+        # Fuzzel doesn't have a direct dmenu mode, so we'll use a simple approach
+        # by creating a temporary input with the default value
+        fuzzel = run(
+            ["fuzzel", "--dmenu", "--prompt", prompt],
+            input=default_value,
+            capture_output=True,
+            encoding="utf-8"
+        )
+        
+        if fuzzel.returncode != 0:
+            return None  # User cancelled
+        
+        return fuzzel.stdout.strip()

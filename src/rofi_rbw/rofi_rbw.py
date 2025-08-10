@@ -53,6 +53,10 @@ class RofiRbw(object):
         if selected_action == Action.CANCEL:
             return
 
+        if selected_action == Action.ADD:
+            self.__handle_add_entry()
+            return
+
         entry = self.rbw.fetch_credentials(selected_entry)
 
         if self.args.use_cache:
@@ -126,3 +130,91 @@ class RofiRbw(object):
             self.clipboarder.copy_to_clipboard(detailed_entry.totp)
             if self.args.use_notify_send:
                 run(["notify-send", "-u", "normal", "-t", "3000", "rofi-rbw", "totp copied to clipboard"], check=True)
+
+    def __handle_add_entry(self) -> None:
+        """Handle adding a new entry to the password database."""
+        from .abstractionhelper import extract_domain_from_url
+        
+        # Try to get URL from clipboard as a default
+        clipboard_url = ""
+        try:
+            clipboard_content = self.clipboarder.read_from_clipboard().strip()
+            
+            # Check if clipboard contains a URL
+            if clipboard_content.startswith(('http://', 'https://')) or ('.' in clipboard_content and not clipboard_content.isspace()):
+                clipboard_url = clipboard_content if clipboard_content.startswith(('http://', 'https://')) else f"https://{clipboard_content}"
+        except Exception:
+            # If clipboard reading fails, start with empty values
+            clipboard_url = ""
+        
+        # Prompt for URL (pre-filled with clipboard content if available)
+        url_prompt = f"URL{f' [{clipboard_url}]' if clipboard_url else ''}"
+        try:
+            result = self.selector.show_input_dialog(url_prompt, clipboard_url if clipboard_url else "")
+            if result is None:
+                return  # User cancelled
+            
+            entered_url = result.strip()
+            # If user entered something, use that; if empty and we had clipboard content, use clipboard; otherwise no URL
+            if entered_url:
+                uri = entered_url if entered_url.startswith(('http://', 'https://')) else f"https://{entered_url}"
+            elif clipboard_url:
+                uri = clipboard_url
+            else:
+                uri = None
+        except Exception:
+            print("Failed to prompt for URL")
+            return
+        
+        # Extract domain for default name if we have a URI
+        if uri:
+            try:
+                domain = extract_domain_from_url(uri)
+                default_name = domain
+            except Exception:
+                default_name = ""
+        else:
+            default_name = ""
+        
+        # Prompt for entry name (pre-filled with domain if available)
+        name_prompt = f"Entry name{f' [{default_name}]' if default_name else ''}"
+        try:
+            result = self.selector.show_input_dialog(name_prompt, default_name if default_name else "")
+            if result is None:
+                return  # User cancelled
+            
+            entered_name = result.strip()
+            if entered_name:
+                name = entered_name
+            elif default_name:
+                name = default_name
+            else:
+                print("Entry name is required")
+                return
+        except Exception:
+            print("Failed to prompt for entry name")
+            return
+        
+        # Prompt for username
+        try:
+            username = self.selector.show_input_dialog("Username", "")
+            if username is None:
+                return  # User cancelled
+            
+            username = username.strip()
+        except Exception:
+            print("Failed to prompt for username")
+            return
+        
+        # Add entry to database (this will generate the password)
+        try:
+            password = self.rbw.add_entry(name, username, uri)
+            
+            # Copy password to clipboard
+            self.clipboarder.copy_to_clipboard(password)
+            print(f"Entry '{name}' added successfully. Password copied to clipboard.")
+            
+            # Sync to update the database
+            self.rbw.sync()
+        except Exception as e:
+            print(f"Error adding entry: {e}")

@@ -101,6 +101,7 @@ def parse_arguments() -> argparse.Namespace:
                 "Alt+t:copy:totp",
                 "Alt+m::menu",
                 "Alt+s:sync",
+                "Alt+n:add",
             ]
         ),
         help="Define keyboard shortcuts in the format <shortcut>:<action>:<target>, separated with a comma",

@@ -30,6 +30,9 @@ class XSelClipboarder(Clipboarder):
                 run(["xsel", "--clear", "--clipboard"])
                 self.__last_copied_characters = None
 
+    def read_from_clipboard(self) -> str:
+        return self.__fetch_clipboard_content()
+
     def __fetch_clipboard_content(self) -> str:
         return run(
             [

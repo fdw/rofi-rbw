@@ -9,7 +9,7 @@
 
 # SYNOPSIS
 
-| **rofi-rbw** \[**-h**] \[**\--version**] \[**\--action** {*type*,*copy*,*print*}]
+| **rofi-rbw** \[**-h**] \[**\--version**] \[**\--action** {*type*,*copy*,*print*,*add*}]
          \[**\--target** {*username*,*password*,*totp*,*OTHER*}]
          \[**\--prompt** *PROMPT*] \[**\--selector-args** *SELECTOR_ARGS*]
          \[**\--clipboarder** *CLIPBOARDER*] \[**\--typer** *TYPER*] \[**\--selector** *SELECTOR*]
@@ -34,9 +34,9 @@ Type, copy or print your credentials from Bitwarden using rofi.
 
 \--action, -a
 
-: Possible values: type, copy, print
+: Possible values: type, copy, print, add
 
-      Choose what to do with the selected characters: Directly type them with the "Typer", copy them to the clipboard using the "Clipboarder", or "print" them on stdout
+      Choose what to do with the selected characters: Directly type them with the "Typer", copy them to the clipboard using the "Clipboarder", "print" them on stdout, or "add" a new entry to the database
 
 \--target, -t
 
@@ -121,6 +121,8 @@ Type, copy or print your credentials from Bitwarden using rofi.
 *alt+m* to show a menu of the entry's components
 
 *alt+s* to sync the contents of the vault
+
+*alt+n* to add a new entry (detects URLs from clipboard and generates secure passwords)
 
 *alt+1* to autotype username and password, separated with a `tab` character
 

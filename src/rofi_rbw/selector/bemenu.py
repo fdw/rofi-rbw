@@ -75,3 +75,19 @@ class Bemenu(Selector):
             return None, Action.CANCEL
 
         return self._extract_targets(bemenu.stdout), None
+
+    def show_input_dialog(self, prompt: str, default_value: str = "") -> str | None:
+        """Show an input dialog using bemenu."""
+        from subprocess import run
+        
+        bemenu = run(
+            ["bemenu", "-p", prompt],
+            input=default_value,
+            capture_output=True,
+            encoding="utf-8"
+        )
+        
+        if bemenu.returncode != 0:
+            return None  # User cancelled
+        
+        return bemenu.stdout.strip()

@@ -15,3 +15,6 @@ class NoopClipboarder(Clipboarder):
 
     def clear_clipboard_after(self, clear: int) -> None:
         raise NoClipboarderFoundException()
+
+    def read_from_clipboard(self) -> str:
+        raise NoClipboarderFoundException()
