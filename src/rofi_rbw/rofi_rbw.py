@@ -121,7 +121,7 @@ class RofiRbw(object):
             elif target == TypeTargets.TAB:
                 self.typer.press_key(Key.TAB)
             else:
-                self.typer.type_characters(detailed_entry[target], self.args.key_delay, self.active_window)
+                self.typer.type_characters(detailed_entry[target], self.args.start_delay, self.args.key_delay, self.active_window)
         if Targets.PASSWORD in targets and isinstance(detailed_entry, Credentials) and detailed_entry.totp != "":
             self.clipboarder.copy_to_clipboard(detailed_entry.totp)
             if self.args.use_notify_send:

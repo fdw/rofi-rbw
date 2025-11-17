@@ -1,4 +1,5 @@
 from subprocess import run
+from time import sleep
 
 from ..abstractionhelper import is_installed, is_wayland
 from .typer import Key, Typer
@@ -16,7 +17,8 @@ class YDotoolTyper(Typer):
     def get_active_window(self) -> str:
         return "not possible with ydotool"
 
-    def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
+    def type_characters(self, characters: str, start_delay: float, key_delay: int, active_window: str) -> None:
+        sleep(start_delay)
         run(["ydotool", "type", "--key-delay", str(key_delay), characters])
 
     def press_key(self, key: Key) -> None:

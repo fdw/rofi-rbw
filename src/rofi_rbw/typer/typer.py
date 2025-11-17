@@ -33,7 +33,7 @@ class Typer(ABC):
         pass
 
     @abstractmethod
-    def type_characters(self, characters: str, key_delay: int, active_window: str) -> None:
+    def type_characters(self, characters: str, start_delay: float, key_delay: int, active_window: str) -> None:
         pass
 
     @abstractmethod

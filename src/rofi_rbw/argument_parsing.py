@@ -121,6 +121,14 @@ def parse_arguments() -> argparse.Namespace:
         default=0,
         help="Set the delay between key presses when typing.",
     )
+    parser.add_argument(
+        "--typing-start-delay",
+        dest="start_delay",
+        action="store",
+        type=float,
+        default=0,
+        help="Set the typing start delay.",
+    )
 
     parsed_args = parser.parse_args()
 
