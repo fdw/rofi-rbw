@@ -1,0 +1,72 @@
+#!/bin/bash
+#
+# MIT License
+#
+# Copyright (c) 2025 Julien Virey
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+set -o errexit -o pipefail -o nounset
+
+# This is only compatible with X11 at the moment
+
+readonly focus_time=0.2
+
+# Detect if focused app is a browser
+is_browser() {
+  name="$(xdotool getwindowfocus getwindowname | tr '[:upper:]' '[:lower:]')"
+  [[ "$name" =~ chrome|firefox ]] && return 0
+  return 1
+}
+
+init() {
+  # Check basic dependency
+  local all_needed_programs_installed=true needed_programs=(rofi-rbw xsel xdotool)
+  for program in "${needed_programs[@]}"; do
+    if ! command -v "$program" > /dev/null 2>&1; then
+      all_needed_programs_installed=false
+      echo "$program missing"
+    fi
+  done
+
+  if [ "$all_needed_programs_installed" = false ]; then
+    echo -e "\nPlease install the previous dependancies"
+    exit 1
+  fi
+}
+
+main() {
+  local parameters=()
+  if is_browser; then
+    sleep $focus_time
+    xdotool key ctrl+l sleep "$focus_time"
+    xdotool key ctrl+c
+    xdotool key Escape Escape
+    current_clipboard="$(xsel --clipboard)"
+
+    if [[ $current_clipboard == https://* ]]; then
+      xsel --clipboard --clear
+      domain=$(echo "$current_clipboard" | awk -F[/:] '{print $4}')
+      parameters+=(--selector-args="-filter '${domain} '")
+    fi
+  fi
+  rofi-rbw "${parameters[@]}"
+}
+
+init && main
