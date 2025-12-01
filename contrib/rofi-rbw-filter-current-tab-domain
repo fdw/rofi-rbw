@@ -39,7 +39,7 @@ init() {
   # Check basic dependency
   local all_needed_programs_installed=true needed_programs=(rofi-rbw xsel xdotool)
   for program in "${needed_programs[@]}"; do
-    if ! command -v "$program" > /dev/null 2>&1; then
+    if ! command -v "$program" >/dev/null 2>&1; then
       all_needed_programs_installed=false
       echo "$program missing"
     fi
