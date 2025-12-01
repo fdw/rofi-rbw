@@ -29,5 +29,8 @@ class WlClipboarder(Clipboarder):
                 run(["wl-copy", "--clear"])
                 self.__last_copied_characters = None
 
+    def read_from_clipboard(self) -> str:
+        return self.__fetch_clipboard_content()
+
     def __fetch_clipboard_content(self) -> str:
         return run(["wl-paste"], capture_output=True, encoding="utf-8").stdout

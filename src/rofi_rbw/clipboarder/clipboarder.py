@@ -34,6 +34,10 @@ class Clipboarder(ABC):
     def clear_clipboard_after(self, clear: int) -> None:
         pass
 
+    @abstractmethod
+    def read_from_clipboard(self) -> str:
+        pass
+
 
 class NoClipboarderFoundException(Exception):
     def __str__(self) -> str:

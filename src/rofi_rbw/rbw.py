@@ -90,3 +90,35 @@ class Rbw:
 
     def sync(self):
         run(["rbw", "sync"])
+
+    def generate_password(self, length: int = 16) -> str:
+        """Generate a new password using rbw generate command."""
+        command = ["rbw", "generate", str(length)]
+        result = run(command, capture_output=True, encoding="utf-8")
+        
+        if result.returncode != 0:
+            raise Exception(f"Failed to generate password: {result.stderr}")
+        
+        return result.stdout.strip()
+
+    def add_entry(self, name: str, username: str, uri: Optional[str] = None, folder: Optional[str] = None, password_length: int = 16) -> str:
+        """Add a new entry to the password database and return the generated password."""
+        command = ["rbw", "generate", str(password_length), name]
+        
+        if username:
+            command.append(username)
+        
+        if uri:
+            command.extend(["--uri", uri])
+        
+        if folder:
+            command.extend(["--folder", folder])
+        
+        # Run the command to create entry with generated password
+        result = run(command, capture_output=True, encoding="utf-8")
+        
+        if result.returncode != 0:
+            raise Exception(f"Failed to add entry: {result.stderr}")
+        
+        # The generated password is returned in stdout
+        return result.stdout.strip()

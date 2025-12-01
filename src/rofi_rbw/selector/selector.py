@@ -1,4 +1,3 @@
-import re
 from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple, Union
 
@@ -65,6 +64,10 @@ class Selector(ABC):
     ) -> Tuple[Union[List[Target], None], Union[Action, None]]:
         pass
 
+    @abstractmethod
+    def show_input_dialog(self, prompt: str, default_value: str = "") -> str | None:
+        pass
+
     def _format_targets_from_entry(self, entry: DetailedEntry) -> List[str]:
         if isinstance(entry, Credentials):
             return self._format_targets_from_credential(entry)
@@ -116,43 +119,77 @@ class Selector(ABC):
     def _format_targets_from_note(self, note: Note) -> List[str]:
         targets = []
         if note.notes:
-            targets.append(f"Notes: {note.notes.replace('\n', '|')}")
-        for field in note.fields:
-            targets.append(f"{self._format_further_item_name(field.key)}: {field.masked_string()}")
-
+            notes_text = note.notes.replace('\n', '|')
+            targets.append(f"Notes: {notes_text}")
         return targets
 
     def _format_further_item_name(self, key: str) -> str:
-        if key.lower() in ["username", "password", "totp"] or re.match(r"^URI \d+$", key):
-            return f"{key} (field)"
-        return key
+        """Format field names for display."""
+        return key.replace('_', ' ').title()
 
-    @staticmethod
-    def _extract_targets(output: str) -> List[Target]:
-        return [Target(line.split(":")[0]) for line in output.strip().split("\n")]
+    def _format_folder(self, entry: Entry, show_folders: bool) -> str:
+        """Format folder display for an entry."""
+        if show_folders and entry.folder:
+            return f"{entry.folder}/"
+        return ""
 
-    @staticmethod
-    def _calculate_max_width(entries: List[Entry], show_folders: bool) -> int:
-        if show_folders:
-            return max(len(it.name) + len(it.folder) + 1 for it in entries)
+    def _calculate_max_width(self, entries: List[Entry], show_folders: bool) -> int:
+        """Calculate the maximum width needed for entry names."""
+        if not entries:
+            return 0
+        
+        max_width = 0
+        for entry in entries:
+            folder_width = len(entry.folder) + 1 if show_folders and entry.folder else 0
+            name_width = len(entry.name)
+            total_width = folder_width + name_width
+            max_width = max(max_width, total_width)
+        
+        return max_width
+
+    def justify(self, entry: Entry, max_width: int, show_folders: bool) -> str:
+        """Add spacing to justify entry display."""
+        folder_width = len(entry.folder) + 1 if show_folders and entry.folder else 0
+        name_width = len(entry.name)
+        current_width = folder_width + name_width
+        spaces_needed = max_width - current_width
+        return " " * max(0, spaces_needed)
+
+    def _extract_targets(self, selected_text: str) -> List[Target]:
+        """Extract targets from selected text."""
+        if not selected_text.strip():
+            return []
+        
+        # Parse the selected text to extract the target type
+        selected_text = selected_text.strip()
+        
+        if selected_text.startswith("Username:"):
+            return [Target("username")]
+        elif selected_text.startswith("Password:"):
+            return [Target("password")]
+        elif selected_text.startswith("TOTP:"):
+            return [Target("totp")]
+        elif selected_text.startswith("Notes:"):
+            return [Target("notes")]
+        elif selected_text.startswith("URI"):
+            return [Target("uri")]
+        elif selected_text.startswith("Number:"):
+            return [Target("number")]
+        elif selected_text.startswith("Cardholder:"):
+            return [Target("cardholder")]
+        elif selected_text.startswith("Brand:"):
+            return [Target("brand")]
+        elif selected_text.startswith("Expiry:"):
+            return [Target("expiry")]
+        elif selected_text.startswith("Code:"):
+            return [Target("code")]
         else:
-            return max(len(it.name) for it in entries)
-
-    @staticmethod
-    def _format_folder(entry: Entry, show_folders: bool) -> str:
-        if not show_folders or not entry.folder:
-            return ""
-        return f"{entry.folder}/"
-
-    @staticmethod
-    def justify(entry: Entry, max_width: int, show_folders: bool) -> str:
-        whitespace_length = max_width - len(entry.name)
-        if show_folders:
-            if entry.folder:
-                whitespace_length -= len(entry.folder) + 1
-        return " " * whitespace_length
-
+            # For custom fields, extract the field name
+            if ":" in selected_text:
+                field_name = selected_text.split(":")[0].strip()
+                return [Target(field_name)]
+            return []
 
 class NoSelectorFoundException(Exception):
     def __str__(self) -> str:
-        return "Could not find a valid way to show the selection. Please check the required dependencies."
+        return "Could not find a valid selector. Please check the required dependencies."
