@@ -46,7 +46,7 @@ init() {
   done
 
   if [ "$all_needed_programs_installed" = false ]; then
-    echo -e "\nPlease install the previous dependancies"
+    echo -e "\nPlease install the previous dependencies"
     exit 1
   fi
 }
