@@ -139,3 +139,19 @@ class Rofi(Selector):
             return f"{keybinding.action.value.title()} {', '.join([target.raw for target in keybinding.targets])}"
         else:
             return keybinding.action.value.title()
+
+    def show_input_dialog(self, prompt: str, default_value: str = "") -> str | None:
+        """Show an input dialog using rofi."""
+        from subprocess import run
+        
+        rofi = run(
+            ["rofi", "-dmenu", "-p", prompt],
+            input=default_value,
+            capture_output=True,
+            encoding="utf-8"
+        )
+        
+        if rofi.returncode != 0:
+            return None  # User cancelled
+        
+        return rofi.stdout.strip()

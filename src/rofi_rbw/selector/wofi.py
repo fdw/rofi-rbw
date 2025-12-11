@@ -75,3 +75,19 @@ class Wofi(Selector):
             return None, Action.CANCEL
 
         return self._extract_targets(wofi.stdout), None
+
+    def show_input_dialog(self, prompt: str, default_value: str = "") -> str | None:
+        """Show an input dialog using wofi."""
+        from subprocess import run
+        
+        wofi = run(
+            ["wofi", "--dmenu", "--prompt", prompt],
+            input=default_value,
+            capture_output=True,
+            encoding="utf-8"
+        )
+        
+        if wofi.returncode != 0:
+            return None  # User cancelled
+        
+        return wofi.stdout.strip()
