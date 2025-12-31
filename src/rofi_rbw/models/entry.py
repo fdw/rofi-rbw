@@ -6,8 +6,8 @@ from hashlib import sha1
 @dataclass(frozen=True)
 class Entry:
     name: str
-    folder: str = ""
-    username: str = ""
+    folder: str
+    username: str
 
     @cached_property
     def hashed(self) -> str:

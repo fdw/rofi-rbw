@@ -13,25 +13,19 @@ from .models.note import Note
 
 class Rbw:
     def list_entries(self) -> List[Entry]:
-        rbw = run(["rbw", "list", "--fields", "folder,name,user"], encoding="utf-8", capture_output=True)
+        rbw = run(["rbw", "list", "--raw"], encoding="utf-8", capture_output=True)
 
         if rbw.returncode != 0:
             print("There was a problem calling rbw. Is it correctly configured?")
             print(rbw.stderr)
             exit(2)
 
+        data = json.loads(rbw.stdout.strip())
+
         return sorted(
-            [self.__parse_rbw_output(it) for it in (rbw.stdout.strip("\n").split("\n"))],
+            [Entry(item["name"], item["folder"] or "", item["user"] or "") for item in data],
             key=lambda x: x.folder.lower() + x.name.lower(),
         )
-
-    def __parse_rbw_output(self, rbw_string: str) -> Entry:
-        fields = rbw_string.split("\t")
-
-        try:
-            return Entry(fields[1], fields[0], fields[2] if len(fields) > 2 else "")
-        except IndexError:
-            raise Exception(f"Entry '{rbw_string}' cannot be parsed")
 
     def fetch_credentials(self, entry: Entry) -> DetailedEntry:
         try:
