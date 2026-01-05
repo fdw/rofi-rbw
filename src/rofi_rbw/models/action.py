@@ -7,3 +7,4 @@ class Action(Enum):
     PRINT = "print"
     SYNC = "sync"
     CANCEL = "cancel"
+    ADD = "add"
