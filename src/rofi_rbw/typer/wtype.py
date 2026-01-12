@@ -24,6 +24,7 @@ class WTypeTyper(Typer):
         if key_delay > 0:
             args = args + ["-d", str(key_delay)]
 
+        args.append("--")
         args.append(characters)
         run(args)
 
