@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 from .detailed_entry import DetailedEntry
 from .targets import Target, Targets
@@ -7,15 +6,15 @@ from .targets import Target, Targets
 
 @dataclass(frozen=True)
 class Card(DetailedEntry):
-    cardholder_name: Optional[str] = None
-    number: Optional[str] = None
-    brand: Optional[str] = None
-    exp_month: Optional[str] = None
-    exp_year: Optional[str] = None
-    code: Optional[str] = None
-    notes: Optional[str] = None
+    cardholder_name: str | None = None
+    number: str | None = None
+    brand: str | None = None
+    exp_month: str | None = None
+    exp_year: str | None = None
+    code: str | None = None
+    notes: str | None = None
 
-    def __getitem__(self, target: Target) -> Optional[str]:
+    def __getitem__(self, target: Target) -> str | None:
         if target == Targets.NUMBER:
             return self.number
         elif target == Targets.CARDHOLDER:

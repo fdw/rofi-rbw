@@ -3,13 +3,13 @@ name = "rofi-rbw"
 version = "1.5.1"
 description = "Rofi frontend for Bitwarden"
 authors = [
-    {name = "Fabian Winter", email = "5821180+fdw@users.noreply.github.com"}
+    { name = "Fabian Winter", email = "5821180+fdw@users.noreply.github.com" }
 ]
-license = {text = "MIT"}
+license = { text = "MIT" }
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
-    "ConfigArgParse>1.3,<2.0.0",
+    "configargparse>1.3,<2.0.0",
 ]
 
 [project.urls]
@@ -29,7 +29,7 @@ include = ["docs/rofi-rbw.1"]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.4.0",
+    "ruff>=0.14.13",
 ]
 
 [tool.ruff]

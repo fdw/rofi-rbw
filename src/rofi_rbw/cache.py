@@ -1,5 +1,4 @@
 from math import floor
-from typing import List
 
 from .models.entry import Entry
 from .paths import cache_file
@@ -10,7 +9,7 @@ class Cache:
         cache_file.parent.mkdir(exist_ok=True)
         self.cache = dict()
 
-    def sorted(self, entries: List[Entry]) -> List[Entry]:
+    def sorted(self, entries: list[Entry]) -> list[Entry]:
         hashed_entries = {entry.hashed: entry for entry in entries}
         sorted_entries = []
 

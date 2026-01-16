@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from subprocess import run
-from typing import List, Optional
 
 from .detailed_entry import DetailedEntry
 from .field import Field
@@ -9,14 +8,14 @@ from .targets import Target, Targets
 
 @dataclass(frozen=True)
 class Credentials(DetailedEntry):
-    username: Optional[str] = ""
-    password: Optional[str] = ""
+    username: str | None = ""
+    password: str | None = ""
     has_totp: bool = False
-    notes: Optional[str] = ""
-    uris: List[str] = field(default_factory=list)
-    fields: List[Field] = field(default_factory=list)
+    notes: str | None = ""
+    uris: list[str] = field(default_factory=list)
+    fields: list[Field] = field(default_factory=list)
 
-    def __getitem__(self, target: Target) -> Optional[str]:
+    def __getitem__(self, target: Target) -> str | None:
         if target == Targets.USERNAME:
             return self.username
         elif target == Targets.PASSWORD:

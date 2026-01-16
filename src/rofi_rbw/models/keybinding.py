@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List, Union
 
 from .action import Action
 from .targets import TypeTarget
@@ -9,4 +8,4 @@ from .targets import TypeTarget
 class Keybinding:
     shortcut: str
     action: Action | None
-    targets: Union[List[TypeTarget], None]
+    targets: list[TypeTarget] | None

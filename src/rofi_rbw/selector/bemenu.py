@@ -1,6 +1,5 @@
 import re
 from subprocess import run
-from typing import Dict, List, Tuple, Union
 
 from rofi_rbw.models.entry import Entry
 
@@ -23,13 +22,13 @@ class Bemenu(Selector):
 
     def show_selection(
         self,
-        entries: List[Entry],
+        entries: list[Entry],
         prompt: str,
         show_help_message: bool,
         show_folders: bool,
-        keybindings: List[Keybinding],
-        additional_args: List[str],
-    ) -> Tuple[Union[List[Target], None], Union[Action, None], Union[Entry, None]]:
+        keybindings: list[Keybinding],
+        additional_args: list[str],
+    ) -> tuple[None, Action | None, Entry | None]:
         parameters = ["bemenu", "-p", prompt, *additional_args]
 
         bemenu = run(
@@ -43,14 +42,14 @@ class Bemenu(Selector):
         else:
             return None, Action.CANCEL, None
 
-    def __format_entries(self, entries: List[Entry], show_folders: bool) -> List[str]:
+    def __format_entries(self, entries: list[Entry], show_folders: bool) -> list[str]:
         max_width = self._calculate_max_width(entries, show_folders)
         return [
             f"{self._format_folder(it, show_folders)}{it.name}{self.justify(it, max_width, show_folders)}  {it.username}"
             for it in entries
         ]
 
-    def __find_entry(self, entries: List[Entry], formatted_string: str) -> Entry:
+    def __find_entry(self, entries: list[Entry], formatted_string: str) -> Entry:
         match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) *  (?P<username>.*)").search(formatted_string)
 
         return next(
@@ -65,9 +64,9 @@ class Bemenu(Selector):
         self,
         entry: DetailedEntry,
         show_help_message: bool,
-        keybindings: Dict[str, Action],
-        additional_args: List[str],
-    ) -> Tuple[Union[List[Target], None], Union[Action, None]]:
+        keybindings: dict[str, Action],
+        additional_args: list[str],
+    ) -> tuple[list[Target] | None, Action | None]:
         parameters = ["bemenu", "-p", "Choose target", *additional_args]
 
         bemenu = run(

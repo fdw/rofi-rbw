@@ -1,4 +1,7 @@
 # [1.6.0] - unreleased
+## Changed
+- Stopped support for Python 3.9.
+
 ## Fixed
 - Passwords starting with `-` can be typed.
 

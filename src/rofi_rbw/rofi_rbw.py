@@ -1,6 +1,5 @@
 import time
 from subprocess import run
-from typing import List, Tuple, Union
 
 from .argument_parsing import parse_arguments
 from .cache import Cache
@@ -75,9 +74,7 @@ class RofiRbw(object):
 
         self.__execute_action(entry)
 
-    def __show_target_menu(
-        self, entry: DetailedEntry, show_help_message: bool
-    ) -> Tuple[List[Target], Union[Action, None]]:
+    def __show_target_menu(self, entry: DetailedEntry, show_help_message: bool) -> tuple[list[Target], Action | None]:
         targets, action = self.selector.select_target(
             entry, show_help_message, self.args.parsed_menu_keybindings, additional_args=self.args.selector_args
         )
@@ -100,7 +97,7 @@ class RofiRbw(object):
         elif self.args.action == Action.PRINT:
             print("\n".join([detailed_entry[target] for target in targets]))
 
-    def __configure_targets(self, detailed_entry: DetailedEntry) -> List[Target]:
+    def __configure_targets(self, detailed_entry: DetailedEntry) -> list[Target]:
         if self.args.targets:
             return self.args.targets
 
@@ -112,7 +109,7 @@ class RofiRbw(object):
 
         return [Targets.USERNAME, Targets.PASSWORD]
 
-    def __type_targets(self, detailed_entry: DetailedEntry, targets: List[Target]):
+    def __type_targets(self, detailed_entry: DetailedEntry, targets: list[Target]):
         for target in targets:
             if target == TypeTargets.DELAY:
                 time.sleep(1)

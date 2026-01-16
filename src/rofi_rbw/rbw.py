@@ -1,7 +1,7 @@
 import json
 from json import JSONDecodeError
 from subprocess import run
-from typing import Any, List, Optional
+from typing import Any
 
 from .models.card import Card
 from .models.credentials import Credentials
@@ -13,7 +13,7 @@ from .models.note import Note
 
 
 class Rbw:
-    def list_entries(self) -> List[Entry]:
+    def list_entries(self) -> list[Entry]:
         rbw = run(["rbw", "list", "--raw"], encoding="utf-8", capture_output=True)
 
         if rbw.returncode != 0:
@@ -83,7 +83,7 @@ class Rbw:
             data["notes"],
         )
 
-    def __load_from_rbw(self, name: str, username: str, folder: Optional[str]) -> dict[str, Any]:
+    def __load_from_rbw(self, name: str, username: str, folder: str | None) -> dict[str, Any]:
         command = ["rbw", "get", "--raw", name]
         if username:
             command.append(username)
