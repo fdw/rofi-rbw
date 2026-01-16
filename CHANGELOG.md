@@ -1,3 +1,11 @@
+# [1.6.0] - unreleased
+## Fixed
+- Passwords starting with `-` can be typed.
+
+## Added
+- Notes are supported. (#114)
+- There can be a delay before typing.
+
 # [1.5.1] - 2025-05-11
 ## Fixed
 - The build process builds a wheel file with `rofi-rbw` again. (#112)
