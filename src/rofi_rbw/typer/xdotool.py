@@ -29,6 +29,7 @@ class XDoToolTyper(Typer):
                 "--clearmodifiers",
                 "--delay",
                 str(key_delay),
+                "--",
                 characters,
             ]
         )
