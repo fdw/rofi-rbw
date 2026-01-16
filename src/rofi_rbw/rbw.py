@@ -1,12 +1,13 @@
 import json
 from json import JSONDecodeError
 from subprocess import run
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from .models.card import Card
 from .models.credentials import Credentials
 from .models.detailed_entry import DetailedEntry
 from .models.entry import Entry
+from .models.EntryType import EntryType
 from .models.field import Field, FieldType
 from .models.note import Note
 
@@ -23,56 +24,66 @@ class Rbw:
         data = json.loads(rbw.stdout.strip())
 
         return sorted(
-            [Entry(item["name"], item["folder"] or "", item["user"] or "") for item in data],
+            [
+                Entry(item["name"], item["folder"] or "", item["user"] or "", item["type"])
+                for item in data
+                if item["type"] in {EntryType.LOGIN.value, EntryType.CARD.value, EntryType.NOTE.value}
+            ],
             key=lambda x: x.folder.lower() + x.name.lower(),
         )
 
     def fetch_credentials(self, entry: Entry) -> DetailedEntry:
-        try:
-            data = json.loads(self.__load_from_rbw(entry.name, entry.username, entry.folder).strip())
-
-            if data["data"] is not None and "password" in data["data"]:
-                return Credentials(
-                    entry.name,
-                    data["folder"],
-                    [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
-                    entry.username,
-                    data["data"]["password"] or "",
-                    data["data"]["totp"] is not None,
-                    data["notes"],
-                    [item["uri"] for item in data["data"]["uris"]],
-                )
-
-            if data["data"] is not None and "number" in data["data"]:
-                return Card(
-                    entry.name,
-                    entry.folder,
-                    [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
-                    data["data"]["cardholder_name"],
-                    data["data"]["number"],
-                    data["data"]["brand"],
-                    data["data"]["exp_month"],
-                    data["data"]["exp_year"],
-                    data["data"]["code"],
-                    data["notes"],
-                )
-
-            if data["notes"] is not None:
-                return Note(
-                    entry.name,
-                    entry.folder,
-                    [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
-                    data["notes"],
-                )
-
-            print(f"Unsupported type: {data}")
+        if entry.type == EntryType.LOGIN.value:
+            return self.__fetch_login(entry)
+        elif entry.type == EntryType.CARD.value:
+            return self.__fetch_card(entry)
+        elif entry.type == EntryType.NOTE.value:
+            return self.__fetch_note(entry)
+        else:
+            print(f"Unsupported type: {entry.type}")
             exit(7)
 
-        except JSONDecodeError as exception:
-            print(f"Could not parse the output: {exception.msg}")
-            exit(12)
+    def __fetch_login(self, entry: Entry) -> Credentials:
+        data = self.__load_from_rbw(entry.name, entry.username, entry.folder)
 
-    def __load_from_rbw(self, name: str, username: str, folder: Optional[str]) -> str:
+        return Credentials(
+            entry.name,
+            data["folder"],
+            [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
+            entry.username,
+            data["data"]["password"] or "",
+            data["data"]["totp"] is not None,
+            data["notes"],
+            [item["uri"] for item in data["data"]["uris"]],
+        )
+
+    def __fetch_card(self, entry: Entry) -> Card:
+        data = self.__load_from_rbw(entry.name, entry.username, entry.folder)
+
+        return Card(
+            entry.name,
+            entry.folder,
+            [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
+            data["data"]["cardholder_name"],
+            data["data"]["number"],
+            data["data"]["brand"],
+            data["data"]["exp_month"],
+            data["data"]["exp_year"],
+            data["data"]["code"],
+            data["notes"],
+        )
+
+    def __fetch_note(self, entry: Entry) -> Note:
+        data = self.__load_from_rbw(entry.name, entry.username, entry.folder)
+
+        return Note(
+            entry.name,
+            entry.folder,
+            [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
+            data["notes"],
+        )
+
+    def __load_from_rbw(self, name: str, username: str, folder: Optional[str]) -> dict[str, Any]:
         command = ["rbw", "get", "--raw", name]
         if username:
             command.append(username)
@@ -80,7 +91,14 @@ class Rbw:
         if folder:
             command.extend(["--folder", folder])
 
-        return run(command, capture_output=True, encoding="utf-8").stdout
+        data = run(command, capture_output=True, encoding="utf-8").stdout
+
+        try:
+            return json.loads(data.strip())
+
+        except JSONDecodeError as exception:
+            print(f"Could not parse the output: {exception.msg}")
+            exit(12)
 
     def sync(self):
         run(["rbw", "sync"])

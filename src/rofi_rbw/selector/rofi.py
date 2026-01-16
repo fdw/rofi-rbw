@@ -61,7 +61,7 @@ class Rofi(Selector):
             return_action = None
             return_targets = None
 
-        return return_targets, return_action, self.__parse_formatted_string(rofi.stdout)
+        return return_targets, return_action, self.__find_entry(entries, rofi.stdout)
 
     def __format_entries(self, entries: List[Entry], show_folders: bool) -> List[str]:
         max_width = self._calculate_max_width(entries, show_folders)
@@ -70,10 +70,16 @@ class Rofi(Selector):
             for it in entries
         ]
 
-    def __parse_formatted_string(self, formatted_string: str) -> Entry:
+    def __find_entry(self, entries: List[Entry], formatted_string: str) -> Entry:
         match = re.compile("(?:(?P<folder>.+)/)?<b>(?P<name>.*?) *</b>(?P<username>.*)").search(formatted_string)
 
-        return Entry(match.group("name"), match.group("folder"), match.group("username").strip())
+        return next(
+            entry
+            for entry in entries
+            if entry.name == match.group("name")
+            and entry.folder == match.group("folder")
+            and entry.username == match.group("username").strip()
+        )
 
     def select_target(
         self,

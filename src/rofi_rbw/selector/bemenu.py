@@ -39,7 +39,7 @@ class Bemenu(Selector):
             encoding="utf-8",
         )
         if bemenu.returncode == 0:
-            return None, None, self.__parse_formatted_string(bemenu.stdout)
+            return None, None, self.__find_entry(entries, bemenu.stdout)
         else:
             return None, Action.CANCEL, None
 
@@ -50,10 +50,16 @@ class Bemenu(Selector):
             for it in entries
         ]
 
-    def __parse_formatted_string(self, formatted_string: str) -> Entry:
+    def __find_entry(self, entries: List[Entry], formatted_string: str) -> Entry:
         match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) *  (?P<username>.*)").search(formatted_string)
 
-        return Entry(match.group("name").strip(), match.group("folder"), match.group("username").strip())
+        return next(
+            entry
+            for entry in entries
+            if entry.name == match.group("name")
+            and entry.folder == match.group("folder")
+            and entry.username == match.group("username").strip()
+        )
 
     def select_target(
         self,
