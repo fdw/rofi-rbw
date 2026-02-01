@@ -1,6 +1,6 @@
-% ROFI-RBW(1) Version 1.5.1 | Rofi Third-party Add-on Documentation
+% ROFI-RBW(1) Version 1.6.0 | Rofi Third-party Add-on Documentation
 % Fabian Winter
-% May 11, 2025
+% February 01, 2026
 
 # NAME
 

@@ -1,4 +1,4 @@
-# [1.6.0] - unreleased
+# [1.6.0] - 2026-02-01
 ## Changed
 - Stopped support for Python 3.9.
 
