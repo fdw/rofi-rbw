@@ -55,8 +55,8 @@ class Fuzzel(Selector):
             entry
             for entry in entries
             if entry.name == match.group("name")
-            and entry.folder == match.group("folder")
-            and entry.username == match.group("username").strip()
+            and (match.group("folder") is None or entry.folder == match.group("folder"))
+            and (match.group("username") is None or entry.username == match.group("username").strip())
         )
 
     def select_target(
