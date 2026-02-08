@@ -70,14 +70,23 @@ class Rofi(Selector):
         ]
 
     def __find_entry(self, entries: list[Entry], formatted_string: str) -> Entry:
-        match = re.compile("(?:(?P<folder>.+)/)?<b>(?P<name>.*?) *</b>(?P<username>.*)").search(formatted_string)
+        # Use \s+ to swallow padding
+        pattern = re.compile(r"(?:(?P<folder>.+)/)?<b>(?P<name>.*?) *</b>\s*(?P<username>.*)")
+        match = pattern.search(formatted_string.strip())
+
+        if not match:
+            raise Exception(f"Regex failed to parse selection: {formatted_string}")
+
+        # Clean the captured data
+        target_name = match.group("name")
+        target_folder = match.group("folder") or "" # Normalize None to empty string
+        target_user = match.group("username").strip()
 
         return next(
-            entry
-            for entry in entries
-            if entry.name == match.group("name")
-            and entry.folder == match.group("folder")
-            and entry.username == match.group("username").strip()
+            entry for entry in entries
+            if entry.name == target_name
+            and (entry.folder or "") == target_folder
+            and entry.username.strip() == target_user
         )
 
     def select_target(
