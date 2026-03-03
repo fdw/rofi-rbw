@@ -70,7 +70,7 @@ class Rofi(Selector):
         ]
 
     def __find_entry(self, entries: list[Entry], formatted_string: str) -> Entry:
-        match = re.compile("(?:(?P<folder>.+)/)?<b>(?P<name>.*?) *</b>(?P<username>.*)").search(formatted_string)
+        match = re.compile("(?:(?P<folder>.+)/)?<b>(?P<name>.*?)</b> {2,}(?P<username>.*)").search(formatted_string)
 
         return next(
             entry

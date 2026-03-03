@@ -64,6 +64,25 @@ class Selector(ABC):
     ) -> tuple[list[Target] | None, Action | None]:
         pass
 
+    def _format_entries(self, entries: list[Entry], show_folders: bool) -> list[str]:
+        max_width = self._calculate_max_width(entries, show_folders)
+        return [
+            f"{self._format_folder(it, show_folders)}{it.name}{self.justify(it, max_width, show_folders)}  {it.username}"
+            for it in entries
+        ]
+
+    @staticmethod
+    def _find_entry(entries: list[Entry], formatted_string: str) -> Entry:
+        match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) {2,}(?P<username>.*)").search(formatted_string)
+
+        return next(
+            entry
+            for entry in entries
+            if entry.name == match.group("name")
+            and (match.group("folder") is None or entry.folder == match.group("folder"))
+            and (match.group("username") is None or entry.username == match.group("username").strip())
+        )
+
     def _format_targets_from_entry(self, entry: DetailedEntry) -> list[str]:
         if isinstance(entry, Credentials):
             return self._format_targets_from_credential(entry)
