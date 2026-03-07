@@ -1,3 +1,8 @@
+# [1.6.1] - 2026-03-07
+## Fixed
+- Fix selection of entries without folders or username. (#125)
+- Fix Wayland detection. (#127)
+
 # [1.6.0] - 2026-02-01
 ## Changed
 - Stopped support for Python 3.9.
