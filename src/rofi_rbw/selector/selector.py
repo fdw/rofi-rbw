@@ -73,14 +73,14 @@ class Selector(ABC):
 
     @staticmethod
     def _find_entry(entries: list[Entry], formatted_string: str) -> Entry:
-        match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) {2,}(?P<username>.*)").search(formatted_string)
+        parts = re.split(r" {2,}", formatted_string.strip(), maxsplit=1)
+        name_part = parts[0]
+        username_part = parts[1] if len(parts) > 1 else ""
 
         return next(
-            entry
-            for entry in entries
-            if entry.name == match.group("name")
-            and (match.group("folder") is None or entry.folder == match.group("folder"))
-            and (match.group("username") is None or entry.username == match.group("username").strip())
+            entry for entry in entries
+            if (f"{entry.folder}/{entry.name}" if entry.folder else entry.name) == name_part
+            and entry.username == username_part
         )
 
     def _format_targets_from_entry(self, entry: DetailedEntry) -> list[str]:
