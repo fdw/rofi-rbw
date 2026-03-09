@@ -46,6 +46,14 @@ def parse_arguments() -> argparse.Namespace:
         help="Choose the selector frontend",
     )
     parser.add_argument(
+        "--fuzzel-config",
+        dest="fuzzel_config",
+        action="store",
+        type=str,
+        default=None,
+        help="Path to fuzzel configuration file to use as base when injecting keybindings",
+    )
+    parser.add_argument(
         "--clipboarder",
         dest="clipboarder",
         action="store",
