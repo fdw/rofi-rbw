@@ -7,6 +7,7 @@ from .clipboarder.clipboarder import Clipboarder
 from .models.action import Action
 from .models.credentials import Credentials
 from .models.detailed_entry import DetailedEntry
+from .models.note import Note
 from .models.targets import Target, Targets, TypeTargets
 from .rbw import Rbw
 from .selector.selector import Selector
@@ -100,6 +101,9 @@ class RofiRbw(object):
     def __configure_targets(self, detailed_entry: DetailedEntry) -> list[Target]:
         if self.args.targets:
             return self.args.targets
+
+        if isinstance(detailed_entry, Note):
+            return [Targets.NOTES]
 
         if self.args.action == Action.TYPE:
             if detailed_entry.autotype_sequence is not None:
