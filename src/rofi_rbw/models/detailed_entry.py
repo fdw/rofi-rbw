@@ -16,6 +16,16 @@ class DetailedEntry(ABC):
         pass
 
     @property
+    @abstractmethod
+    def default_target(self) -> list[Target]:
+        pass
+
+    @property
+    @abstractmethod
+    def default_autotype_target(self) -> list[TypeTarget]:
+        pass
+
+    @property
     def autotype_sequence(self) -> list[TypeTarget] | None:
         sequence = next((field for field in self.fields if field.key == "_autotype"), None)
         if sequence is None:

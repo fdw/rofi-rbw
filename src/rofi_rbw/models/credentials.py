@@ -3,7 +3,7 @@ from subprocess import run
 
 from .detailed_entry import DetailedEntry
 from .field import Field
-from .targets import Target, Targets
+from .targets import Target, Targets, TypeTarget, TypeTargets
 
 
 @dataclass(frozen=True)
@@ -30,6 +30,14 @@ class Credentials(DetailedEntry):
             return next(
                 (field.value for field in self.fields if field.key == target.raw.removesuffix(" (field)")), None
             )
+
+    @property
+    def default_target(self) -> list[Target]:
+        return [Targets.USERNAME, Targets.PASSWORD]
+
+    @property
+    def default_autotype_target(self) -> list[TypeTarget]:
+        return [Targets.USERNAME, TypeTargets.TAB, Targets.PASSWORD]
 
     @property
     def totp(self):
