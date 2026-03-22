@@ -102,12 +102,9 @@ class RofiRbw(object):
             return self.args.targets
 
         if self.args.action == Action.TYPE:
-            if detailed_entry.autotype_sequence is not None:
-                return detailed_entry.autotype_sequence
-            else:
-                return [Targets.USERNAME, TypeTargets.TAB, Targets.PASSWORD]
+            return detailed_entry.autotype_sequence or detailed_entry.default_autotype_target
 
-        return [Targets.USERNAME, Targets.PASSWORD]
+        return detailed_entry.default_target
 
     def __type_targets(self, detailed_entry: DetailedEntry, targets: list[Target]):
         for target in targets:

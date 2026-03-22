@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from .detailed_entry import DetailedEntry
-from .targets import Target, Targets
+from .targets import Target, Targets, TypeTarget, TypeTargets
 
 
 @dataclass(frozen=True)
@@ -13,6 +13,14 @@ class Card(DetailedEntry):
     exp_year: str | None = None
     code: str | None = None
     notes: str | None = None
+
+    @property
+    def default_target(self) -> list[Target]:
+        return [Targets.NUMBER, Targets.EXPIRY, Targets.CODE]
+
+    @property
+    def default_autotype_target(self) -> list[TypeTarget]:
+        return [Targets.NUMBER, TypeTargets.TAB, Targets.EXPIRY, TypeTargets.TAB, Targets.CODE]
 
     def __getitem__(self, target: Target) -> str | None:
         if target == Targets.NUMBER:
