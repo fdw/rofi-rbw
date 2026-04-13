@@ -49,7 +49,7 @@ class Rbw:
         return Credentials(
             entry.name,
             data["folder"],
-            [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
+            [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"] if item["name"]],
             entry.username,
             data["data"]["password"] or "",
             data["data"]["totp"] is not None,
@@ -63,7 +63,7 @@ class Rbw:
         return Card(
             entry.name,
             entry.folder,
-            [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
+            [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"] if item["name"]],
             data["data"]["cardholder_name"],
             data["data"]["number"],
             data["data"]["brand"],
@@ -79,7 +79,7 @@ class Rbw:
         return Note(
             entry.name,
             entry.folder,
-            [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"]],
+            [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"] if item["name"]],
             data["notes"],
         )
 
