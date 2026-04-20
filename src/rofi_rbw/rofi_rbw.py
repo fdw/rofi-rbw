@@ -9,6 +9,7 @@ from .models.credentials import Credentials
 from .models.detailed_entry import DetailedEntry
 from .models.targets import Target, Targets, TypeTargets
 from .rbw import Rbw
+from .selector.fuzzel import Fuzzel
 from .selector.selector import Selector
 from .typer.typer import Key, Typer
 
@@ -18,6 +19,8 @@ class RofiRbw(object):
         self.args = parse_arguments()
         self.rbw = Rbw()
         self.selector = Selector.best_option(self.args.selector)
+        if isinstance(self.selector, Fuzzel) and self.args.fuzzel_config:
+            self.selector.config_path = self.args.fuzzel_config
         self.typer = Typer.best_option(self.args.typer)
         self.clipboarder = Clipboarder.best_option(self.args.clipboarder)
         self.active_window = self.typer.get_active_window()
