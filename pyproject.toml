@@ -31,6 +31,7 @@ include = ["docs/rofi-rbw.1"]
 dev = [
     "ruff>=0.14.13",
     "pytest>=8.0",
+    "hypothesis>=6.0",
 ]
 
 [tool.ruff]
