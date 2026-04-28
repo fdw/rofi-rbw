@@ -71,17 +71,14 @@ class Selector(ABC):
             for it in entries
         ]
 
-    @staticmethod
-    def _find_entry(entries: list[Entry], formatted_string: str) -> Entry:
-        match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) {2,}(?P<username>.*)").search(formatted_string)
-
-        return next(
-            entry
-            for entry in entries
-            if entry.name == match.group("name")
-            and (match.group("folder") is None or entry.folder == match.group("folder"))
-            and (match.group("username") is None or entry.username == match.group("username").strip())
-        )
+    def _find_entry(self, entries: list[Entry], selected: str) -> Entry:
+        """Reverse _format_entries by matching `selected` against output from both show_folders modes."""
+        selected = selected.strip()
+        for show_folders in (True, False):
+            lookup = {s.strip(): e for s, e in zip(self._format_entries(entries, show_folders), entries)}
+            if selected in lookup:
+                return lookup[selected]
+        raise KeyError(selected)
 
     def _format_targets_from_entry(self, entry: DetailedEntry) -> list[str]:
         if isinstance(entry, Credentials):
