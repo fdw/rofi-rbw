@@ -1,3 +1,7 @@
+# [NEXT]
+## Changed
+- `wl-copy` sets the `sensitive` flag for passwords. (#93)
+
 # [1.6.1] - 2026-03-07
 ## Fixed
 - Fix selection of entries without folders or username. (#125)
