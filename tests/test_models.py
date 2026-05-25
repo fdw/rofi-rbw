@@ -25,5 +25,5 @@ from rofi_rbw.models.targets import Targets
 )
 def test_default_target_return_values(entry, expected_targets, expected_values):
     assert entry.default_target == expected_targets
-    for target, expected in zip(entry.default_target, expected_values):
+    for target, expected in zip(entry.default_target, expected_values, strict=True):
         assert entry[target] == expected

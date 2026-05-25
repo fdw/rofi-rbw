@@ -29,11 +29,12 @@ class WTypeTyper(Typer):
         run(args)
 
     def press_key(self, key: Key) -> None:
-        if key == Key.ENTER:
-            key_name = "return"
-        elif key == Key.TAB:
-            key_name = "tab"
-        else:
-            raise Exception("Unknown key")
+        match key:
+            case Key.ENTER:
+                key_name = "return"
+            case Key.TAB:
+                key_name = "tab"
+            case _:
+                raise Exception("Unknown key")
 
         run(["wtype", "-k", key_name])

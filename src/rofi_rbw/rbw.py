@@ -33,15 +33,16 @@ class Rbw:
         )
 
     def fetch_credentials(self, entry: Entry) -> DetailedEntry:
-        if entry.type == EntryType.LOGIN.value:
-            return self.__fetch_login(entry)
-        elif entry.type == EntryType.CARD.value:
-            return self.__fetch_card(entry)
-        elif entry.type == EntryType.NOTE.value:
-            return self.__fetch_note(entry)
-        else:
-            print(f"Unsupported type: {entry.type}")
-            exit(7)
+        match entry.type:
+            case EntryType.LOGIN.value:
+                return self.__fetch_login(entry)
+            case EntryType.CARD.value:
+                return self.__fetch_card(entry)
+            case EntryType.NOTE.value:
+                return self.__fetch_note(entry)
+            case _:
+                print(f"Unsupported type: {entry.type}")
+                exit(7)
 
     def __fetch_login(self, entry: Entry) -> Credentials:
         data = self.__load_from_rbw(entry.name, entry.username, entry.folder)
