@@ -37,11 +37,12 @@ class XDoToolTyper(Typer):
         run(["xdotool", "keyup", "Shift_L", "Shift_R", "Alt_L", "Alt_R"])
 
     def press_key(self, key: Key) -> None:
-        if key == Key.ENTER:
-            key_name = "Return"
-        elif key == Key.TAB:
-            key_name = "Tab"
-        else:
-            raise Exception("Unknown key")
+        match key:
+            case Key.ENTER:
+                key_name = "Return"
+            case Key.TAB:
+                key_name = "Tab"
+            case _:
+                raise Exception("Unknown key")
 
         run(["xdotool", "key", key_name])

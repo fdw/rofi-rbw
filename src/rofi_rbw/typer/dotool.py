@@ -22,11 +22,12 @@ class DotoolTyper(Typer):
         run(["dotool"], input=f"typedelay {key_delay}\ntype {characters}", encoding="utf-8")
 
     def press_key(self, key: Key) -> None:
-        if key == Key.ENTER:
-            key_name = "enter"
-        elif key == Key.TAB:
-            key_name = "tab"
-        else:
-            raise Exception("Unknown key")
+        match key:
+            case Key.ENTER:
+                key_name = "enter"
+            case Key.TAB:
+                key_name = "tab"
+            case _:
+                raise Exception("Unknown key")
 
         run(["dotool"], input=f"key {key_name}", encoding="utf-8")

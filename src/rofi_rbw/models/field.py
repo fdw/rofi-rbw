@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 
 class FieldType(Enum):
@@ -14,7 +13,7 @@ class FieldType(Enum):
 class Field:
     key: str
     value: str
-    type: Optional[FieldType]
+    type: FieldType | None
 
     def masked_string(self):
         if self.type == FieldType.HIDDEN:

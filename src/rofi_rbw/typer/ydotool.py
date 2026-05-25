@@ -22,11 +22,12 @@ class YDotoolTyper(Typer):
         run(["ydotool", "type", "--key-delay", str(key_delay), characters])
 
     def press_key(self, key: Key) -> None:
-        if key == Key.ENTER:
-            key_name = "28"
-        elif key == Key.TAB:
-            key_name = "15"
-        else:
-            raise Exception("Unknown key")
+        match key:
+            case Key.ENTER:
+                key_name = "28"
+            case Key.TAB:
+                key_name = "15"
+            case _:
+                raise Exception("Unknown key")
 
         run(["ydotool", "key", f"{key_name}:1", f"{key_name}:0"])

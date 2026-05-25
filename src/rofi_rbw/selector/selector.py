@@ -84,13 +84,15 @@ class Selector(ABC):
         )
 
     def _format_targets_from_entry(self, entry: DetailedEntry) -> list[str]:
-        if isinstance(entry, Credentials):
-            return self._format_targets_from_credential(entry)
-        elif isinstance(entry, Card):
-            return self._format_targets_from_card(entry)
-        elif isinstance(entry, Note):
-            return self._format_targets_from_note(entry)
-        return []
+        match entry:
+            case Credentials():
+                return self._format_targets_from_credential(entry)
+            case Card():
+                return self._format_targets_from_card(entry)
+            case Note():
+                return self._format_targets_from_note(entry)
+            case _:
+                return []
 
     def _format_targets_from_credential(self, credentials: Credentials) -> list[str]:
         targets = []

@@ -87,15 +87,16 @@ class RofiRbw(object):
 
     def __execute_action(self, detailed_entry: DetailedEntry) -> None:
         targets = self.__configure_targets(detailed_entry)
-        if self.args.action == Action.TYPE:
-            self.__type_targets(detailed_entry, targets)
-        elif self.args.action == Action.COPY:
-            for target in targets:
-                self.clipboarder.copy_to_clipboard(detailed_entry[target])
-            if len(targets) == 1 and targets[0] == Targets.PASSWORD:
-                self.clipboarder.clear_clipboard_after(self.args.clear)
-        elif self.args.action == Action.PRINT:
-            print("\n".join([detailed_entry[target] for target in targets]))
+        match self.args.action:
+            case Action.TYPE:
+                self.__type_targets(detailed_entry, targets)
+            case Action.COPY:
+                for target in targets:
+                    self.clipboarder.copy_to_clipboard(detailed_entry[target])
+                if len(targets) == 1 and targets[0] == Targets.PASSWORD:
+                    self.clipboarder.clear_clipboard_after(self.args.clear)
+            case Action.PRINT:
+                print("\n".join([detailed_entry[target] for target in targets]))
 
     def __configure_targets(self, detailed_entry: DetailedEntry) -> list[Target]:
         if self.args.targets:
@@ -108,16 +109,17 @@ class RofiRbw(object):
 
     def __type_targets(self, detailed_entry: DetailedEntry, targets: list[Target]):
         for target in targets:
-            if target == TypeTargets.DELAY:
-                time.sleep(1)
-            elif target == TypeTargets.ENTER:
-                self.typer.press_key(Key.ENTER)
-            elif target == TypeTargets.TAB:
-                self.typer.press_key(Key.TAB)
-            else:
-                self.typer.type_characters(
-                    detailed_entry[target], self.args.start_delay, self.args.key_delay, self.active_window
-                )
+            match target:
+                case TypeTargets.DELAY:
+                    time.sleep(1)
+                case TypeTargets.ENTER:
+                    self.typer.press_key(Key.ENTER)
+                case TypeTargets.TAB:
+                    self.typer.press_key(Key.TAB)
+                case _:
+                    self.typer.type_characters(
+                        detailed_entry[target], self.args.start_delay, self.args.key_delay, self.active_window
+                    )
         if Targets.PASSWORD in targets and isinstance(detailed_entry, Credentials) and detailed_entry.totp != "":
             self.clipboarder.copy_to_clipboard(detailed_entry.totp)
             if self.args.use_notify_send:
