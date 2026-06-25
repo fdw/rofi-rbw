@@ -30,6 +30,7 @@ class Fuzzel(Selector):
         parameters = [
             "fuzzel",
             "--dmenu",
+            "--index",
             "-p",
             prompt,
             *self.__build_parameters_for_keybindings(keybindings),
@@ -56,7 +57,8 @@ class Fuzzel(Selector):
             return_action = None
             return_targets = None
 
-        return return_targets, return_action, self._find_entry(entries, fuzzel.stdout)
+        selected = entries[int(fuzzel.stdout.strip())] if fuzzel.stdout.strip() else None
+        return return_targets, return_action, selected
 
     def select_target(
         self,
