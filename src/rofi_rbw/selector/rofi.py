@@ -6,7 +6,7 @@ from ..models.action import Action
 from ..models.detailed_entry import DetailedEntry
 from ..models.entry import Entry
 from ..models.keybinding import Keybinding
-from ..models.targets import Target, Targets
+from ..models.targets import Target
 from .selector import Selector
 
 
@@ -129,18 +129,8 @@ class Rofi(Selector):
             "-mesg",
             " | ".join(
                 [
-                    f"<b>{keybinding.shortcut}</b>: {self.__format_action_and_targets(keybinding)}"
+                    f"<b>{keybinding.shortcut}</b>: {self._format_action_and_targets(keybinding)}"
                     for keybinding in keybindings
                 ]
             ),
         ]
-
-    def __format_action_and_targets(self, keybinding: Keybinding) -> str:
-        if keybinding.targets and Targets.MENU in keybinding.targets:
-            return "Menu"
-        elif keybinding.action == Action.SYNC:
-            return "Sync logins"
-        elif keybinding.targets:
-            return f"{keybinding.action.value.title()} {', '.join([target.raw for target in keybinding.targets])}"
-        else:
-            return keybinding.action.value.title()

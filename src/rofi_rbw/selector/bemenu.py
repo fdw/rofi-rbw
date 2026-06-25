@@ -45,7 +45,7 @@ class Bemenu(Selector):
         self,
         entry: DetailedEntry,
         show_help_message: bool,
-        keybindings: dict[str, Action],
+        keybindings: list[Keybinding],
         additional_args: list[str],
     ) -> tuple[list[Target] | None, Action | None]:
         parameters = ["bemenu", "-p", "Choose target", *additional_args]
