@@ -2,6 +2,9 @@
 ## Changed
 - `wl-copy` sets the `sensitive` flag for passwords. (#93)
 
+## Added
+- `fuzzel` can now be customized with key bindings. (#130)
+
 # [1.6.1] - 2026-03-07
 ## Fixed
 - Fix selection of entries without folders or username. (#125)

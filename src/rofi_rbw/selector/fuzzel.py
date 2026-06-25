@@ -26,8 +26,18 @@ class Fuzzel(Selector):
         show_folders: bool,
         keybindings: list[Keybinding],
         additional_args: list[str],
-    ) -> tuple[None, Action | None, Entry | None]:
-        parameters = ["fuzzel", "--dmenu", "-p", prompt, *additional_args]
+    ) -> tuple[list[Target] | None, Action | None, Entry | None]:
+        parameters = [
+            "fuzzel",
+            "--dmenu",
+            "-p",
+            prompt,
+            *self.__build_parameters_for_keybindings(keybindings),
+            *additional_args,
+        ]
+
+        if show_help_message and keybindings:
+            parameters.extend(self.__format_keybindings_message(keybindings))
 
         fuzzel = run(
             parameters,
@@ -35,19 +45,37 @@ class Fuzzel(Selector):
             capture_output=True,
             encoding="utf-8",
         )
-        if fuzzel.returncode == 0:
-            return None, None, self._find_entry(entries, fuzzel.stdout)
-        else:
+
+        if fuzzel.returncode == 1:
             return None, Action.CANCEL, None
+        elif fuzzel.returncode >= 10:
+            keybinding = keybindings[(fuzzel.returncode - 10)]
+            return_action = keybinding.action
+            return_targets = keybinding.targets
+        else:
+            return_action = None
+            return_targets = None
+
+        return return_targets, return_action, self._find_entry(entries, fuzzel.stdout)
 
     def select_target(
         self,
         entry: DetailedEntry,
         show_help_message: bool,
-        keybindings: dict[str, Action],
+        keybindings: list[Keybinding],
         additional_args: list[str],
     ) -> tuple[list[Target] | None, Action | None]:
-        parameters = ["fuzzel", "--dmenu", "-p", "Choose target", *additional_args]
+        parameters = [
+            "fuzzel",
+            "--dmenu",
+            "-p",
+            "Choose target",
+            *self.__build_parameters_for_keybindings(keybindings),
+            *additional_args,
+        ]
+
+        if show_help_message and keybindings:
+            parameters.extend(self.__format_keybindings_message(keybindings))
 
         fuzzel = run(
             parameters,
@@ -58,5 +86,27 @@ class Fuzzel(Selector):
 
         if fuzzel.returncode == 1:
             return None, Action.CANCEL
+        elif fuzzel.returncode >= 10:
+            action = keybindings[(fuzzel.returncode - 10)].action
+        else:
+            action = None
 
-        return self._extract_targets(fuzzel.stdout), None
+        return (self._extract_targets(fuzzel.stdout)), action
+
+    def __build_parameters_for_keybindings(self, keybindings: list[Keybinding]) -> list[str]:
+        params = []
+        for index, keybinding in enumerate(keybindings):
+            params.append(f"--override=key-bindings.custom-{1 + index}={self.__translate_shortcut(keybinding.shortcut)}")
+        return params
+
+    def __translate_shortcut(self, shortcut: str) -> str:
+        return "+".join("Mod1" if token == "Alt" else token for token in shortcut.split("+"))
+
+    def __format_keybindings_message(self, keybindings: list[Keybinding]) -> list[str]:
+        return [
+            "--mesg",
+            " | ".join(
+                f"{keybinding.shortcut}: {self._format_action_and_targets(keybinding)}"
+                for keybinding in keybindings
+            ),
+        ]

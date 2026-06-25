@@ -8,7 +8,7 @@ from ..models.detailed_entry import DetailedEntry
 from ..models.entry import Entry
 from ..models.keybinding import Keybinding
 from ..models.note import Note
-from ..models.targets import Target
+from ..models.targets import Target, Targets
 
 
 class Selector(ABC):
@@ -59,7 +59,7 @@ class Selector(ABC):
         self,
         entry: DetailedEntry,
         show_help_message: bool,
-        keybindings: dict[str, Action],
+        keybindings: list[Keybinding],
         additional_args: list[str],
     ) -> tuple[list[Target] | None, Action | None]:
         pass
@@ -147,6 +147,16 @@ class Selector(ABC):
         if key.lower() in ["username", "password", "totp"] or re.match(r"^URI \d+$", key):
             return f"{key} (field)"
         return key
+
+    def _format_action_and_targets(self, keybinding: Keybinding) -> str:
+        if keybinding.targets and Targets.MENU in keybinding.targets:
+            return "Menu"
+        elif keybinding.action == Action.SYNC:
+            return "Sync logins"
+        elif keybinding.targets:
+            return f"{keybinding.action.value.title()} {', '.join([target.raw for target in keybinding.targets])}"
+        else:
+            return keybinding.action.value.title()
 
     @staticmethod
     def _extract_targets(output: str) -> list[Target]:
