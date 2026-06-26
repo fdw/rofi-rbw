@@ -91,10 +91,7 @@ class RofiRbw(object):
             case Action.TYPE:
                 self.__type_targets(detailed_entry, targets)
             case Action.COPY:
-                for target in targets:
-                    self.clipboarder.copy_to_clipboard(detailed_entry[target])
-                if len(targets) == 1 and targets[0] == Targets.PASSWORD:
-                    self.clipboarder.clear_clipboard_after(self.args.clear)
+                self.__copy_targets(detailed_entry, targets)
             case Action.PRINT:
                 print("\n".join([detailed_entry[target] for target in targets]))
 
@@ -111,7 +108,7 @@ class RofiRbw(object):
         for target in targets:
             match target:
                 case TypeTargets.DELAY:
-                    time.sleep(1)
+                    time.sleep(self.args.delay)
                 case TypeTargets.ENTER:
                     self.typer.press_key(Key.ENTER)
                 case TypeTargets.TAB:
@@ -124,3 +121,18 @@ class RofiRbw(object):
             self.clipboarder.copy_to_clipboard(detailed_entry.totp)
             if self.args.use_notify_send:
                 run(["notify-send", "-u", "normal", "-t", "3000", "rofi-rbw", "totp copied to clipboard"], check=True)
+
+    def __copy_targets(self, detailed_entry: DetailedEntry, targets: list[Target]):
+        non_delay_targets = [t for t in targets if t != TypeTargets.DELAY]
+        for target in targets:
+            match target:
+                case TypeTargets.DELAY:
+                    time.sleep(self.args.delay)
+                case _:
+                    value = detailed_entry[target]
+                    if value:
+                        self.clipboarder.copy_to_clipboard(value)
+                        if self.args.use_notify_send:
+                            run(["notify-send", "-u", "normal", "-t", "3000", "rofi-rbw", f"{target.raw} copied to clipboard"], check=True)
+        if len(non_delay_targets) == 1 and non_delay_targets[0] == Targets.PASSWORD:
+            self.clipboarder.clear_clipboard_after(self.args.clear)

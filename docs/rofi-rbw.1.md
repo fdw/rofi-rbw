@@ -13,7 +13,7 @@
          \[**\--target** {*username*,*password*,*totp*,*OTHER*}]
          \[**\--prompt** *PROMPT*] \[**\--selector-args** *SELECTOR_ARGS*]
          \[**\--clipboarder** *CLIPBOARDER*] \[**\--typer** *TYPER*] \[**\--selector** *SELECTOR*]
-         \[**\--clear-after** *NUMBER*] \[**\--typing-key-delay** *NUMBER*]
+         \[**\--clear-after** *NUMBER*] \[**\--typing-key-delay** *NUMBER*] \[**\--delay** *NUMBER*]
          \[**\--no-help**] \[**\--display-fields** *DISPLAY_FIELDS*]
          \[**\--keybindings** *KEYBINDINGS*] \[**\--menu-keybindings** *MENU_KEYBINDINGS*]
          \[**\--use-notify-send**]
@@ -73,6 +73,10 @@ Type, copy or print your credentials from Bitwarden using rofi.
 
 : Set a small delay between keypresses when typing. `0` by default.
 
+\--delay _SECONDS_
+
+: Duration in seconds to wait when a `delay` step is encountered in a keybinding sequence (e.g. `Alt+c:copy:username:delay:password`), for both `type` and `copy` actions. `1.0` by default.
+
 \--no-cache
 
 : Disable the automatic frecency cache. It contains sha1-hashes of the selected entries and how often they were used.
@@ -118,7 +122,7 @@ Type, copy or print your credentials from Bitwarden using rofi.
 
 \--use-notify-send
 
-: Send desktop notification after copying TOTP.
+: Send a desktop notification after each field is copied (e.g. "username copied to clipboard").
 
 # DEFAULT KEYBINDINGS
 
