@@ -1,5 +1,5 @@
 import time
-from subprocess import run
+from subprocess import PIPE, Popen, run
 
 from ..abstractionhelper import is_installed, is_wayland
 from .clipboarder import Clipboarder
@@ -17,8 +17,9 @@ class WlClipboarder(Clipboarder):
         return "wl-copy"
 
     def copy_to_clipboard(self, characters: str) -> None:
-        run(["wl-copy", "--sensitive"], input=characters, encoding="utf-8")
-
+        process = Popen(["wl-copy", "--sensitive"], stdin=PIPE, encoding="utf-8")
+        process.stdin.write(characters)
+        process.stdin.close()
         self.__last_copied_characters = characters
 
     def clear_clipboard_after(self, clear: int) -> None:
