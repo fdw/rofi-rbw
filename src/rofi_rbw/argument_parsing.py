@@ -146,6 +146,14 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         default=0,
         help="Set the typing start delay.",
     )
+    parser.add_argument(
+        "--delay",
+        dest="delay",
+        action="store",
+        type=float,
+        default=1.0,
+        help="Duration in seconds to wait when a 'delay' target is encountered (for both type and copy actions).",
+    )
 
     parsed_args = parser.parse_args(argv)
 
