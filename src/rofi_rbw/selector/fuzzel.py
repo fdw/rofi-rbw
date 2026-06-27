@@ -98,7 +98,9 @@ class Fuzzel(Selector):
     def __build_parameters_for_keybindings(self, keybindings: list[Keybinding]) -> list[str]:
         params = []
         for index, keybinding in enumerate(keybindings):
-            params.append(f"--override=key-bindings.custom-{1 + index}={self.__translate_shortcut(keybinding.shortcut)}")
+            params.append(
+                f"--override=key-bindings.custom-{1 + index}={self.__translate_shortcut(keybinding.shortcut)}"
+            )
         return params
 
     def __translate_shortcut(self, shortcut: str) -> str:
@@ -108,7 +110,6 @@ class Fuzzel(Selector):
         return [
             "--mesg",
             " | ".join(
-                f"{keybinding.shortcut}: {self._format_action_and_targets(keybinding)}"
-                for keybinding in keybindings
+                f"{keybinding.shortcut}: {self._format_action_and_targets(keybinding)}" for keybinding in keybindings
             ),
         ]

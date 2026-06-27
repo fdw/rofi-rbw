@@ -1,4 +1,3 @@
-import re
 from subprocess import run
 
 from ..abstractionhelper import is_installed
@@ -32,6 +31,8 @@ class Rofi(Selector):
             "rofi",
             "-markup-rows",
             "-dmenu",
+            "-format",
+            "i",
             "-i",
             "-sort",
             "-p",
@@ -60,7 +61,7 @@ class Rofi(Selector):
             return_action = None
             return_targets = None
 
-        return return_targets, return_action, self.__find_entry(entries, rofi.stdout)
+        return return_targets, return_action, (entries[int(rofi.stdout.strip())])
 
     def __format_entries(self, entries: list[Entry], show_folders: bool) -> list[str]:
         max_width = self._calculate_max_width(entries, show_folders)
@@ -68,17 +69,6 @@ class Rofi(Selector):
             f"{self._format_folder(it, show_folders)}<b>{it.name}</b>{self.justify(it, max_width, show_folders)}  {it.username}"
             for it in entries
         ]
-
-    def __find_entry(self, entries: list[Entry], formatted_string: str) -> Entry:
-        match = re.compile("(?:(?P<folder>.+)/)?<b>(?P<name>.*?)</b> {2,}(?P<username>.*)").search(formatted_string)
-
-        return next(
-            entry
-            for entry in entries
-            if entry.name == match.group("name")
-            and (match.group("folder") is None or entry.folder == match.group("folder"))
-            and (match.group("username") is None or entry.username == match.group("username").strip())
-        )
 
     def select_target(
         self,
