@@ -33,7 +33,7 @@ class RofiRbw(object):
             entries,
             self.args.prompt,
             self.args.show_help,
-            self.args.show_folders,
+            self.args.display_fields,
             self.args.parsed_keybindings,
             self.args.selector_args,
         )
@@ -44,7 +44,7 @@ class RofiRbw(object):
                 self.rbw.list_entries(),
                 self.args.prompt,
                 self.args.show_help,
-                self.args.show_folders,
+                self.args.display_fields,
                 self.args.parsed_keybindings,
                 self.args.selector_args,
             )

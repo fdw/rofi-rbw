@@ -5,6 +5,7 @@ from ..models.action import Action
 from ..models.card import Card
 from ..models.credentials import Credentials
 from ..models.detailed_entry import DetailedEntry
+from ..models.display_field_token import DisplayFieldToken
 from ..models.entry import Entry
 from ..models.keybinding import Keybinding
 from ..models.note import Note
@@ -48,7 +49,7 @@ class Selector(ABC):
         entries: list[Entry],
         prompt: str,
         show_help_message: bool,
-        show_folders: bool,
+        display_fields: list[DisplayFieldToken],
         keybindings: list[Keybinding],
         additional_args: list[str],
     ) -> tuple[list[Target] | None, Action | None, Entry | None]:
@@ -64,23 +65,28 @@ class Selector(ABC):
     ) -> tuple[list[Target] | None, Action | None]:
         pass
 
-    def _format_entries(self, entries: list[Entry], show_folders: bool) -> list[str]:
-        max_width = self._calculate_max_width(entries, show_folders)
+    def _format_entries(self, entries: list[Entry], display_fields: list[DisplayFieldToken]) -> list[str]:
+        number_tokens = len(display_fields)
+        formatted_entries = [[self._format_field(entry, token) for token in display_fields] for entry in entries]
+        max_lengths = [max(len(field) for field in pivoted_fields) for pivoted_fields in zip(*formatted_entries)]
+
         return [
-            f"{self._format_folder(it, show_folders)}{it.name}{self.justify(it, max_width, show_folders)}  {it.username}"
-            for it in entries
+            "  ".join([entry[field_index].ljust(max_lengths[field_index]) for field_index in range(number_tokens)])
+            for entry in formatted_entries
         ]
 
-    @staticmethod
-    def _find_entry(entries: list[Entry], formatted_string: str) -> Entry:
-        match = re.compile("(?:(?P<folder>.+)/)?(?P<name>.*?) {2,}(?P<username>.*)").search(formatted_string)
+    def _find_entry(
+        self, entries: list[Entry], formatted_string: str, display_fields: list[DisplayFieldToken]
+    ) -> Entry:
+        pattern = f"^{' {2,}'.join(f'(?P<{token.name.lower()}>.*?)' for token in display_fields)}$"
+        match = re.compile(pattern).search(formatted_string)
 
         return next(
             entry
             for entry in entries
-            if entry.name == match.group("name")
-            and (match.group("folder") is None or entry.folder == match.group("folder"))
-            and (match.group("username") is None or entry.username == match.group("username").strip())
+            if all(
+                self._format_field(entry, token) == match.group(token.name.lower()).strip() for token in display_fields
+            )
         )
 
     def _format_targets_from_entry(self, entry: DetailedEntry) -> list[str]:
@@ -158,30 +164,21 @@ class Selector(ABC):
         else:
             return keybinding.action.value.title()
 
-    @staticmethod
-    def _extract_targets(output: str) -> list[Target]:
+    def _format_field(self, entry: Entry, token: DisplayFieldToken) -> str:
+        match token:
+            case DisplayFieldToken.NAME_ONLY:
+                return entry.name
+            case DisplayFieldToken.NAME_WITH_FOLDER:
+                return f"{entry.folder}/{entry.name}" if entry.folder else entry.name
+            case DisplayFieldToken.FOLDER:
+                return entry.folder
+            case DisplayFieldToken.USER:
+                return entry.username
+            case DisplayFieldToken.FIRST_URI:
+                return entry.uris[0] if entry.uris else ""
+
+    def _extract_targets(self, output: str) -> list[Target]:
         return [Target(line.split(":")[0]) for line in output.strip().split("\n")]
-
-    @staticmethod
-    def _calculate_max_width(entries: list[Entry], show_folders: bool) -> int:
-        if show_folders:
-            return max(len(it.name) + len(it.folder) + 1 for it in entries)
-        else:
-            return max(len(it.name) for it in entries)
-
-    @staticmethod
-    def _format_folder(entry: Entry, show_folders: bool) -> str:
-        if not show_folders or not entry.folder:
-            return ""
-        return f"{entry.folder}/"
-
-    @staticmethod
-    def justify(entry: Entry, max_width: int, show_folders: bool) -> str:
-        whitespace_length = max_width - len(entry.name)
-        if show_folders:
-            if entry.folder:
-                whitespace_length -= len(entry.folder) + 1
-        return " " * whitespace_length
 
 
 class NoSelectorFoundException(Exception):

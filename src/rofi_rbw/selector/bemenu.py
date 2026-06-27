@@ -1,10 +1,10 @@
 from subprocess import run
 
-from rofi_rbw.models.entry import Entry
-
 from ..abstractionhelper import is_installed
 from ..models.action import Action
 from ..models.detailed_entry import DetailedEntry
+from ..models.display_field_token import DisplayFieldToken
+from ..models.entry import Entry
 from ..models.keybinding import Keybinding
 from ..models.targets import Target
 from .selector import Selector
@@ -24,7 +24,7 @@ class Bemenu(Selector):
         entries: list[Entry],
         prompt: str,
         show_help_message: bool,
-        show_folders: bool,
+        display_fields: list[DisplayFieldToken],
         keybindings: list[Keybinding],
         additional_args: list[str],
     ) -> tuple[None, Action | None, Entry | None]:
@@ -32,12 +32,12 @@ class Bemenu(Selector):
 
         bemenu = run(
             parameters,
-            input="\n".join(self._format_entries(entries, show_folders)),
+            input="\n".join(self._format_entries(entries, display_fields)),
             capture_output=True,
             encoding="utf-8",
         )
         if bemenu.returncode == 0:
-            return None, None, self._find_entry(entries, bemenu.stdout)
+            return None, None, self._find_entry(entries, bemenu.stdout, display_fields)
         else:
             return None, Action.CANCEL, None
 

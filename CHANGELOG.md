@@ -1,5 +1,6 @@
 # [NEXT]
 ## Changed
+- Fields shown in the overview can now be changed with `--display-fields`, deprecating `--no-folder`. (#135)
 - `wl-copy` sets the `sensitive` flag for passwords. (#93)
 
 ## Added

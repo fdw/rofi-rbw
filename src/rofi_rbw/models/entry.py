@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cached_property
 from hashlib import sha1
 
@@ -11,6 +11,7 @@ class Entry:
     folder: str
     username: str
     type: EntryType
+    uris: list[str] = field(default_factory=list)
 
     @cached_property
     def hashed(self) -> str:

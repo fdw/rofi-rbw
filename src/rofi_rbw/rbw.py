@@ -25,7 +25,7 @@ class Rbw:
 
         return sorted(
             [
-                Entry(item["name"], item["folder"] or "", item["user"] or "", item["type"])
+                Entry(item["name"], item["folder"] or "", item["user"] or "", item["type"], item["uris"] or [])
                 for item in data
                 if item["type"] in {EntryType.LOGIN.value, EntryType.CARD.value, EntryType.NOTE.value}
             ],

@@ -3,6 +3,7 @@ from subprocess import run
 from ..abstractionhelper import is_installed
 from ..models.action import Action
 from ..models.detailed_entry import DetailedEntry
+from ..models.display_field_token import DisplayFieldToken
 from ..models.entry import Entry
 from ..models.keybinding import Keybinding
 from ..models.targets import Target
@@ -23,7 +24,7 @@ class Rofi(Selector):
         entries: list[Entry],
         prompt: str,
         show_help_message: bool,
-        show_folders: bool,
+        display_fields: list[DisplayFieldToken],
         keybindings: list[Keybinding],
         additional_args: list[str],
     ) -> tuple[list[Target] | None, Action | None, Entry | None]:
@@ -46,7 +47,7 @@ class Rofi(Selector):
 
         rofi = run(
             parameters,
-            input="\n".join(self.__format_entries(entries, show_folders)),
+            input="\n".join(self._format_entries(entries, display_fields)),
             capture_output=True,
             encoding="utf-8",
         )
@@ -63,12 +64,16 @@ class Rofi(Selector):
 
         return return_targets, return_action, (entries[int(rofi.stdout.strip())])
 
-    def __format_entries(self, entries: list[Entry], show_folders: bool) -> list[str]:
-        max_width = self._calculate_max_width(entries, show_folders)
-        return [
-            f"{self._format_folder(it, show_folders)}<b>{it.name}</b>{self.justify(it, max_width, show_folders)}  {it.username}"
-            for it in entries
-        ]
+    def _format_field(self, entry: Entry, token: DisplayFieldToken) -> str:
+        match token:
+            case DisplayFieldToken.NAME_ONLY:
+                return f"<b>{super()._format_field(entry, token)}</b>"
+            case DisplayFieldToken.NAME_WITH_FOLDER:
+                if entry.folder:
+                    return f"{entry.folder}/<b>{entry.name}</b>"
+                return f"<b>{entry.name}</b>"
+            case _:
+                return super()._format_field(entry, token)
 
     def select_target(
         self,

@@ -3,6 +3,7 @@ from subprocess import run
 from ..abstractionhelper import is_installed, is_wayland
 from ..models.action import Action
 from ..models.detailed_entry import DetailedEntry
+from ..models.display_field_token import DisplayFieldToken
 from ..models.entry import Entry
 from ..models.keybinding import Keybinding
 from ..models.targets import Target
@@ -23,7 +24,7 @@ class Fuzzel(Selector):
         entries: list[Entry],
         prompt: str,
         show_help_message: bool,
-        show_folders: bool,
+        display_fields: list[DisplayFieldToken],
         keybindings: list[Keybinding],
         additional_args: list[str],
     ) -> tuple[list[Target] | None, Action | None, Entry | None]:
@@ -42,7 +43,7 @@ class Fuzzel(Selector):
 
         fuzzel = run(
             parameters,
-            input="\n".join(self._format_entries(entries, show_folders)),
+            input="\n".join(self._format_entries(entries, display_fields)),
             capture_output=True,
             encoding="utf-8",
         )

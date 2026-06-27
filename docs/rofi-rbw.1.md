@@ -14,7 +14,7 @@
          \[**\--prompt** *PROMPT*] \[**\--selector-args** *SELECTOR_ARGS*]
          \[**\--clipboarder** *CLIPBOARDER*] \[**\--typer** *TYPER*] \[**\--selector** *SELECTOR*]
          \[**\--clear-after** *NUMBER*] \[**\--typing-key-delay** *NUMBER*]
-         \[**\--no-help**] \[**\--no-folder**]
+         \[**\--no-help**] \[**\--display-fields** *DISPLAY_FIELDS*]
          \[**\--keybindings** *KEYBINDINGS*] \[**\--menu-keybindings** *MENU_KEYBINDINGS*]
          \[**\--use-notify-send**]
 
@@ -81,9 +81,18 @@ Type, copy or print your credentials from Bitwarden using rofi.
 
 : Don't show the help message about available keyboard shortcuts.
 
-\--no-folder
+\--display-fields _DISPLAY_FIELDS_
+
+: Possible values: name_only, name_with_folder, folder, user, uri
+
+      Ordered list of fields to show in the selection list, given as separate arguments (e.g. `--display-fields name_only user`).
+      `name_with_folder` renders as `folder/name`.
+      Defaults to `name_with_folder,user`.
+
+\--no-folder *(deprecated)*
 
 : Don't show folders in the list of possible entries.
+      Superseded by `--display-fields`. Translates to `--display-fields name_only user`.
 
 \--selector-args _SELECTOR-ARGS_
 

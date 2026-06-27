@@ -1,16 +1,18 @@
 import argparse
 import shlex
+import sys
 
 import configargparse
 
 from . import __version__
 from .models.action import Action
+from .models.display_field_token import DisplayFieldToken
 from .models.keybinding import Keybinding
 from .models.targets import Target, TypeTarget
 from .paths import config_file_locations
 
 
-def parse_arguments() -> argparse.Namespace:
+def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
     parser = configargparse.ArgumentParser(
         description="Insert or copy passwords and usernames from Bitwarden using rofi or rofi-likes.",
         default_config_files=config_file_locations,
@@ -74,8 +76,23 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--no-help", dest="show_help", action="store_false", help="Don't show a help message about the shortcuts"
     )
-    parser.add_argument("--no-folder", dest="show_folders", action="store_false", help="Don't show the entry's folder")
+    parser.add_argument(
+        "--no-folder",
+        dest="show_folders",
+        action="store_false",
+        help=argparse.SUPPRESS,
+    )
     parser.set_defaults(show_folders=True)
+    parser.add_argument(
+        "--display-fields",
+        dest="display_fields",
+        action="store",
+        nargs="+",
+        choices=[field.value for field in DisplayFieldToken],
+        default=None,
+        metavar="DISPLAY_FIELDS",
+        help='Ordered list of fields to show in the selection list, given as separate arguments Defaults to "name_with_folder user".',
+    )
     parser.add_argument("--no-cache", dest="use_cache", action="store_false", help="Don't save history in cache")
     parser.set_defaults(use_cache=True)
     parser.add_argument(
@@ -130,7 +147,7 @@ def parse_arguments() -> argparse.Namespace:
         help="Set the typing start delay.",
     )
 
-    parsed_args = parser.parse_args()
+    parsed_args = parser.parse_args(argv)
 
     parsed_args.selector_args = shlex.split(parsed_args.selector_args)
 
@@ -158,5 +175,18 @@ def parse_arguments() -> argparse.Namespace:
         parsed_args.parsed_menu_keybindings.append(
             Keybinding(elements[0], Action(elements[1]) if elements[1] else None, None)
         )
+
+    if parsed_args.display_fields is not None:
+        display_fields = [DisplayFieldToken(field) for field in parsed_args.display_fields]
+    elif not parsed_args.show_folders:
+        sys.stderr.write(
+            "warning: --no-folder is deprecated and will be removed in a future release. Use --display-fields name_only user instead.\n"
+        )
+        display_fields = [DisplayFieldToken.NAME_ONLY, DisplayFieldToken.USER]
+    else:
+        display_fields = [DisplayFieldToken.NAME_WITH_FOLDER, DisplayFieldToken.USER]
+
+    del parsed_args.show_folders
+    parsed_args.display_fields = display_fields
 
     return parsed_args
