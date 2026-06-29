@@ -15,6 +15,7 @@ client rbw
 \f[I]CLIPBOARDER\f[R]] [\f[B]\-\-typer\f[R] \f[I]TYPER\f[R]]
 [\f[B]\-\-selector\f[R] \f[I]SELECTOR\f[R]] [\f[B]\-\-clear\-after\f[R]
 \f[I]NUMBER\f[R]] [\f[B]\-\-typing\-key\-delay\f[R] \f[I]NUMBER\f[R]]
+[\f[B]\-\-action\-sequence\-delay\f[R] \f[I]NUMBER\f[R]]
 [\f[B]\-\-no\-help\f[R]] [\f[B]\-\-display\-fields\f[R]
 \f[I]DISPLAY_FIELDS\f[R]] [\f[B]\-\-keybindings\f[R]
 \f[I]KEYBINDINGS\f[R]] [\f[B]\-\-menu\-keybindings\f[R]
@@ -82,6 +83,13 @@ Set to \f[CR]0\f[R] to disable.
 Set a small delay between keypresses when typing.
 \f[CR]0\f[R] by default.
 .TP
+\-\-action\-sequence\-delay \f[I]MILLISECONDS\f[R]
+Define the duration in milliseconds to wait for a \f[CR]delay\f[R] step
+in a keybinding sequence
+(e.g.\ \f[CR]Alt+c:copy:username:delay:password\f[R]).
+It applies to both \f[CR]type\f[R] and \f[CR]copy\f[R] actions.
+\f[CR]1000\f[R] by default.
+.TP
 \-\-no\-cache
 Disable the automatic frecency cache.
 It contains sha1\-hashes of the selected entries and how often they were
@@ -137,7 +145,8 @@ Choose the application to type with manually.
 .RE
 .TP
 \-\-use\-notify\-send
-Send desktop notification after copying TOTP.
+Send a desktop notification after each field is copied
+(e.g.\ \(lqusername copied to clipboard\(rq).
 .SH DEFAULT KEYBINDINGS
 \f[I]enter\f[R] to use the default action
 .PP

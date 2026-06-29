@@ -46,3 +46,16 @@ def test_parse_arguments_no_deprecation_warning_with_display_fields(capsys):
     parse_arguments(["--display-fields", "name_only", "uri"])
     captured = capsys.readouterr()
     assert "--no-folder" not in captured.err
+
+
+@pytest.mark.parametrize(
+    ("argv", "expected"),
+    [
+        ([], 1000),
+        (["--action-sequence-delay", "500"], 500),
+        (["--action-sequence-delay", "0"], 0),
+    ],
+)
+def test_parse_arguments_action_sequence_delay(argv, expected):
+    args = parse_arguments(argv)
+    assert args.action_sequence_delay == expected

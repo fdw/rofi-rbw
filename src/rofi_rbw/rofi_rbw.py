@@ -1,5 +1,6 @@
 import time
-from subprocess import run
+
+from notifier import Notifier
 
 from .argument_parsing import parse_arguments
 from .cache import Cache
@@ -20,6 +21,7 @@ class RofiRbw(object):
         self.selector = Selector.best_option(self.args.selector)
         self.typer = Typer.best_option(self.args.typer)
         self.clipboarder = Clipboarder.best_option(self.args.clipboarder)
+        self.notifer = Notifier()
         self.active_window = self.typer.get_active_window()
 
     def main(self) -> None:
@@ -108,7 +110,7 @@ class RofiRbw(object):
         for target in targets:
             match target:
                 case TypeTargets.DELAY:
-                    time.sleep(self.args.inter_target_delay)
+                    time.sleep(self.args.action_sequence_delay / 1000)
                 case TypeTargets.ENTER:
                     self.typer.press_key(Key.ENTER)
                 case TypeTargets.TAB:
@@ -120,17 +122,18 @@ class RofiRbw(object):
         if Targets.PASSWORD in targets and isinstance(detailed_entry, Credentials) and detailed_entry.totp != "":
             self.clipboarder.copy_to_clipboard(detailed_entry.totp)
             if self.args.use_notify_send:
-                run(["notify-send", "-u", "normal", "-t", "3000", "rofi-rbw", "totp copied to clipboard"], check=True)
+                self.notifer.notify("totp copied to clipboard")
 
     def __copy_targets(self, detailed_entry: DetailedEntry, targets: list[Target]):
         for target in targets:
             if target == TypeTargets.DELAY:
-                time.sleep(self.args.inter_target_delay)
+                time.sleep(self.args.action_sequence_delay / 1000)
             else:
                 value = detailed_entry[target]
-                if value:
-                    self.clipboarder.copy_to_clipboard(value)
-                    if self.args.use_notify_send:
-                        run(["notify-send", "-u", "normal", "-t", str(int(self.args.inter_target_delay * 1000)), "rofi-rbw", f"{target.raw} copied to clipboard"], check=True)
+                self.clipboarder.copy_to_clipboard(value)
+
+                if self.args.use_notify_send:
+                    self.notifer.notify(f"{target.raw} copied to clipboard")
+
         if len(targets) == 1 and targets[0] == Targets.PASSWORD:
             self.clipboarder.clear_clipboard_after(self.args.clear)

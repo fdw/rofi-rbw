@@ -5,6 +5,8 @@
 
 ## Added
 - `fuzzel` can now be customized with key bindings. (#130)
+- Support a delay between copying actions. (#137)
+- Make delay duration configurable.
 
 # [1.6.1] - 2026-03-07
 ## Fixed

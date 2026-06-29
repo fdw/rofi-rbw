@@ -13,7 +13,7 @@
          \[**\--target** {*username*,*password*,*totp*,*OTHER*}]
          \[**\--prompt** *PROMPT*] \[**\--selector-args** *SELECTOR_ARGS*]
          \[**\--clipboarder** *CLIPBOARDER*] \[**\--typer** *TYPER*] \[**\--selector** *SELECTOR*]
-         \[**\--clear-after** *NUMBER*] \[**\--typing-key-delay** *NUMBER*] \[**\--delay** *NUMBER*]
+         \[**\--clear-after** *NUMBER*] \[**\--typing-key-delay** *NUMBER*] \[**\--action-sequence-delay** *NUMBER*]
          \[**\--no-help**] \[**\--display-fields** *DISPLAY_FIELDS*]
          \[**\--keybindings** *KEYBINDINGS*] \[**\--menu-keybindings** *MENU_KEYBINDINGS*]
          \[**\--use-notify-send**]
@@ -73,9 +73,9 @@ Type, copy or print your credentials from Bitwarden using rofi.
 
 : Set a small delay between keypresses when typing. `0` by default.
 
-\--delay _SECONDS_
+\--action-sequence-delay _MILLISECONDS_
 
-: Duration in seconds to wait when a `delay` step is encountered in a keybinding sequence (e.g. `Alt+c:copy:username:delay:password`), for both `type` and `copy` actions. `1.0` by default.
+: Define the duration in milliseconds to wait for a `delay` step in a keybinding sequence (e.g. `Alt+c:copy:username:delay:password`). It applies to both `type` and `copy` actions. `1000` by default.
 
 \--no-cache
 

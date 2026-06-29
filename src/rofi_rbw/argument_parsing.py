@@ -71,7 +71,7 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         action="store",
         type=int,
         default=0,
-        help="Limit the duration in seconds passwords stay in your clipboard. When not set or <= 0, passwords stay indefinitely.",
+        help="Limit the duration in seconds passwords stay in your clipboard. When not set or <= 0, passwords stay indefinitely",
     )
     parser.add_argument(
         "--no-help", dest="show_help", action="store_false", help="Don't show a help message about the shortcuts"
@@ -91,7 +91,7 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         choices=[field.value for field in DisplayFieldToken],
         default=None,
         metavar="DISPLAY_FIELDS",
-        help='Ordered list of fields to show in the selection list, given as separate arguments Defaults to "name_with_folder user".',
+        help='Ordered list of fields to show in the selection list, given as separate arguments Defaults to "name_with_folder user"',
     )
     parser.add_argument("--no-cache", dest="use_cache", action="store_false", help="Don't save history in cache")
     parser.set_defaults(use_cache=True)
@@ -136,23 +136,23 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         action="store",
         type=int,
         default=0,
-        help="Set the delay between key presses when typing.",
+        help="Set the delay between key presses when typing",
     )
     parser.add_argument(
         "--typing-start-delay",
         dest="start_delay",
         action="store",
-        type=float,
+        type=int,
         default=0,
-        help="Set the typing start delay.",
+        help="Set the typing start delay",
     )
     parser.add_argument(
-        "--inter-target-delay",
-        dest="inter_target_delay",
+        "--action-sequence-delay",
+        dest="action_sequence_delay",
         action="store",
-        type=float,
-        default=1.0,
-        help="Duration in seconds to wait when a 'delay' target is encountered (for both type and copy actions).",
+        type=int,
+        default=1000,
+        help="Set the delay to wait for a 'delay' step",
     )
 
     parsed_args = parser.parse_args(argv)
