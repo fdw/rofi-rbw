@@ -108,7 +108,7 @@ class RofiRbw(object):
         for target in targets:
             match target:
                 case TypeTargets.DELAY:
-                    time.sleep(self.args.delay)
+                    time.sleep(self.args.inter_target_delay)
                 case TypeTargets.ENTER:
                     self.typer.press_key(Key.ENTER)
                 case TypeTargets.TAB:
@@ -123,16 +123,14 @@ class RofiRbw(object):
                 run(["notify-send", "-u", "normal", "-t", "3000", "rofi-rbw", "totp copied to clipboard"], check=True)
 
     def __copy_targets(self, detailed_entry: DetailedEntry, targets: list[Target]):
-        non_delay_targets = [t for t in targets if t != TypeTargets.DELAY]
         for target in targets:
-            match target:
-                case TypeTargets.DELAY:
-                    time.sleep(self.args.delay)
-                case _:
-                    value = detailed_entry[target]
-                    if value:
-                        self.clipboarder.copy_to_clipboard(value)
-                        if self.args.use_notify_send:
-                            run(["notify-send", "-u", "normal", "-t", "3000", "rofi-rbw", f"{target.raw} copied to clipboard"], check=True)
-        if len(non_delay_targets) == 1 and non_delay_targets[0] == Targets.PASSWORD:
+            if target == TypeTargets.DELAY:
+                time.sleep(self.args.inter_target_delay)
+            else:
+                value = detailed_entry[target]
+                if value:
+                    self.clipboarder.copy_to_clipboard(value)
+                    if self.args.use_notify_send:
+                        run(["notify-send", "-u", "normal", "-t", str(int(self.args.inter_target_delay * 1000)), "rofi-rbw", f"{target.raw} copied to clipboard"], check=True)
+        if len(targets) == 1 and targets[0] == Targets.PASSWORD:
             self.clipboarder.clear_clipboard_after(self.args.clear)
