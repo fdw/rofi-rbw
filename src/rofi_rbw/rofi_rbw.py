@@ -1,7 +1,5 @@
 import time
 
-from .notifier import Notifier
-
 from .argument_parsing import parse_arguments
 from .cache import Cache
 from .clipboarder.clipboarder import Clipboarder
@@ -9,6 +7,7 @@ from .models.action import Action
 from .models.credentials import Credentials
 from .models.detailed_entry import DetailedEntry
 from .models.targets import Target, Targets, TypeTargets
+from .notifier import Notifier
 from .rbw import Rbw
 from .selector.selector import Selector
 from .typer.typer import Key, Typer
