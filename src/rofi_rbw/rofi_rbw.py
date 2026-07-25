@@ -1,6 +1,6 @@
 import time
 
-from notifier import Notifier
+from .notifier import Notifier
 
 from .argument_parsing import parse_arguments
 from .cache import Cache
