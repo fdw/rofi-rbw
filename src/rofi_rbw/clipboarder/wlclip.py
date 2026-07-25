@@ -30,4 +30,4 @@ class WlClipboarder(Clipboarder):
                 self.__last_copied_characters = None
 
     def __fetch_clipboard_content(self) -> str:
-        return run(["wl-paste"], capture_output=True, encoding="utf-8").stdout
+        return run(["wl-paste", "-n"], capture_output=True, encoding="utf-8").stdout
