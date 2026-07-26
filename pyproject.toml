@@ -29,8 +29,8 @@ include = ["docs/rofi-rbw.1"]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.14.13",
-    "pytest>=8.0",
+    "ruff>=0.16.0",
+    "pytest>=9.0",
 ]
 
 [tool.ruff]
