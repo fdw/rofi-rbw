@@ -1,13 +1,13 @@
-# [NEXT]
+# [1.7.0] - 2026-08-01
 ## Changed
 - Fields shown in the overview can now be changed with `--display-fields`, deprecating `--no-folder`. (#135)
 - `wl-copy` sets the `sensitive` flag for passwords. (#93)
 
 ## Fixed
-- Clipboard is now actually cleared. (#138)
+- Clipboard is actually cleared. (#138)
 
 ## Added
-- `fuzzel` can now be customized with key bindings. (#130)
+- `fuzzel` can be customized with key bindings. (#130)
 - Support a delay between copying actions. (#137)
 - Make delay duration configurable.
 

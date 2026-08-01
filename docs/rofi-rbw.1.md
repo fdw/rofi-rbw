@@ -1,6 +1,6 @@
 % ROFI-RBW(1) Version 1.6.1 | Rofi Third-party Add-on Documentation
 % Fabian Winter
-% March 07, 2026
+% August 01, 2026
 
 # NAME
 
@@ -68,6 +68,10 @@ Type, copy or print your credentials from Bitwarden using rofi.
 \--clear-after _SECONDS_
 
 : Clear the password from the clipboard after _SECONDS_ seconds. Set to `0` to disable.
+
+\--typing-start-delay _MILLISECONDS_
+
+: Set a small delay before typing starts. `0` by default.
 
 \--typing-key-delay _MILLISECONDS_
 
