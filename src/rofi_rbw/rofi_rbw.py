@@ -129,6 +129,8 @@ class RofiRbw(object):
                 time.sleep(self.args.action_sequence_delay / 1000)
             else:
                 value = detailed_entry[target]
+                if not value:
+                    continue
                 self.clipboarder.copy_to_clipboard(value)
 
                 if self.args.use_notify_send:
