@@ -19,7 +19,7 @@ Then, you can start `rofi-rbw`. It is *not* available as a rofi mode.
 
 # Configuration
 You can configure `rofi-rbw` either with cli arguments or with a config file called `$XDG_CONFIG_HOME/rofi-rbw.rc`. In the file, use the long option names without double dashes.
-Please check the [man page](docs/rofi-rbw.1.md) for details.
+Please check the [man page](docs/rofi-rbw.1.scd) for details.
 
 ## Options
 
