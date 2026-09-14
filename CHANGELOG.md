@@ -1,5 +1,6 @@
 # [1.7.0] - 2026-08-01
 ## Changed
+- All delays are measured in milliseconds.
 - Fields shown in the overview can now be changed with `--display-fields`, deprecating `--no-folder`. (#135)
 - `wl-copy` sets the `sensitive` flag for passwords. (#93)
 
