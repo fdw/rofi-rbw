@@ -17,8 +17,8 @@ class DotoolTyper(Typer):
     def get_active_window(self) -> str:
         return "not possible with dotool"
 
-    def type_characters(self, characters: str, start_delay: float, key_delay: int, active_window: str) -> None:
-        sleep(start_delay)
+    def type_characters(self, characters: str, start_delay: int, key_delay: int, active_window: str) -> None:
+        sleep(start_delay/1000)
         run(["dotool"], input=f"typedelay {key_delay}\ntype {characters}", encoding="utf-8")
 
     def press_key(self, key: Key) -> None:

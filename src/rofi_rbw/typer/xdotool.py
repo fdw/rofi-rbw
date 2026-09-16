@@ -17,8 +17,8 @@ class XDoToolTyper(Typer):
     def get_active_window(self) -> str:
         return run(args=["xdotool", "getactivewindow"], capture_output=True, encoding="utf-8").stdout[:-1]
 
-    def type_characters(self, characters: str, start_delay: float, key_delay: int, active_window: str) -> None:
-        sleep(start_delay)
+    def type_characters(self, characters: str, start_delay: int, key_delay: int, active_window: str) -> None:
+        sleep(start_delay/1000)
         run(
             [
                 "xdotool",

@@ -17,8 +17,8 @@ class WTypeTyper(Typer):
     def get_active_window(self) -> str:
         return "not possible with wtype"
 
-    def type_characters(self, characters: str, start_delay: float, key_delay: int, active_window: str) -> None:
-        sleep(start_delay)
+    def type_characters(self, characters: str, start_delay: int, key_delay: int, active_window: str) -> None:
+        sleep(start_delay/1000)
         args = ["wtype"]
 
         if key_delay > 0:
