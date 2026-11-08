@@ -83,6 +83,9 @@ class Selector(ABC):
             for entry in formatted_entries
         ]
 
+    def _search_terms(self, entry: Entry) -> str:
+        return " ".join(uri for uri in entry.uris if uri)
+
     def _find_entry(
         self, entries: list[Entry], formatted_string: str, display_fields: list[DisplayFieldToken]
     ) -> Entry:
