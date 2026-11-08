@@ -1,5 +1,6 @@
 import re
 from abc import ABC, abstractmethod
+from html import unescape
 
 from ..models.action import Action
 from ..models.card import Card
@@ -66,12 +67,19 @@ class Selector(ABC):
         pass
 
     def _format_entries(self, entries: list[Entry], display_fields: list[DisplayFieldToken]) -> list[str]:
+        def unescaped_ljust(s: str, width: int, fillchar: str = " ") -> str:
+            return s.ljust(len(s) + width - len(unescape(s)), fillchar)
+
         number_tokens = len(display_fields)
         formatted_entries = [[self._format_field(entry, token) for token in display_fields] for entry in entries]
-        max_lengths = [max(len(field) for field in pivoted_fields) for pivoted_fields in zip(*formatted_entries)]
+        max_lengths = [
+            max(len(unescape(field)) for field in pivoted_fields) for pivoted_fields in zip(*formatted_entries)
+        ]
 
         return [
-            "  ".join([entry[field_index].ljust(max_lengths[field_index]) for field_index in range(number_tokens)])
+            "  ".join(
+                [unescaped_ljust(entry[field_index], max_lengths[field_index]) for field_index in range(number_tokens)]
+            )
             for entry in formatted_entries
         ]
 

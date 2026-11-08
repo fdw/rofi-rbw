@@ -1,3 +1,4 @@
+from html import escape
 from subprocess import run
 
 from ..abstractionhelper import is_installed
@@ -67,13 +68,13 @@ class Rofi(Selector):
     def _format_field(self, entry: Entry, token: DisplayFieldToken) -> str:
         match token:
             case DisplayFieldToken.NAME_ONLY:
-                return f"<b>{super()._format_field(entry, token)}</b>"
+                return f"<b>{escape(super()._format_field(entry, token))}</b>"
             case DisplayFieldToken.NAME_WITH_FOLDER:
                 if entry.folder:
-                    return f"{entry.folder}/<b>{entry.name}</b>"
-                return f"<b>{entry.name}</b>"
+                    return f"{escape(entry.folder)}/<b>{escape(entry.name)}</b>"
+                return f"<b>{escape(entry.name)}</b>"
             case _:
-                return super()._format_field(entry, token)
+                return escape(super()._format_field(entry, token))
 
     def select_target(
         self,
