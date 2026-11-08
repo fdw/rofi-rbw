@@ -1,3 +1,4 @@
+import re
 from subprocess import run
 
 from ..abstractionhelper import is_installed, is_wayland
@@ -28,10 +29,12 @@ class Fuzzel(Selector):
         keybindings: list[Keybinding],
         additional_args: list[str],
     ) -> tuple[list[Target] | None, Action | None, Entry | None]:
+        search_uris = self.__supports_match_nth()
         parameters = [
             "fuzzel",
             "--dmenu",
             "--index",
+            *(["--with-nth=1", "--match-nth=2"] if search_uris else []),
             "-p",
             prompt,
             *self.__build_parameters_for_keybindings(keybindings),
@@ -41,9 +44,13 @@ class Fuzzel(Selector):
         if show_help_message and keybindings:
             parameters.extend(self.__format_keybindings_message(keybindings))
 
+        lines = self._format_entries(entries, display_fields)
+        if search_uris:
+            lines = self._format_rows(entries, lines)
+
         fuzzel = run(
             parameters,
-            input="\n".join(self._format_entries(entries, display_fields)),
+            input="\n".join(lines),
             capture_output=True,
             encoding="utf-8",
         )
@@ -60,6 +67,25 @@ class Fuzzel(Selector):
 
         selected = entries[int(fuzzel.stdout.strip())] if fuzzel.stdout.strip() else None
         return return_targets, return_action, selected
+
+    def _format_rows(self, entries: list[Entry], lines: list[str]) -> list[str]:
+        # Two columns: 1 = what is displayed, 2 = what is matched (display text + URIs)
+        rows = []
+        for entry, line in zip(entries, lines):
+            line = line.replace("\t", " ")
+            terms = self._search_terms(entry).replace("\t", " ")
+            rows.append(f"{line}\t{line} {terms}".rstrip())
+        return rows
+
+    @staticmethod
+    def __supports_match_nth() -> bool:
+        # check if installed fuzzel supporpts "--match-nth" (added in 1.14.0)
+        try:
+            output = run(["fuzzel", "--version"], capture_output=True, encoding="utf-8").stdout
+        except OSError:
+            return False
+        match = re.search(r"(\d+)\.(\d+)", output)
+        return match is not None and (int(match.group(1)), int(match.group(2))) >= (1, 14)
 
     def select_target(
         self,
