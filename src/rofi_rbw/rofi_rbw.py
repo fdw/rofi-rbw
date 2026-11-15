@@ -106,30 +106,39 @@ class RofiRbw(object):
         return detailed_entry.default_target
 
     def __type_targets(self, detailed_entry: DetailedEntry, targets: list[Target]):
+        skipped = False
         for target in targets:
             match target:
                 case TypeTargets.DELAY:
-                    time.sleep(self.args.action_sequence_delay / 1000)
+                    if not skipped:
+                        time.sleep(self.args.action_sequence_delay / 1000)
+                    skipped = False
                 case TypeTargets.ENTER:
                     self.typer.press_key(Key.ENTER)
                 case TypeTargets.TAB:
                     self.typer.press_key(Key.TAB)
                 case _:
-                    self.typer.type_characters(
-                        detailed_entry[target], self.args.start_delay, self.args.key_delay, self.active_window
-                    )
+                    value = detailed_entry[target]
+                    if not value:
+                        skipped = True
+                        continue
+                    self.typer.type_characters(value, self.args.start_delay, self.args.key_delay, self.active_window)
         if Targets.PASSWORD in targets and isinstance(detailed_entry, Credentials) and detailed_entry.totp != "":
             self.clipboarder.copy_to_clipboard(detailed_entry.totp)
             if self.args.use_notify_send:
                 self.notifer.notify("totp copied to clipboard")
 
     def __copy_targets(self, detailed_entry: DetailedEntry, targets: list[Target]):
+        skipped = False
         for target in targets:
             if target == TypeTargets.DELAY:
-                time.sleep(self.args.action_sequence_delay / 1000)
+                if not skipped:
+                    time.sleep(self.args.action_sequence_delay / 1000)
+                skipped = False
             else:
                 value = detailed_entry[target]
                 if not value:
+                    skipped = True
                     continue
                 self.clipboarder.copy_to_clipboard(value)
 
