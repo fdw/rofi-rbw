@@ -9,6 +9,7 @@ from .models.detailed_entry import DetailedEntry
 from .models.entry import Entry
 from .models.EntryType import EntryType
 from .models.field import Field, FieldType
+from .models.identity import Identity
 from .models.note import Note
 
 
@@ -27,7 +28,8 @@ class Rbw:
             [
                 Entry(item["name"], item["folder"] or "", item["user"] or "", item["type"], item["uris"] or [])
                 for item in data
-                if item["type"] in {EntryType.LOGIN.value, EntryType.CARD.value, EntryType.NOTE.value}
+                if item["type"]
+                in {EntryType.LOGIN.value, EntryType.CARD.value, EntryType.NOTE.value, EntryType.IDENTITY.value}
             ],
             key=lambda x: x.folder.lower() + x.name.lower(),
         )
@@ -40,6 +42,8 @@ class Rbw:
                 return self.__fetch_card(entry)
             case EntryType.NOTE.value:
                 return self.__fetch_note(entry)
+            case EntryType.IDENTITY.value:
+                return self.__fetch_identity(entry)
             case _:
                 print(f"Unsupported type: {entry.type}")
                 exit(7)
@@ -81,6 +85,33 @@ class Rbw:
             entry.name,
             entry.folder,
             [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"] if item["name"]],
+            data["notes"],
+        )
+
+    def __fetch_identity(self, entry: Entry) -> Identity:
+        data = self.__load_from_rbw(entry.name, entry.username, entry.folder)
+
+        return Identity(
+            entry.name,
+            entry.folder,
+            [Field(item["name"], item["value"], FieldType(item["type"])) for item in data["fields"] if item["name"]],
+            data["data"]["title"],
+            data["data"]["first_name"],
+            data["data"]["middle_name"],
+            data["data"]["last_name"],
+            data["data"]["address1"],
+            data["data"]["address2"],
+            data["data"]["address3"],
+            data["data"]["city"],
+            data["data"]["state"],
+            data["data"]["postal_code"],
+            data["data"]["country"],
+            data["data"]["phone"],
+            data["data"]["email"],
+            data["data"]["ssn"],
+            data["data"]["license_number"],
+            data["data"]["passport_number"],
+            data["data"]["username"],
             data["notes"],
         )
 

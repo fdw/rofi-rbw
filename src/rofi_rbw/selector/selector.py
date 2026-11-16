@@ -8,6 +8,7 @@ from ..models.credentials import Credentials
 from ..models.detailed_entry import DetailedEntry
 from ..models.display_field_token import DisplayFieldToken
 from ..models.entry import Entry
+from ..models.identity import Identity
 from ..models.keybinding import Keybinding
 from ..models.note import Note
 from ..models.targets import Target, Targets
@@ -105,6 +106,8 @@ class Selector(ABC):
                 return self._format_targets_from_card(entry)
             case Note():
                 return self._format_targets_from_note(entry)
+            case Identity():
+                return self._format_targets_from_identity(entry)
             case _:
                 return []
 
@@ -153,6 +156,20 @@ class Selector(ABC):
             value = note.notes.replace("\n", "|")
             targets.append(f"Notes: {value}")
         for field in note.fields:
+            targets.append(f"{self._format_further_item_name(field.key)}: {field.masked_string()}")
+
+        return targets
+
+    def _format_targets_from_identity(self, identity: Identity) -> list[str]:
+        targets = []
+        for target, value in identity.target_values:
+            if not value:
+                continue
+            if target in (Targets.SSN, Targets.LICENSE_NUMBER, Targets.PASSPORT_NUMBER):
+                value = f"{value[0]}{'*' * (len(value) - 1)}"
+            label = "SSN" if target == Targets.SSN else target.raw.capitalize()
+            targets.append(f"{label}: {value.replace(chr(10), '|')}")
+        for field in identity.fields:
             targets.append(f"{self._format_further_item_name(field.key)}: {field.masked_string()}")
 
         return targets
