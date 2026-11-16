@@ -64,6 +64,9 @@ class RofiRbw(object):
         if selected_action is not None:
             self.args.action = selected_action
 
+        if self.args.targets is None and entry.default_target == [Targets.MENU]:
+            self.args.targets = entry.default_target
+
         if self.args.targets is not None and Targets.MENU in self.args.targets:
             targets, action = self.__show_target_menu(
                 entry,

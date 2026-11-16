@@ -3,6 +3,8 @@ import pytest
 from rofi_rbw.models.display_field_token import DisplayFieldToken
 from rofi_rbw.models.entry import Entry
 from rofi_rbw.models.EntryType import EntryType
+from rofi_rbw.models.identity import Identity
+from rofi_rbw.models.targets import Targets
 
 from .DummySelector import DummySelector
 
@@ -141,3 +143,13 @@ def test_find_entry(entries, tokens, index):
     formatted = dummy_selector._format_entries(entries, tokens)[index]
     found = dummy_selector._find_entry(entries, formatted, tokens)
     assert found == entries[index]
+
+
+def test_format_and_extract_identity_targets():
+    selector = DummySelector()
+    identity = Identity("test", "", [], first_name="Taro", postal_code="100-0001", ssn="123456")
+
+    lines = selector._format_targets_from_entry(identity)
+
+    assert lines == ["First name: Taro", "Postal code: 100-0001", "SSN: 1*****"]
+    assert selector._extract_targets("\n".join(lines)) == [Targets.FIRST_NAME, Targets.POSTAL_CODE, Targets.SSN]

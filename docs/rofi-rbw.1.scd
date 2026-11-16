@@ -30,7 +30,10 @@ components of the selected entry.
 
 *--target*=_TARGET_, *-t* _TARGET_
 	Possible values: _username_, _password_, _totp_, _notes_, _number_,
-	_cardholder_, _brand_, _expiry_, _code_, _CUSTOM FIELD NAME_,
+	_cardholder_, _brand_, _expiry_, _code_, _title_, _first name_,
+	_middle name_, _last name_, _email_, _phone_, _address 1_, _address 2_,
+	_address 3_, _city_, _state_, _postal code_, _country_, _ssn_,
+	_license number_, _passport number_, _CUSTOM FIELD NAME_,
 	_menu_
 
 	Choose which component of the selected entry to type, copy, or

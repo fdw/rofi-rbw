@@ -4,14 +4,30 @@ class Target:
     def __init__(self, input: str):
         prepared_input = input.strip()
         if prepared_input.lower() in (
+            "address 1",
+            "address 2",
+            "address 3",
             "brand",
             "cardholder",
+            "city",
             "code",
+            "country",
+            "email",
             "expiry",
+            "first name",
+            "last name",
+            "license number",
             "menu",
+            "middle name",
             "notes",
             "number",
+            "passport number",
             "password",
+            "phone",
+            "postal code",
+            "ssn",
+            "state",
+            "title",
             "totp",
             "username",
         ) or prepared_input.lower().startswith("uri"):
@@ -52,6 +68,22 @@ class Targets:
     BRAND = Target("brand")
     EXPIRY = Target("expiry")
     CODE = Target("code")
+    TITLE = Target("title")
+    FIRST_NAME = Target("first name")
+    MIDDLE_NAME = Target("middle name")
+    LAST_NAME = Target("last name")
+    ADDRESS_1 = Target("address 1")
+    ADDRESS_2 = Target("address 2")
+    ADDRESS_3 = Target("address 3")
+    CITY = Target("city")
+    STATE = Target("state")
+    POSTAL_CODE = Target("postal code")
+    COUNTRY = Target("country")
+    PHONE = Target("phone")
+    EMAIL = Target("email")
+    SSN = Target("ssn")
+    LICENSE_NUMBER = Target("license number")
+    PASSPORT_NUMBER = Target("passport number")
     NOTES = Target("notes")
     MENU = Target("menu")
 

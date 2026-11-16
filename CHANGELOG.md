@@ -2,6 +2,9 @@
 ## Fixed
 - HTML characters are displayed correctly in rofi. (#145)
 
+## Added
+- Identities are listed. Selecting one opens the target menu, as they have many fields.
+
 # [1.7.0] - 2026-08-01
 ## Changed
 - All delays are measured in milliseconds.
