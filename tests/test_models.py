@@ -21,20 +21,16 @@ from rofi_rbw.models.targets import Targets
             [Targets.NUMBER, Targets.EXPIRY, Targets.CODE],
             ["1234", "2025-01", "123"],
         ),
+        (
+            Identity("test", "", [], first_name="Taro", last_name="Yamada"),
+            [Targets.FIRST_NAME, Targets.LAST_NAME],
+            ["Taro", "Yamada"],
+        ),
     ],
-    ids=["note", "credentials", "card"],
+    ids=["note", "credentials", "card", "identity"],
 )
 def test_default_target_return_values(entry, expected_targets, expected_values):
     assert entry.default_target == expected_targets
     for target, expected in zip(entry.default_target, expected_values, strict=True):
         assert entry[target] == expected
 
-
-def test_identity_values():
-    identity = Identity("test", "", [], first_name="Taro", last_name="Yamada", postal_code="100-0001")
-
-    assert identity[Targets.FIRST_NAME] == "Taro"
-    assert identity[Targets.LAST_NAME] == "Yamada"
-    assert identity[Targets.POSTAL_CODE] == "100-0001"
-    assert identity[Targets.EMAIL] is None
-    assert identity.default_target == [Targets.MENU]

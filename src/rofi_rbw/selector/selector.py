@@ -162,13 +162,43 @@ class Selector(ABC):
 
     def _format_targets_from_identity(self, identity: Identity) -> list[str]:
         targets = []
-        for target, value in identity.target_values:
-            if not value:
-                continue
-            if target in (Targets.SSN, Targets.LICENSE_NUMBER, Targets.PASSPORT_NUMBER):
-                value = f"{value[0]}{'*' * (len(value) - 1)}"
-            label = "SSN" if target == Targets.SSN else target.raw.capitalize()
-            targets.append(f"{label}: {value.replace(chr(10), '|')}")
+        if identity.title:
+            targets.append(f"Title: {identity.title}")
+        if identity.first_name:
+            targets.append(f"First name: {identity.first_name}")
+        if identity.middle_name:
+            targets.append(f"Middle name: {identity.middle_name}")
+        if identity.last_name:
+            targets.append(f"Last name: {identity.last_name}")
+        if identity.username:
+            targets.append(f"Username: {identity.username}")
+        if identity.email:
+            targets.append(f"Email: {identity.email}")
+        if identity.phone:
+            targets.append(f"Phone: {identity.phone}")
+        if identity.address1:
+            targets.append(f"Address 1: {identity.address1}")
+        if identity.address2:
+            targets.append(f"Address 2: {identity.address2}")
+        if identity.address3:
+            targets.append(f"Address 3: {identity.address3}")
+        if identity.city:
+            targets.append(f"City: {identity.city}")
+        if identity.state:
+            targets.append(f"State: {identity.state}")
+        if identity.postal_code:
+            targets.append(f"Postal code: {identity.postal_code}")
+        if identity.country:
+            targets.append(f"Country: {identity.country}")
+        if identity.ssn:
+            targets.append(f"SSN: {identity.ssn[0]}{'*' * (len(identity.ssn) - 1)}")
+        if identity.license_number:
+            targets.append(f"License number: {identity.license_number[0]}{'*' * (len(identity.license_number) - 1)}")
+        if identity.passport_number:
+            targets.append(f"Passport number: {identity.passport_number[0]}{'*' * (len(identity.passport_number) - 1)}")
+        if identity.notes:
+            value = identity.notes.replace("\n", "|")
+            targets.append(f"Notes: {value}")
         for field in identity.fields:
             targets.append(f"{self._format_further_item_name(field.key)}: {field.masked_string()}")
 

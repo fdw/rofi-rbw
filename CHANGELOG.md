@@ -3,7 +3,7 @@
 - HTML characters are displayed correctly in rofi. (#145)
 
 ## Added
-- Identities are listed. Selecting one opens the target menu, as they have many fields.
+- Identities are listed. By default, their first and last name are used.
 
 # [1.7.0] - 2026-08-01
 ## Changed
