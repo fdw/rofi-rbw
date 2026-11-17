@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from .detailed_entry import DetailedEntry
-from .targets import Target, Targets, TypeTarget
+from .targets import Target, Targets, TypeTarget, TypeTargets
 
 
 @dataclass(frozen=True)
@@ -26,38 +26,52 @@ class Identity(DetailedEntry):
     notes: str | None = None
 
     @property
-    def target_values(self) -> list[tuple[Target, str | None]]:
-        return [
-            (Targets.TITLE, self.title),
-            (Targets.FIRST_NAME, self.first_name),
-            (Targets.MIDDLE_NAME, self.middle_name),
-            (Targets.LAST_NAME, self.last_name),
-            (Targets.USERNAME, self.username),
-            (Targets.EMAIL, self.email),
-            (Targets.PHONE, self.phone),
-            (Targets.ADDRESS_1, self.address1),
-            (Targets.ADDRESS_2, self.address2),
-            (Targets.ADDRESS_3, self.address3),
-            (Targets.CITY, self.city),
-            (Targets.STATE, self.state),
-            (Targets.POSTAL_CODE, self.postal_code),
-            (Targets.COUNTRY, self.country),
-            (Targets.SSN, self.ssn),
-            (Targets.LICENSE_NUMBER, self.license_number),
-            (Targets.PASSPORT_NUMBER, self.passport_number),
-            (Targets.NOTES, self.notes),
-        ]
-
-    def __getitem__(self, target: Target) -> str | None:
-        return next(
-            (value for key, value in self.target_values if key == target),
-            next((field.value for field in self.fields if field.key == target.raw.removesuffix(" (field)")), None),
-        )
-
-    @property
     def default_target(self) -> list[Target]:
-        return [Targets.MENU]
+        return [Targets.FIRST_NAME, Targets.LAST_NAME]
 
     @property
     def default_autotype_target(self) -> list[TypeTarget]:
-        return [Targets.MENU]
+        return [Targets.FIRST_NAME, TypeTargets.TAB, Targets.LAST_NAME]
+
+    def __getitem__(self, target: Target) -> str | None:
+        match target:
+            case Targets.TITLE:
+                return self.title
+            case Targets.FIRST_NAME:
+                return self.first_name
+            case Targets.MIDDLE_NAME:
+                return self.middle_name
+            case Targets.LAST_NAME:
+                return self.last_name
+            case Targets.USERNAME:
+                return self.username
+            case Targets.EMAIL:
+                return self.email
+            case Targets.PHONE:
+                return self.phone
+            case Targets.ADDRESS_1:
+                return self.address1
+            case Targets.ADDRESS_2:
+                return self.address2
+            case Targets.ADDRESS_3:
+                return self.address3
+            case Targets.CITY:
+                return self.city
+            case Targets.STATE:
+                return self.state
+            case Targets.POSTAL_CODE:
+                return self.postal_code
+            case Targets.COUNTRY:
+                return self.country
+            case Targets.SSN:
+                return self.ssn
+            case Targets.LICENSE_NUMBER:
+                return self.license_number
+            case Targets.PASSPORT_NUMBER:
+                return self.passport_number
+            case Targets.NOTES:
+                return self.notes
+            case _:
+                return next(
+                    (field.value for field in self.fields if field.key == target.raw.removesuffix(" (field)")), None
+                )
