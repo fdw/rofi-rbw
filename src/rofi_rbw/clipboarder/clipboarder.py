@@ -5,11 +5,17 @@ class Clipboarder(ABC):
     @staticmethod
     def best_option(name: str | None = None) -> "Clipboarder":
         from .noop import NoopClipboarder
-        from .wlclip import WlClipboarder
+        from .wlclip import WlClipboarder, WlLegacyClipboarder
         from .xclip import XClipClipboarder
         from .xsel import XSelClipboarder
 
-        available_clipboarders = [XSelClipboarder, XClipClipboarder, WlClipboarder, NoopClipboarder]
+        available_clipboarders = [
+            XSelClipboarder,
+            XClipClipboarder,
+            WlClipboarder,
+            WlLegacyClipboarder,
+            NoopClipboarder,
+        ]
 
         if name is not None:
             return next(clipboarder for clipboarder in available_clipboarders if clipboarder.name() == name)()

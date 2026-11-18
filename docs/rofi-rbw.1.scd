@@ -106,10 +106,13 @@ components of the selected entry.
 	*--selector-args* " ARGS".
 
 *--clipboarder*=_CLIPBOARDER_
-	Possible values: _xsel_, _xclip_, _wl-copy_
+	Possible values: _xsel_, _xclip_, _wl-copy_, _wl-copy-legacy_
 
 	Choose the application to access the clipboard with manually.
 	Chosen automatically by default.
+
+	_wl-copy-legacy_ is _wl-copy_ without *--sensitive*, for wl-clipboard
+	older than 2.3.0. It is never chosen automatically.
 
 *--typer*=_TYPER_
 	Possible values: _xdotool_, _wtype_, _ydotool_, _dotool_
