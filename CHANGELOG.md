@@ -4,6 +4,7 @@
 
 ## Added
 - Identities are listed. By default, their first and last name are used.
+- `--clipboarder wl-copy-legacy` copies without `--sensitive`, for wl-clipboard older than 2.3.0. (#148)
 
 # [1.7.0] - 2026-08-01
 ## Changed

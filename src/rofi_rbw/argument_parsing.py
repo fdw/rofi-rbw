@@ -52,7 +52,7 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
         dest="clipboarder",
         action="store",
         type=str,
-        choices=["xsel", "xclip", "wl-copy"],
+        choices=["xsel", "xclip", "wl-copy", "wl-copy-legacy"],
         default=None,
         help="Choose the application to access the clipboard with",
     )

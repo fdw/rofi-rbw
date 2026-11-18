@@ -140,10 +140,13 @@ limitation, specify it as \fB\-\-selector\-args\fR=\fIARGS\fR or
 .RE
 \fB\-\-clipboarder\fR=\fICLIPBOARDER\fR
 .RS 4
-Possible values: \fIxsel\fR, \fIxclip\fR, \fIwl\-copy\fR
+Possible values: \fIxsel\fR, \fIxclip\fR, \fIwl\-copy\fR, \fIwl\-copy\-legacy\fR
 .PP
 Choose the application to access the clipboard with manually.\&
 Chosen automatically by default.\&
+.PP
+\fIwl\-copy\-legacy\fR is \fIwl\-copy\fR without \fB\-\-sensitive\fR, for wl\-clipboard
+older than 2.3.0.\& It is never chosen automatically.\&
 .PP
 .RE
 \fB\-\-typer\fR=\fITYPER\fR
