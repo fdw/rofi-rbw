@@ -48,7 +48,7 @@ class Rofi(Selector):
 
         rofi = run(
             parameters,
-            input="\n".join(self._format_entries(entries, display_fields)),
+            input="\n".join(self._format_rows(entries, display_fields)),
             capture_output=True,
             encoding="utf-8",
         )
@@ -64,6 +64,14 @@ class Rofi(Selector):
             return_targets = None
 
         return return_targets, return_action, (entries[int(rofi.stdout.strip())])
+
+    def _format_rows(self, entries: list[Entry], display_fields: list[DisplayFieldToken]) -> list[str]:
+        # rofi's dmenu row options: "text\0meta\x1fterms" adds invisible search terms to a row
+        rows = []
+        for entry, line in zip(entries, self._format_entries(entries, display_fields)):
+            terms = self._search_terms(entry)
+            rows.append(f"{line}\0meta\x1f{terms}" if terms else line)
+        return rows
 
     def _format_field(self, entry: Entry, token: DisplayFieldToken) -> str:
         match token:

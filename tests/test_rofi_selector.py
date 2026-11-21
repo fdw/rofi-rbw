@@ -66,3 +66,14 @@ def test_rofi_find_entry(tokens, index):
     formatted = rofi._format_entries([default_entry, second_entry], tokens)[index]
     found = rofi._find_entry([default_entry, second_entry], formatted, tokens)
     assert found == [default_entry, second_entry][index]
+
+
+def test_rofi_rows_include_uris_as_hidden_meta():
+    rows = rofi._format_rows([default_entry, second_entry], [DisplayFieldToken.NAME_ONLY])
+    assert rows[0] == "<b>github</b>\0meta\x1fhttps://github.com https://second.com"
+    assert rows[1] == "<b>site</b>  \0meta\x1fhttps://example.com"
+
+
+def test_rofi_rows_without_uris_have_no_meta():
+    entry = Entry(name="card", folder="", username="", type=EntryType.CARD)
+    assert rofi._format_rows([entry], [DisplayFieldToken.NAME_ONLY]) == ["<b>card</b>"]
